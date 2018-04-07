@@ -1,33 +1,349 @@
 
 <template>
   <div class="scq-view">
-      <preview :dataset="dataset"></preview>
+      <div class="current flex row " style="width:100%;">
+        <div>按下多选：{{isMulitle}}</div> 
+        <div> 当前选中：{{current_id}}</div>
+        <div>
+          <el-select  placeholder="请选择活动区域" v-model="tagType" @change="currentTagChange">
+            <el-option v-for="(item,index) in tageTypeArray" :key="index" :label="item" :value="item"></el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="flex row content">
+        <preview v-on:current="getCurrent" 
+        :dataset="dataset[0]" 
+        class="grow paremt_preview" 
+        :currentSelect="current_id"
+        :tagType="dataset[0].tagType"
+        ></preview>
+        <div class="insersub-view flex column" style="margin-left:20px;">
+            <div class="flex row">
+            <div class="row-list">
+                <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
+                <div class="subitem flex vcenter"  v-for="(item,index) in rowList" @click="rowAdd(item)">
+                    {{item}}
+                </div>
+            </div>
+            <div class="column-list">
+                    <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
+                <div class="subitem flex vcenter" v-for="item in columnList" @click="columnAdd(item)">
+                    {{item}}
+                </div>
+            </div>
+            </div>
+        </div>
+      </div>
+      
+      <textarea name="" id="" cols="30" rows="10" class="html-box" v-model="htmlcode">
+            
+      </textarea>
+      <div class="css-box">
+          <code class="css-code" v-html="csscode">
+          </code>
+      </div>
   </div>
 </template>
 
 <script>
 // import HelloWorld from "./components/HelloWorld";
-import preview from './component/preview'
+import preview from "./component/preview";
+import uid2 from "uid2";
+import classname from "classname";
 export default {
   name: "index",
-  data(){
-      return {
-          dataset:{
-              value:"1",
-              subset:[
-                  {
-                      value:"2.1"
-                  },
-                  {
-                      value:"2.2"
-                  }
-              ]
-          }
-      }
+  data() {
+    return {
+      current_id: ["1"],
+      dataset: [
+        {
+          id: "1",
+          value: "1",
+          tagType: "div",
+          direction: "row",
+          className: "container",
+          subset: []
+        }
+      ],
+      addDirection: "row",
+      addNumber: 1,
+      tagType: "div",
+      rowList: [1, 2, 3, 4, 5],
+      columnList: [1, 2, 3, 4, 5],
+      tageTypeArray: ["div", "view", "image", "text"],
+      isMulitle: false
+    };
   },
-  components:{
-      preview
+  methods: {
+    currentTagChange(event) {
+      console.log(event);
+      this.getNodeByIdChaneType(this.dataset, this.current_id,event);
+    },
+    getNodeByIdChaneType(subset, id,tagType) {
+      let item = subset.filter(item => {
+        // return item.id == id
+        let findresult = id.find(subitem => {
+          return subitem == item.id;
+        });
+        console.log(!!findresult);
+        return !!findresult;
+      });
+      if (item.length > 0) {
+        item.forEach(subitem => {
+            subitem.tagType=tagType
+        });
+        this.setDatasetClassName(this.dataset, 1);
+      } else {
+        subset.map(item => {
+          this.getNodeByIdChaneType(item.subset, id,tagType);
+        });
+      }
+    },
+    getCurrent(event) {
+      console.log(event);
+      this.tagType = event.tagType;
+      if (this.isMulitle) {
+        let finditem = this.current_id.find(item => {
+          return item == event.id;
+        });
+
+        // console.log(finditem);
+        if (finditem === undefined) {
+          this.current_id.push(event.id);
+        } else {
+          // console.log(finditem)
+          this.current_id.splice(
+            this.current_id.findIndex(item => {
+              return item === finditem;
+            }),
+            1
+          );
+        }
+
+        let newarray = JSON.parse(JSON.stringify(this.current_id));
+        this.current_id = newarray;
+      } else {
+        this.current_id = JSON.parse(JSON.stringify([event.id]));
+      }
+    },
+    //   遍历树结构，找到指定值
+    getNodeById(subset, id) {
+      let item = subset.filter(item => {
+        // return item.id == id
+        let findresult = id.find(subitem => {
+          return subitem == item.id;
+        });
+        console.log(!!findresult);
+        return !!findresult;
+      });
+      if (item.length > 0) {
+        this.addElement(item);
+      } else {
+        subset.map(item => {
+          this.getNodeById(item.subset, id);
+        });
+      }
+    },
+    columnAdd(number) {
+      this.addDirection = "column";
+      this.addNumber = number;
+      this.getNodeById(this.dataset, this.current_id);
+    },
+    rowAdd(number) {
+      this.addNumber = number;
+      this.addDirection = "row";
+      //   console.log( this.current_id)
+      this.getNodeById(this.dataset, this.current_id);
+      //   this.dataset.subset.push({
+      //               id:"2.3",
+      //               value:"2.3"
+      //           })
+    },
+    addElement(item) {
+      let addArray = new Array(this.addNumber);
+      addArray.fill(1);
+      item.forEach(subitem => {
+        subitem.direction = this.addDirection;
+        addArray.forEach(() => {
+          subitem.subset.push({
+            tagType: this.tagType,
+            direction: this.addDirection,
+            id: uid2(10),
+            className: "",
+            subset: []
+          });
+          //   item
+        });
+      });
+      this.setDatasetClassName(this.dataset, 1);
+    },
+    jsonToHtmlStyle1(array, tagType) {
+      // 操作
+      // let element = null
+      // if(parentElement==null){
+      if (tagType == undefined) {
+        tagType = "div";
+      }
+      let element = document.createElement(tagType);
+      // console.log('array.tagType',tagType)
+      // }
+      // 子级
+      array.forEach(item => {
+        console.log("item.tagType", item.tagType);
+        let childElement = this.jsonToHtmlStyle1(item.subset, item.tagType);
+        childElement.className = classname(
+          item.className,
+          "flex",
+          item.direction
+        );
+        element.appendChild(childElement);
+      });
+      // 返回元素
+      return element;
+    },
+
+    jsonToCssStyle1(array, parentHeader, parentLevel, result) {
+      array.forEach((item, index) => {
+        let nodeHeader = "";
+        let sublevel = "";
+        if (parentHeader == "") {
+          nodeHeader = ".myContaint";
+          sublevel = "";
+        } else {
+          nodeHeader =
+            parentHeader +
+            " " +
+            item.tagType +
+            ".s" +
+            parentLevel +
+            "-" +
+            index;
+          sublevel = parentLevel + "-" + index;
+        }
+
+        result.push(nodeHeader + " {}");
+        this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result);
+      });
+    },
+    setDatasetClassName(array, parentLevel) {
+      array.forEach((item, index) => {
+        let sublevel = "";
+        if (parentLevel == 1) {
+          sublevel = "";
+        } else {
+          sublevel = parentLevel + "-" + index;
+          item.className = "s" + sublevel;
+        }
+
+        this.setDatasetClassName(item.subset, sublevel);
+      });
+    }
+  },
+  computed: {
+    htmlcode: function() {
+      // console.log(this.jsonToHtmlStyle1(this.dataset))
+      let element = this.jsonToHtmlStyle1(this.dataset);
+      // // console.log(element);
+      // console.log('change',this.dataset)
+      console.log("change", element.outerHTML);
+      var result = tidy_html5(element.outerHTML, options);
+      console.log("result", result);
+      return tidy_html5(element.outerHTML, options);
+    },
+    csscode: function() {
+      let result = [];
+      this.jsonToCssStyle1(this.dataset, "", 1, result);
+      // console.log(result);
+      let newResult = result.map(item => {
+        return "<p>" + item + "</p>";
+      });
+      return newResult.join("\n");
+    }
+  },
+  created() {
+    //   let body = document.getElementsByTagName('body')
+
+    window.addEventListener("keydown", event => {
+      //   console.log(event)
+      if (event.keyCode == 17) {
+        this.isMulitle = true;
+      }
+    });
+    window.addEventListener("keyup", event => {
+      //   console.log(event)
+      if (event.keyCode == 17) {
+        this.isMulitle = false;
+      }
+    });
+  },
+  components: {
+    preview
   }
 };
 </script>
 
+<style>
+.html-box,
+.css-box {
+  display: block;
+  margin-top: 20px;
+  min-height: 500px;
+  width: 100%;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.preview {
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid black;
+  padding: 20px;
+}
+.scq-view {
+  /* height: 800px; */
+  min-width: 100px;
+}
+.content {
+  height: 100%;
+}
+.paremt_preview {
+  height: 800px;
+}
+.flex {
+  display: flex;
+}
+.row {
+  flex-direction: row;
+}
+.flex .grow {
+  flex-grow: 1;
+}
+.flex.vcenter {
+  justify-content: center;
+  align-items: center;
+}
+.column {
+  flex-direction: column;
+}
+
+.insersub-view {
+  width: 200px;
+}
+.insersub-view .subitem {
+  height: 50px;
+  width: 100px;
+  border: 1px solid #ddd;
+}
+.preview {
+  background-color: #d4d4d4;
+}
+.selected {
+  background-color: #ffaf3a;
+}
+.current {
+  justify-content: flex-start;
+}
+.current div {
+  margin-right: 20px;
+}
+</style>

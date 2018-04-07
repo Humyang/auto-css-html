@@ -82,4 +82,7 @@ li.el-menu-item {
 .el-menu{
     border-right:0;
 }
+html,body,#app{
+  min-height: 100%;
+}
 </style>

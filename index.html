@@ -6,6 +6,34 @@
     <title></title>
   </head>
   <body>
+      <script src='http://lovasoa.github.io/tidy-html5/tidy.js'></script>
+      <script>
+        options = {
+        "indent":"auto",
+        "indent-spaces":2,
+        "wrap":80,
+        "markup":true,
+        "output-xml":false,
+        "numeric-entities":true,
+        "quote-marks":true,
+        "quote-nbsp":false,
+        "show-body-only":true,
+        "quote-ampersand":false,
+        "break-before-br":true,
+        "uppercase-tags":false,
+        "uppercase-attributes":false,
+        "drop-font-tags":true,
+        "tidy-mark":false,
+        "drop-empty-elements":false,
+        "merge-divs":false,
+        "new-blocklevel-tags":['view','image','text']
+      }
+  // 文档地址
+  // http://api.html-tidy.org/tidy/quickref_5.6.0.html#drop-empty-elements
+      // var html = document.querySelector("body").outerHTML;
+      // var result = tidy_html5(html, options);
+      // console.log(result);
+      </script>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
