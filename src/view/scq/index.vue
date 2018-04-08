@@ -9,6 +9,9 @@
             <el-option v-for="(item,index) in tageTypeArray" :key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
+        <div class="flex row">
+          containt name <el-input v-model="containerName" placeholder="请输入内容"></el-input>
+        </div>
       </div>
       <div class="flex row content">
         <preview v-on:current="getCurrent" 
@@ -18,19 +21,25 @@
         :tagType="dataset[0].tagType"
         ></preview>
         <div class="insersub-view flex column" style="margin-left:20px;">
+            <div>
+              <el-select  placeholder="设置添加位置" v-model="appendPosition" >
+                <el-option  label="直接子级直接添加" value="subChildAppend"></el-option>
+                <el-option  label="直接子级插入" value="subChildInsert"></el-option>
+              </el-select>
+            </div>
             <div class="flex row">
-            <div class="row-list">
-                <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
-                <div class="subitem flex vcenter"  v-for="(item,index) in rowList" @click="rowAdd(item)">
-                    {{item}}
-                </div>
-            </div>
-            <div class="column-list">
-                    <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
-                <div class="subitem flex vcenter" v-for="item in columnList" @click="columnAdd(item)">
-                    {{item}}
-                </div>
-            </div>
+              <div class="row-list">
+                  <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
+                  <div class="subitem flex vcenter"  v-for="(item,index) in rowList" @click="rowAdd(item)">
+                      {{item}}
+                  </div>
+              </div>
+              <div class="column-list">
+                      <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
+                  <div class="subitem flex vcenter" v-for="item in columnList" @click="columnAdd(item)">
+                      {{item}}
+                  </div>
+              </div>
             </div>
         </div>
       </div>
@@ -55,16 +64,18 @@ export default {
   data() {
     return {
       current_id: ["1"],
+      appendPosition: "subChildAppend",
       dataset: [
         {
           id: "1",
           value: "1",
           tagType: "div",
           direction: "row",
-          className: "container",
+          className: "",
           subset: []
         }
       ],
+      containerName: "container",
       addDirection: "row",
       addNumber: 1,
       tagType: "div",
@@ -77,9 +88,9 @@ export default {
   methods: {
     currentTagChange(event) {
       console.log(event);
-      this.getNodeByIdChaneType(this.dataset, this.current_id,event);
+      this.getNodeByIdChaneType(this.dataset, this.current_id, event);
     },
-    getNodeByIdChaneType(subset, id,tagType) {
+    getNodeByIdChaneType(subset, id, tagType) {
       let item = subset.filter(item => {
         // return item.id == id
         let findresult = id.find(subitem => {
@@ -90,12 +101,12 @@ export default {
       });
       if (item.length > 0) {
         item.forEach(subitem => {
-            subitem.tagType=tagType
+          subitem.tagType = tagType;
         });
         this.setDatasetClassName(this.dataset, 1);
       } else {
         subset.map(item => {
-          this.getNodeByIdChaneType(item.subset, id,tagType);
+          this.getNodeByIdChaneType(item.subset, id, tagType);
         });
       }
     },
@@ -159,21 +170,52 @@ export default {
       //               value:"2.3"
       //           })
     },
+    resetUid(dataset){
+      console.log(dataset)
+      if(dataset.length>0){
+        
+        dataset.forEach((item)=>{
+          console.log(item.id)
+        item.id = uid2(10)
+        console.log(item.id)
+        this.resetUid(item.subset)
+      })
+      }
+    },
     addElement(item) {
       let addArray = new Array(this.addNumber);
       addArray.fill(1);
       item.forEach(subitem => {
         subitem.direction = this.addDirection;
-        addArray.forEach(() => {
-          subitem.subset.push({
-            tagType: this.tagType,
-            direction: this.addDirection,
-            id: uid2(10),
-            className: "",
-            subset: []
+
+        if (this.appendPosition == "subChildAppend") {
+          addArray.forEach(() => {
+            subitem.subset.push({
+              tagType: this.tagType,
+              direction: this.addDirection,
+              id: uid2(10),
+              className: "",
+              subset: []
+            });
           });
-          //   item
-        });
+        }
+        if (this.appendPosition == "subChildInsert") {
+          let subset = JSON.parse(JSON.stringify(subitem.subset));
+
+          subitem.subset = [];
+          
+          addArray.forEach(() => {
+            let nSubset = JSON.parse(JSON.stringify(subset));
+            this.resetUid(nSubset)
+            subitem.subset.push({
+              tagType: this.tagType,
+              direction: this.addDirection,
+              id: uid2(10),
+              className: "",
+              subset: nSubset
+            });
+          });
+        }
       });
       this.setDatasetClassName(this.dataset, 1);
     },
@@ -207,7 +249,7 @@ export default {
         let nodeHeader = "";
         let sublevel = "";
         if (parentHeader == "") {
-          nodeHeader = ".myContaint";
+          nodeHeader = "." + this.containerName;
           sublevel = "";
         } else {
           nodeHeader =
@@ -260,9 +302,15 @@ export default {
       return newResult.join("\n");
     }
   },
+  watch: {
+    containerName(newValue) {
+      // console.log(v,e)
+      this.dataset[0].className = newValue;
+    }
+  },
   created() {
     //   let body = document.getElementsByTagName('body')
-
+    this.dataset[0].className = this.containerName;
     window.addEventListener("keydown", event => {
       //   console.log(event)
       if (event.keyCode == 17) {
@@ -342,6 +390,8 @@ export default {
 }
 .current {
   justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
 }
 .current div {
   margin-right: 20px;
