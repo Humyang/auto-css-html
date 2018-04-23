@@ -36,12 +36,12 @@ if sync_github == 1:
         # close static serve and api serve
         print 'close serve -- begin'
         close_static = get_pid_close(8600)
-        close_api = get_pid_close(8602)
-        if close_static == 1 and close_api == 1:
+        # close_api = get_pid_close(8602)
+        if close_static == 1:
             print 'close serve -- success'
         else:
             print 'close serve -- faile'
         print 'start serve'
         # start server
-        subprocess_command('nohup node ./src/server/index.js &')
+        # subprocess_command('nohup node ./src/server/index.js &')
         subprocess_command('nohup node ./dist_serve/static.js &')
