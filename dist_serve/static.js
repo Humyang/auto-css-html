@@ -24,6 +24,6 @@ router.get('*',async function (ctx,next) {
 },serve(__dirname+'./../dist',{maxage:3153600000}))
 app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(8600);
+app.listen(8700);
 
-console.log('listening on port 8600');
+console.log('listening on port 8700');
