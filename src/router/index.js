@@ -28,30 +28,21 @@ const router = new VueRouter({
           component: resolve => require(['@/view/index/index.vue'], resolve),
         }, 
         {
-          path: '/plan',
-          name:"plan",
-          meta: {
-            title: '计划'
-          },
-          component: resolve => require(['@/view/plan/index.vue'], resolve),
-        }, 
-        {
           path: '/scq',
           name:"scq",
           meta: {
             title: '生成器'
           },
           component: resolve => require(['@/view/scq/index.vue'], resolve),
+        },
+        {
+          path: '/scroll_wxxcx',
+          name:"scq",
+          meta: {
+            title: '微信小程序滚动加载'
+          },
+          component: resolve => require(['@/view/scroll_wxxcx/index.vue'], resolve),
         }
-        // , 
-        // {
-        //   path: '/chart',
-        //   name:"chart",
-        //   meta: {
-        //     title: '图标'
-        //   },
-        //   component: resolve => require(['@/view/plan/index.vue'], resolve),
-        // }, 
         
       ]
     },
