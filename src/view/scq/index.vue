@@ -81,7 +81,7 @@ export default {
       tagType: "div",
       rowList: [1, 2, 3, 4, 5],
       columnList: [1, 2, 3, 4, 5],
-      tageTypeArray: ["div", "view", "image", "text"],
+      tageTypeArray: ["div", "view", "image", "text","span"],
       isMulitle: false
     };
   },
