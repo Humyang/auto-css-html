@@ -12,14 +12,17 @@
       </div>
 
     
-    <div v-for="item in rawList" class="flex row">
+    <div v-for="item,index in rawList" class="flex row">
         <textarea v-model="item.value" name="" id="" cols="30" rows="10"></textarea>
-        <div v-for="subItem in rawListInput">
-            <div v-for="input in subItem">
-                {{input.name}}
-                <input type="text" v-model="input.value">
-            </div>
+        <div class="flex column">
+            <span v-for="subItem in rawListInput[index]">
+            <!-- <div v-for="input in subItem"> -->
+                <a href="">{{subItem.name}}</a>
+                <input type="text" v-model="subItem.value">
+            <!-- </div> -->
+        </span>
         </div>
+        
     </div> 
     <div v-for="item in resArr">
         <textarea  name="" id="" cols="30" rows="10">{{item}}</textarea>
@@ -56,8 +59,14 @@ export default {
               if(!flag){
                   flag = []
               }
-              for(let b=0;b<flag.length;b++){
-                    v.push({name:flag[b],value:''})
+              let removed = []
+              let flagConver = flag.forEach((item)=>{
+                  if(!removed.includes(item)){
+                      removed.push(item)
+                  }
+              })
+              for(let b=0;b<removed.length;b++){
+                    v.push({name:removed[b],value:''})
               }
               
               this.rawListInput.push(v)
@@ -69,7 +78,10 @@ export default {
               let content = this.rawList[i].value
               for(let s=0;s<this.rawListInput[i].length;s++){
                   console.log(this.rawListInput[i][s].name)
-                  content = content.replace(this.rawListInput[i][s].name,this.rawListInput[i][s].value)
+                  let replace = this.rawListInput[i][s].name
+                  replace = replace.replace('[','\\[')
+                  replace = replace.replace(']','\\]')
+                  content = content.replace(new RegExp(replace,'g'),this.rawListInput[i][s].value)
               }
               this.resArr.push(content)
           }
