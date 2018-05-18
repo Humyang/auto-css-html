@@ -5,6 +5,8 @@ import store from './vuex/store'
 import ElementUI from 'element-ui';
 import * as api from '@/api/index'
 
+import '@/css/flex.css'
+
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false

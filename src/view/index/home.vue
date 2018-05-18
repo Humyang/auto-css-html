@@ -16,10 +16,10 @@
         <i class="el-icon-menu"></i>
         <span slot="title">生成器</span>
       </el-menu-item>
-      <!-- <el-menu-item index="3">
-      <i class="el-icon-setting"></i>
-      <span slot="title">导航四</span>
-    </el-menu-item> -->
+      <el-menu-item index="pdsc">
+        <i class="el-icon-menu"></i>
+        <span slot="title">片段生成</span>
+      </el-menu-item>
     </el-menu>
   </el-aside>
   <el-main>

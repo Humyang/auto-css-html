@@ -34,7 +34,15 @@ const router = new VueRouter({
             title: '生成器'
           },
           component: resolve => require(['@/view/scq/index.vue'], resolve),
+        },{
+          path: '/pdsc',
+          name:"pdsc",
+          meta: {
+            title: '片段生成'
+          },
+          component: resolve => require(['@/view/pdsc/index.vue'], resolve),
         },
+        
         {
           path: '/scroll_wxxcx',
           name:"scq",
