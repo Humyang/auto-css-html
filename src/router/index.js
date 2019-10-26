@@ -50,7 +50,16 @@ const router = new VueRouter({
             title: '微信小程序滚动加载'
           },
           component: resolve => require(['@/view/scroll_wxxcx/index.vue'], resolve),
+        },
+        {
+          path: '/qiongju',
+          name:"scq",
+          meta: {
+            title: '穷举'
+          },
+          component: resolve => require(['@/view/qiongju/index.vue'], resolve),
         }
+        
         
       ]
     },

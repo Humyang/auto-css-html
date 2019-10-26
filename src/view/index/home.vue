@@ -20,6 +20,10 @@
         <i class="el-icon-menu"></i>
         <span slot="title">片段生成</span>
       </el-menu-item>
+      <el-menu-item index="qiongju">
+        <i class="el-icon-menu"></i>
+        <span slot="title">穷举</span>
+      </el-menu-item>
     </el-menu>
   </el-aside>
   <el-main>
