@@ -14,8 +14,14 @@
         <el-input v-model="containerName" placeholder="请输入内容"></el-input>
       </div>
     </div>
-    <div class="flex row content">
-      <div style="height:200px;width: 100%;">
+    <div class="flex column content">
+      <div>
+        <button @click="setElementAttr('grow')">grow</button>
+        <button @click="setElementAttr('justift-center')">justift-center</button>
+        <button @click="setElementAttr('align-center')">align-center</button>
+        <button @click="setElementAttr('padding-10')">padding-10</button>
+      </div>
+      <div style="min-height:200px;width: 100%;">
         <preview
           v-on:current="getCurrent"
           :dataset="dataset[0]"
@@ -23,6 +29,12 @@
           :currentSelect="current_id"
           :tagType="dataset[0].tagType"
         ></preview>
+        <div>
+          <button
+            v-for="(item,index) in currentItem.classObj"
+            @click="setExtendAttr(index,item)"
+          >{{index}} {{item}}</button>
+        </div>
       </div>
       <div class="insersub-view flex column" style="margin-left:20px;">
         <div>
@@ -51,9 +63,11 @@
         </div>
       </div>
     </div>
-
     <textarea name id cols="30" rows="10" class="html-box" v-model="htmlcode"></textarea>
+
     <div class="css-box">
+      <button @click="cssNormal">normal</button>
+      <button @click="cssTree">tree</button>
       <code class="css-code" v-html="csscode"></code>
     </div>
   </div>
@@ -64,12 +78,14 @@
 import preview from './component/preview'
 import uid2 from 'uid2'
 import classname from 'classname'
+window.ccc = classname
 export default {
   name: 'index',
   data() {
     return {
       current_id: ['1'],
       appendPosition: 'subChildAppend',
+      cssType: 'normal', //normal tree
       dataset: [
         {
           id: '1',
@@ -77,9 +93,11 @@ export default {
           tagType: 'div',
           direction: 'row',
           className: '',
+          classObj: {},
           subset: []
         }
       ],
+      currentItem: {},
       containerName: 'container',
       addDirection: 'row',
       addNumber: 1,
@@ -91,6 +109,48 @@ export default {
     }
   },
   methods: {
+    setExtendAttr(index, item) {
+      let obj = JSON.parse(JSON.stringify(this.currentItem.classObj))
+      obj[index] = !item
+      this.currentItem.classObj = obj
+      // console.log('this.currentItem.classObj', this.currentItem.classObj)
+      this.currentItem.className = classname(this.currentItem.className, obj)
+    },
+    setElementAttr(type) {
+      let item = this.getNode(this.dataset, this.current_id)
+      // console.log('item', arr)
+      // arr.forEach(item => {
+      switch (type) {
+        case 'grow':
+          item.classObj = Object.assign({}, item.classObj, { grow: true })
+          item.className = classname(item.className, 'grow')
+          break
+        case 'justift-center':
+          item.classObj = Object.assign({}, item.classObj, { center: true })
+          item.className = classname(item.className, 'center')
+          break
+        case 'align-center':
+          item.classObj = Object.assign({}, item.classObj, {
+            'align-center': true
+          })
+          item.className = classname(item.className, 'align-center')
+          break
+        case 'padding-10':
+          item.classObj = Object.assign({}, item.classObj, {
+            'p-all-10': true
+          })
+          item.className = classname(item.className, 'p-all-10')
+          break
+      }
+      this.currentItem = item
+      // })
+    },
+    cssNormal() {
+      this.cssType = 'normal'
+    },
+    cssTree() {
+      this.cssType = 'tree'
+    },
     currentTagChange(event) {
       console.log(event)
       this.getNodeByIdChaneType(this.dataset, this.current_id, event)
@@ -140,7 +200,58 @@ export default {
         this.current_id = newarray
       } else {
         this.current_id = JSON.parse(JSON.stringify([event.id]))
+        let arr = this.getNode(this.dataset, this.current_id)
+        this.currentItem = arr
+        // arr.forEach(item => {
+        //   this.currentItem = item
+        // })
       }
+    },
+    getNode(subset, id) {
+      // let res = subset.filter(item => {
+      //   return item.id == id
+      // })
+      // console.log('getNode', id)
+      let res = ''
+      for (let index = 0; index < subset.length; index++) {
+        const element = subset[index]
+        let findresult = id.find(subitem => {
+          return subitem == element.id
+        })
+        if (findresult) {
+          res = element
+          break
+        } else {
+          res = this.getNode(element.subset, id)
+          if (res != '') {
+            break
+          }
+        }
+        // if (element.id == id[0]) {
+        //   res = element
+        //   console.log('resresresres', res)
+        // } else {
+        //   res = this.getNode(element.subset, id)
+        // }
+      }
+
+      return res
+      // let item = subset.filter(item => {
+      //   // return item.id == id
+      //   let findresult = id.find(subitem => {
+      //     return subitem == item.id
+      //   })
+      //   return !!findresult
+      // })
+      // if (item.length > 0) {
+      //   return item
+      // } else {
+      //   let res = ''
+      //   subset.map(item => {
+      //     res = this.getNode(item.subset, id)
+      //   })
+      //   return res
+      // }
     },
     //   遍历树结构，找到指定值
     getNodeById(subset, id) {
@@ -199,6 +310,7 @@ export default {
               direction: this.addDirection,
               id: uid2(10),
               className: '',
+              classObj: {},
               subset: []
             })
           })
@@ -216,6 +328,7 @@ export default {
               direction: this.addDirection,
               id: uid2(10),
               className: '',
+              classObj: {},
               subset: nSubset
             })
           })
@@ -265,6 +378,33 @@ export default {
         this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result)
       })
     },
+    jsonToCssStyle2(array, result, top) {
+      // console.log('2222222222', array)
+      let res = ''
+      array.forEach((item, index) => {
+        res = res + '.' + item.className + '{'
+        if (item.subset) {
+          res += this.jsonToCssStyle2(item.subset, result, false)
+        }
+        // let nodeHeader = ''
+        // let sublevel = ''
+        // if (parentHeader == '') {
+        //   nodeHeader = '.' + this.containerName
+        //   sublevel = ''
+        // } else {
+        //   nodeHeader =
+        //     parentHeader + ' ' + item.tagType + '.s' + parentLevel + '-' + index
+        //   sublevel = parentLevel + '-' + index
+        // }
+
+        // result.push(nodeHeader + ' {}')
+        // this.jsonToCssStyle2(item.subset, nodeHeader, sublevel, result)
+      })
+      if (!top) {
+        res += '}'
+      }
+      return res
+    },
     setDatasetClassName(array, parentLevel) {
       array.forEach((item, index) => {
         let sublevel = ''
@@ -272,7 +412,7 @@ export default {
           sublevel = ''
         } else {
           sublevel = parentLevel + '-' + index
-          item.className = 's' + sublevel
+          item.className = classname({}, 's' + sublevel, item.classObj)
         }
 
         this.setDatasetClassName(item.subset, sublevel)
@@ -292,12 +432,19 @@ export default {
     },
     csscode: function() {
       let result = []
-      this.jsonToCssStyle1(this.dataset, '', 1, result)
+      if (this.cssType == 'normal') {
+        this.jsonToCssStyle1(this.dataset, '', 1, result)
+        let newResult = result.map(item => {
+          return '<p>' + item + '</p>'
+        })
+        return newResult.join('\n')
+      }
+      if (this.cssType == 'tree') {
+        let res = this.jsonToCssStyle2(this.dataset, '', true)
+
+        return res
+      }
       // console.log(result);
-      let newResult = result.map(item => {
-        return '<p>' + item + '</p>'
-      })
-      return newResult.join('\n')
     }
   },
   watch: {
