@@ -1,74 +1,103 @@
 
 <template>
-  <div class="scq-view">
-    <div class="current flex row" style="width:100%;">
-      <div>按下多选：{{isMulitle}}</div>
-      <div>当前选中：{{current_id}}</div>
+  <div class="scq-view row flex" style="height: 100%;">
+    <div style="width: 50%;height:100%;overflow:auto;" class="flex column">
+      <div class="history flex">
+        <span
+          class="vcenter flex"
+          v-for="(item,index) in elementHistory"
+          :key="index"
+          @click="actionTimeTravel(index)"
+        >{{index+1}}</span>
+      </div>
       <div>
-        <el-select placeholder="请选择活动区域" v-model="tagType" @change="currentTagChange">
-          <el-option v-for="(item,index) in tageTypeArray" :key="index" :label="item" :value="item"></el-option>
-        </el-select>
-      </div>
-      <div class="flex row">
-        containt name
-        <el-input v-model="containerName" placeholder="请输入内容"></el-input>
-      </div>
-    </div>
-    <div class="flex column content">
-      <div>
-        <button @click="setElementAttr('grow')">grow</button>
-        <button @click="setElementAttr('justift-center')">justift-center</button>
-        <button @click="setElementAttr('align-center')">align-center</button>
-        <button @click="setElementAttr('padding-10')">padding-10</button>
-      </div>
-      <div style="min-height:200px;width: 100%;">
         <preview
           v-on:current="getCurrent"
           :dataset="dataset[0]"
-          class="grow paremt_preview"
+          class="paremt_preview"
           :currentSelect="current_id"
           :tagType="dataset[0].tagType"
+          style
         ></preview>
-        <div>
-          <button
-            v-for="(item,index) in currentItem.classObj"
-            @click="setExtendAttr(index,item)"
-          >{{index}} {{item}}</button>
-        </div>
       </div>
-      <div class="insersub-view flex column" style="margin-left:20px;">
+
+      <textarea
+        name
+        id
+        cols="30"
+        rows="10"
+        class="html-box"
+        v-model="htmlcode"
+        style="min-height:200px;"
+      ></textarea>
+
+      <div class="css-box">
+        <button @click="cssNormal">normal</button>
+        <button @click="cssTree">tree</button>
+        <code class="css-code" v-html="csscode"></code>
+      </div>
+    </div>
+    <div style="width: 50%;overflow:hidden;">
+      <div class="current flex row" style="width:100%;">
+        <div>按下多选：{{isMulitle}}</div>
+        <div>当前选中：{{current_id}}</div>
         <div>
-          <el-select placeholder="设置添加位置" v-model="appendPosition">
-            <el-option label="直接子级直接添加" value="subChildAppend"></el-option>
-            <el-option label="直接子级插入" value="subChildInsert"></el-option>
+          <el-select placeholder="请选择活动区域" v-model="tagType" @change="currentTagChange">
+            <el-option
+              v-for="(item,index) in tageTypeArray"
+              :key="index"
+              :label="item"
+              :value="item"
+            ></el-option>
           </el-select>
         </div>
         <div class="flex row">
-          <div class="row-list">
-            <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
-            <div
-              class="subitem flex vcenter"
-              v-for="(item,index) in rowList"
-              @click="rowAdd(item)"
-            >{{item}}</div>
+          containt name
+          <el-input v-model="containerName" placeholder="请输入内容"></el-input>
+        </div>
+      </div>
+      <div class="flex column content">
+        <div>
+          <button @click="setElementAttr('grow')">grow</button>
+          <button @click="setElementAttr('justift-center')">justift-center</button>
+          <button @click="setElementAttr('align-center')">align-center</button>
+          <button @click="setElementAttr('padding-10')">padding-10</button>
+        </div>
+        <div style="min-height:200px;width: 100%;">
+          <div>
+            <button
+              v-for="(item,index) in currentItem.classObj"
+              @click="setExtendAttr(index,item)"
+            >{{index}} {{item}}</button>
           </div>
-          <div class="column-list">
-            <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
-            <div
-              class="subitem flex vcenter"
-              v-for="item in columnList"
-              @click="columnAdd(item)"
-            >{{item}}</div>
+        </div>
+        <div class="insersub-view flex column" style="margin-left:20px;">
+          <div>
+            <el-select placeholder="设置添加位置" v-model="appendPosition">
+              <el-option label="直接子级直接添加" value="subChildAppend"></el-option>
+              <el-option label="直接子级插入" value="subChildInsert"></el-option>
+            </el-select>
+          </div>
+          <div class="flex row">
+            <div class="row-list">
+              <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
+              <div
+                class="subitem flex vcenter"
+                v-for="(item,index) in rowList"
+                @click="rowAdd(item)"
+              >{{item}}</div>
+            </div>
+            <div class="column-list">
+              <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
+              <div
+                class="subitem flex vcenter"
+                v-for="item in columnList"
+                @click="columnAdd(item)"
+              >{{item}}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <textarea name id cols="30" rows="10" class="html-box" v-model="htmlcode"></textarea>
-
-    <div class="css-box">
-      <button @click="cssNormal">normal</button>
-      <button @click="cssTree">tree</button>
-      <code class="css-code" v-html="csscode"></code>
     </div>
   </div>
 </template>
@@ -79,6 +108,7 @@ import preview from './component/preview'
 import uid2 from 'uid2'
 import classname from 'classname'
 window.ccc = classname
+import { mapMutations, mapActions, mapState } from 'vuex'
 export default {
   name: 'index',
   data() {
@@ -86,17 +116,7 @@ export default {
       current_id: ['1'],
       appendPosition: 'subChildAppend',
       cssType: 'normal', //normal tree
-      dataset: [
-        {
-          id: '1',
-          value: '1',
-          tagType: 'div',
-          direction: 'row',
-          className: '',
-          classObj: {},
-          subset: []
-        }
-      ],
+      dataset: [],
       currentItem: {},
       containerName: 'container',
       addDirection: 'row',
@@ -108,13 +128,49 @@ export default {
       isMulitle: false
     }
   },
+
+  computed: {
+    ...mapState({
+      dset: state => JSON.parse(JSON.stringify(state.element)),
+      elementHistory: state => state.elementHistory
+    }),
+    htmlcode: function() {
+      let element = this.jsonToHtmlStyle1(this.dataset)
+      console.log('change', element.outerHTML)
+      var result = tidy_html5(element.outerHTML, options)
+      console.log('result', result)
+      return tidy_html5(element.outerHTML, options)
+    },
+    csscode: function() {
+      let result = []
+      if (this.cssType == 'normal') {
+        this.jsonToCssStyle1(this.dataset, '', 1, result)
+        let newResult = result.map(item => {
+          return '<p>' + item + '</p>'
+        })
+        return newResult.join('\n')
+      }
+      if (this.cssType == 'tree') {
+        let res = this.jsonToCssStyle2(this.dataset, '', true)
+
+        return res
+      }
+      // console.log(result);
+    }
+  },
   methods: {
+    ...mapActions(['setElement', 'timeTravel']),
+    actionTimeTravel(index) {
+      this.timeTravel(index)
+    },
     setExtendAttr(index, item) {
       let obj = JSON.parse(JSON.stringify(this.currentItem.classObj))
       obj[index] = !item
       this.currentItem.classObj = obj
       // console.log('this.currentItem.classObj', this.currentItem.classObj)
       this.currentItem.className = classname(this.currentItem.className, obj)
+
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
     },
     setElementAttr(type) {
       let item = this.getNode(this.dataset, this.current_id)
@@ -143,6 +199,8 @@ export default {
           break
       }
       this.currentItem = item
+
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       // })
     },
     cssNormal() {
@@ -176,18 +234,14 @@ export default {
       }
     },
     getCurrent(event) {
-      console.log(event)
       this.tagType = event.tagType
       if (this.isMulitle) {
         let finditem = this.current_id.find(item => {
           return item == event.id
         })
-
-        // console.log(finditem);
         if (finditem === undefined) {
           this.current_id.push(event.id)
         } else {
-          // console.log(finditem)
           this.current_id.splice(
             this.current_id.findIndex(item => {
               return item === finditem
@@ -202,16 +256,9 @@ export default {
         this.current_id = JSON.parse(JSON.stringify([event.id]))
         let arr = this.getNode(this.dataset, this.current_id)
         this.currentItem = arr
-        // arr.forEach(item => {
-        //   this.currentItem = item
-        // })
       }
     },
     getNode(subset, id) {
-      // let res = subset.filter(item => {
-      //   return item.id == id
-      // })
-      // console.log('getNode', id)
       let res = ''
       for (let index = 0; index < subset.length; index++) {
         const element = subset[index]
@@ -227,40 +274,15 @@ export default {
             break
           }
         }
-        // if (element.id == id[0]) {
-        //   res = element
-        //   console.log('resresresres', res)
-        // } else {
-        //   res = this.getNode(element.subset, id)
-        // }
       }
-
       return res
-      // let item = subset.filter(item => {
-      //   // return item.id == id
-      //   let findresult = id.find(subitem => {
-      //     return subitem == item.id
-      //   })
-      //   return !!findresult
-      // })
-      // if (item.length > 0) {
-      //   return item
-      // } else {
-      //   let res = ''
-      //   subset.map(item => {
-      //     res = this.getNode(item.subset, id)
-      //   })
-      //   return res
-      // }
     },
     //   遍历树结构，找到指定值
     getNodeById(subset, id) {
       let item = subset.filter(item => {
-        // return item.id == id
         let findresult = id.find(subitem => {
           return subitem == item.id
         })
-        console.log(!!findresult)
         return !!findresult
       })
       if (item.length > 0) {
@@ -279,20 +301,12 @@ export default {
     rowAdd(number) {
       this.addNumber = number
       this.addDirection = 'row'
-      //   console.log( this.current_id)
       this.getNodeById(this.dataset, this.current_id)
-      //   this.dataset.subset.push({
-      //               id:"2.3",
-      //               value:"2.3"
-      //           })
     },
     resetUid(dataset) {
-      console.log(dataset)
       if (dataset.length > 0) {
         dataset.forEach(item => {
-          console.log(item.id)
           item.id = uid2(10)
-          console.log(item.id)
           this.resetUid(item.subset)
         })
       }
@@ -335,6 +349,7 @@ export default {
         }
       })
       this.setDatasetClassName(this.dataset, 1)
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
     },
     jsonToHtmlStyle1(array, tagType) {
       // 操作
@@ -386,19 +401,6 @@ export default {
         if (item.subset) {
           res += this.jsonToCssStyle2(item.subset, result, false)
         }
-        // let nodeHeader = ''
-        // let sublevel = ''
-        // if (parentHeader == '') {
-        //   nodeHeader = '.' + this.containerName
-        //   sublevel = ''
-        // } else {
-        //   nodeHeader =
-        //     parentHeader + ' ' + item.tagType + '.s' + parentLevel + '-' + index
-        //   sublevel = parentLevel + '-' + index
-        // }
-
-        // result.push(nodeHeader + ' {}')
-        // this.jsonToCssStyle2(item.subset, nodeHeader, sublevel, result)
       })
       if (!top) {
         res += '}'
@@ -419,38 +421,17 @@ export default {
       })
     }
   },
-  computed: {
-    htmlcode: function() {
-      // console.log(this.jsonToHtmlStyle1(this.dataset))
-      let element = this.jsonToHtmlStyle1(this.dataset)
-      // // console.log(element);
-      // console.log('change',this.dataset)
-      console.log('change', element.outerHTML)
-      var result = tidy_html5(element.outerHTML, options)
-      console.log('result', result)
-      return tidy_html5(element.outerHTML, options)
-    },
-    csscode: function() {
-      let result = []
-      if (this.cssType == 'normal') {
-        this.jsonToCssStyle1(this.dataset, '', 1, result)
-        let newResult = result.map(item => {
-          return '<p>' + item + '</p>'
-        })
-        return newResult.join('\n')
-      }
-      if (this.cssType == 'tree') {
-        let res = this.jsonToCssStyle2(this.dataset, '', true)
-
-        return res
-      }
-      // console.log(result);
-    }
-  },
   watch: {
+    dset: {
+      handler: function() {
+        this.dataset = this.dset
+      },
+      immediate: true
+    },
     containerName(newValue) {
       // console.log(v,e)
       this.dataset[0].className = newValue
+      this.setElement(this.dataset)
     }
   },
   created() {
@@ -480,7 +461,6 @@ export default {
 .css-box {
   display: block;
   margin-top: 20px;
-  min-height: 500px;
   width: 100%;
   border: 1px solid #ddd;
   text-align: left;
@@ -499,9 +479,9 @@ export default {
 .content {
   height: 100%;
 }
-.paremt_preview {
+/* .paremt_preview {
   height: 800px;
-}
+} */
 .flex {
   display: flex;
 }
@@ -540,5 +520,11 @@ export default {
 }
 .current div {
   margin-right: 20px;
+}
+.history span {
+  width: 30px;
+  height: 100px;
+  background: #ddd;
+  border-right: 1px solid black;
 }
 </style>

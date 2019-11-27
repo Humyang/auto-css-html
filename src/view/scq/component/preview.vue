@@ -7,7 +7,7 @@
     'selected':onSelected,
     [dataset.className]:true
     }"
-    style="height: 100%;"
+    style="min-height: 100px;"
   >
     {{dataset.direction}}
     <template v-if="dataset.subset!=undefined">
