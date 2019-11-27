@@ -7,9 +7,8 @@
     'selected':onSelected,
     [dataset.className]:true
     }"
-    style="min-height: 100px;"
   >
-    {{dataset.direction}}
+    <span class="status-bar">{{dataset.direction}}</span>
     <template v-if="dataset.subset!=undefined">
       <preview
         v-for="item,index in dataset.subset"
@@ -62,3 +61,18 @@ export default {
   }
 }
 </script>
+<style >
+span.status-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* display: inherit; */
+  border: 1px solid #1000ff;
+  margin: 2px;
+  padding: 2px;
+}
+
+.preview {
+  position: relative;
+}
+</style>

@@ -2,13 +2,16 @@
 <template>
   <div class="scq-view row flex" style="height: 100%;">
     <div style="width: 50%;height:100%;overflow:auto;" class="flex column">
-      <div class="history flex">
-        <span
-          class="vcenter flex"
-          v-for="(item,index) in elementHistory"
-          :key="index"
-          @click="actionTimeTravel(index)"
-        >{{index+1}}</span>
+      <div class="flex">
+        <div class="history flex" style="flex-flow: row-reverse;">
+          <span
+            class="vcenter flex"
+            v-for="(item,index) in elementHistory"
+            :key="index"
+            @click="actionTimeTravel(index)"
+            :class="{active:index==currentHistroyIndex}"
+          >{{index+1}}</span>
+        </div>
       </div>
       <div>
         <preview
@@ -38,66 +41,72 @@
       </div>
     </div>
     <div style="width: 50%;overflow:hidden;">
-      <div class="current flex row" style="width:100%;">
-        <div>按下多选：{{isMulitle}}</div>
-        <div>当前选中：{{current_id}}</div>
-        <div>
-          <el-select placeholder="请选择活动区域" v-model="tagType" @change="currentTagChange">
-            <el-option
-              v-for="(item,index) in tageTypeArray"
-              :key="index"
-              :label="item"
-              :value="item"
-            ></el-option>
-          </el-select>
-        </div>
-        <div class="flex row">
-          containt name
-          <el-input v-model="containerName" placeholder="请输入内容"></el-input>
-        </div>
-      </div>
-      <div class="flex column content">
-        <div>
-          <button @click="setElementAttr('grow')">grow</button>
-          <button @click="setElementAttr('justift-center')">justift-center</button>
-          <button @click="setElementAttr('align-center')">align-center</button>
-          <button @click="setElementAttr('padding-10')">padding-10</button>
-        </div>
-        <div style="min-height:200px;width: 100%;">
-          <div>
-            <button
-              v-for="(item,index) in currentItem.classObj"
-              @click="setExtendAttr(index,item)"
-            >{{index}} {{item}}</button>
-          </div>
-        </div>
-        <div class="insersub-view flex column" style="margin-left:20px;">
-          <div>
-            <el-select placeholder="设置添加位置" v-model="appendPosition">
-              <el-option label="直接子级直接添加" value="subChildAppend"></el-option>
-              <el-option label="直接子级插入" value="subChildInsert"></el-option>
-            </el-select>
-          </div>
-          <div class="flex row">
-            <div class="row-list">
-              <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
-              <div
-                class="subitem flex vcenter"
-                v-for="(item,index) in rowList"
-                @click="rowAdd(item)"
-              >{{item}}</div>
+      <el-tabs type="border-card">
+        <el-tab-pane label="类名">
+          <div class="current flex row" style="width:100%;">
+            <div>按下多选：{{isMulitle}}</div>
+            <!-- <div>当前选中：{{current_id}}</div> -->
+            <div>
+              <el-select placeholder="请选择活动区域" v-model="tagType" @change="currentTagChange">
+                <el-option
+                  v-for="(item,index) in tageTypeArray"
+                  :key="index"
+                  :label="item"
+                  :value="item"
+                ></el-option>
+              </el-select>
             </div>
-            <div class="column-list">
-              <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
-              <div
-                class="subitem flex vcenter"
-                v-for="item in columnList"
-                @click="columnAdd(item)"
-              >{{item}}</div>
+            <div class="flex row">
+              containt name
+              <el-input v-model="containerName" placeholder="请输入内容"></el-input>
             </div>
           </div>
-        </div>
-      </div>
+          <div class="flex column content">
+            <div>
+              <button @click="setElementAttr('grow')">grow</button>
+              <button @click="setElementAttr('justift-center')">justift-center</button>
+              <button @click="setElementAttr('align-center')">align-center</button>
+              <button @click="setElementAttr('padding-10')">padding-10</button>
+            </div>
+            <div style="min-height:200px;width: 100%;">
+              <div>
+                <button
+                  v-for="(item,index) in currentItem.classObj"
+                  @click="setExtendAttr(index,item)"
+                >{{index}} {{item}}</button>
+              </div>
+            </div>
+            <div class="insersub-view flex column" style="margin-left:20px;">
+              <div>
+                <el-select placeholder="设置添加位置" v-model="appendPosition">
+                  <el-option label="子级添加" value="subChildAppend"></el-option>
+                  <el-option label="孙级添加" value="subChildInsert"></el-option>
+                </el-select>
+              </div>
+              <div class="flex row">
+                <div class="row-list">
+                  <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
+                  <div
+                    class="subitem flex vcenter"
+                    v-for="(item,index) in rowList"
+                    @click="rowAdd(item)"
+                  >{{item}}</div>
+                </div>
+                <div class="column-list">
+                  <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
+                  <div
+                    class="subitem flex vcenter"
+                    v-for="item in columnList"
+                    @click="columnAdd(item)"
+                  >{{item}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="原生属性">配置管理</el-tab-pane>
+        <el-tab-pane label="预设">角色管理</el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -113,6 +122,7 @@ export default {
   name: 'index',
   data() {
     return {
+      currentHistroyIndex: 0,
       current_id: ['1'],
       appendPosition: 'subChildAppend',
       cssType: 'normal', //normal tree
@@ -162,14 +172,14 @@ export default {
     ...mapActions(['setElement', 'timeTravel']),
     actionTimeTravel(index) {
       this.timeTravel(index)
+      this.currentHistroyIndex = index
     },
     setExtendAttr(index, item) {
+      console.log('setExtendArrt')
       let obj = JSON.parse(JSON.stringify(this.currentItem.classObj))
       obj[index] = !item
       this.currentItem.classObj = obj
-      // console.log('this.currentItem.classObj', this.currentItem.classObj)
       this.currentItem.className = classname(this.currentItem.className, obj)
-
       this.setElement(JSON.parse(JSON.stringify(this.dataset)))
     },
     setElementAttr(type) {
@@ -324,7 +334,7 @@ export default {
               direction: this.addDirection,
               id: uid2(10),
               className: '',
-              classObj: {},
+              classObj: { grow: true },
               subset: []
             })
           })
@@ -342,7 +352,7 @@ export default {
               direction: this.addDirection,
               id: uid2(10),
               className: '',
-              classObj: {},
+              classObj: { grow: true },
               subset: nSubset
             })
           })
@@ -422,9 +432,17 @@ export default {
     }
   },
   watch: {
+    elementHistory: {
+      handler: function() {
+        this.currentHistroyIndex = this.elementHistory.length - 1
+      },
+      immediate: true
+    },
     dset: {
       handler: function() {
         this.dataset = this.dset
+        let arr = this.getNode(this.dataset, this.current_id)
+        this.currentItem = arr
       },
       immediate: true
     },
@@ -467,7 +485,7 @@ export default {
 }
 
 .preview {
-  height: 100%;
+  /* height: 100%; */
   box-sizing: border-box;
   border: 1px solid black;
   padding: 20px;
@@ -523,8 +541,14 @@ export default {
 }
 .history span {
   width: 30px;
-  height: 100px;
+  height: 30px;
   background: #ddd;
   border-right: 1px solid black;
+}
+span.vcenter.flex.active {
+  background: #009688;
+  color: white;
+  font-weight: 600;
+  border: 0;
 }
 </style>
