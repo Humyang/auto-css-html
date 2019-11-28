@@ -1,49 +1,43 @@
-/* 布局 */
-
-/* flex */
-.flex{
-  display: flex
+.flex {
+  display: flex;
 }
-.flex.vcenter{
+.flex.vcenter {
   justify-content: center;
   align-items: center;
 }
-.flex.row{
-  flex-direction:row; 
+.flex.row {
+  flex-direction: row;
 }
-.flex.column{
+.flex.column {
   flex-direction: column;
 }
-.flex.between{
+.flex.between {
   justify-content: space-between;
 }
-.flex.start{
+.flex.start {
   justify-content: flex-start;
 }
-.flex.align-baseline{
+.flex.align-baseline {
   align-items: baseline;
 }
-.flex.align-start{
+.flex.align-start {
   align-items: flex-start;
 }
-.flex.align-end{
+.flex.align-end {
   align-items: flex-end;
 }
-.flex.wrap{
-  flex-wrap:wrap;
+.flex.wrap {
+  flex-wrap: wrap;
 }
-.flex.center{
+.flex.center {
   justify-content: center;
 }
-.flex.j-end{
+.flex.j-end {
   justify-content: flex-end;
 }
-.flex.align-center{
+.flex.align-center {
   align-items: center;
 }
-.flex .grow{
-  flex-grow: 1
+.flex .grow {
+  flex-grow: 1;
 }
-
-
-

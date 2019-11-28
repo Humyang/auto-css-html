@@ -1,53 +1,112 @@
 
 <template>
-  <div class="scq-view row flex" style="height: 100%;">
-    <div style="width: 50%;height:100%;overflow:auto;" class="flex column">
-      <div class="flex">
-        <div class="history flex" style="flex-flow: row-reverse;">
-          <span
-            class="vcenter flex"
-            v-for="(item,index) in elementHistory"
-            :key="index"
-            @click="actionTimeTravel(index)"
-            :class="{active:index==currentHistroyIndex}"
-          >{{index+1}}</span>
+  <div class="scq-view flex column" style="height: 100%;">
+    <div>
+      <div class="current flex row" style="width:100%;">
+        <div>按下多选：{{isMulitle}}</div>
+        <!-- <div>当前选中：{{current_id}}</div> -->
+
+        <div class="flex row">
+          父级名称
+          <el-input v-model="containerName" placeholder="请输入内容"></el-input>
         </div>
       </div>
-      <div>
-        <preview
-          v-on:current="getCurrent"
-          :dataset="dataset[0]"
-          class="paremt_preview"
-          :currentSelect="current_id"
-          :tagType="dataset[0].tagType"
-          style
-        ></preview>
-      </div>
-
-      <textarea
-        name
-        id
-        cols="30"
-        rows="10"
-        class="html-box"
-        v-model="htmlcode"
-        style="min-height:200px;"
-      ></textarea>
-
-      <div class="css-box">
-        <button @click="cssNormal">normal</button>
-        <button @click="cssTree">tree</button>
-        <code class="css-code" v-html="csscode"></code>
-      </div>
     </div>
-    <div style="width: 50%;overflow:hidden;">
-      <el-tabs type="border-card">
-        <el-tab-pane label="类名">
-          <div class="current flex row" style="width:100%;">
-            <div>按下多选：{{isMulitle}}</div>
-            <!-- <div>当前选中：{{current_id}}</div> -->
+    <div class="flex row">
+      <div style="width: 50%;height:100%;overflow:auto;margin-right:10px;" class="flex column">
+        <el-tabs type="border-card">
+          <el-tab-pane label="视图">
+            <div class="flex">
+              <div class="history flex" style="flex-flow: row-reverse;">
+                <span
+                  class="vcenter flex"
+                  v-for="(item,index) in elementHistory"
+                  :key="index"
+                  @click="actionTimeTravel(index)"
+                  :class="{active:index==currentHistroyIndex}"
+                >{{index+1}}</span>
+              </div>
+            </div>
             <div>
-              <el-select placeholder="请选择活动区域" v-model="tagType" @change="currentTagChange">
+              <preview
+                v-on:current="getCurrent"
+                :dataset="dataset[0]"
+                class="paremt_preview"
+                :currentSelect="current_id"
+                :tagType="dataset[0].tagType"
+                style
+              ></preview>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="HTML">
+            <code class="css-code">{{htmlcode}}</code>
+          </el-tab-pane>
+          <el-tab-pane label="CSS">
+            <div class="css-box">
+              <!-- <button @click="cssNormal">normal</button>
+              <button @click="cssTree">tree</button>-->
+
+              <el-tabs type="border-card">
+                <el-tab-pane label="List">
+                  <code class="css-code" v-html="csscodeList"></code>
+                </el-tab-pane>
+                <el-tab-pane label="Tree">
+                  <code class="css-code" v-html="csscodeTree"></code>
+                </el-tab-pane>
+              </el-tabs>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+      <div style="width: 50%;overflow:hidden;">
+        <el-tabs type="border-card">
+          <el-tab-pane label="预设类名">
+            <div class="flex column content">
+              <div>
+                <button @click="setElementAttr('grow')">grow</button>
+                <button @click="setElementAttr('justift-center')">justift-center</button>
+                <button @click="setElementAttr('align-center')">align-center</button>
+                <button @click="setElementAttr('padding-10')">padding-10</button>
+              </div>
+              <div style>
+                <div>
+                  <button
+                    v-for="(item,index) in currentItem.classObj"
+                    @click="setExtendAttr(index,item)"
+                  >{{index}} {{item}}</button>
+                </div>
+              </div>
+              <div class="insersub-view flex column" style="margin-left:20px;">
+                <div>
+                  <el-select placeholder="设置添加位置" v-model="appendPosition">
+                    <el-option label="子级添加" value="subChildAppend"></el-option>
+                    <el-option label="孙级添加" value="subChildInsert"></el-option>
+                  </el-select>
+                </div>
+                <div class="flex row">
+                  <div class="row-list">
+                    <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
+                    <div
+                      class="subitem flex vcenter"
+                      v-for="(item,index) in rowList"
+                      @click="rowAdd(item)"
+                    >{{item}}</div>
+                  </div>
+                  <div class="column-list">
+                    <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
+                    <div
+                      class="subitem flex vcenter"
+                      v-for="item in columnList"
+                      @click="columnAdd(item)"
+                    >{{item}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="原生属性">
+            <div style="    text-align: left;">
+              <el-select v-model="tagType" @change="currentTagChange">
                 <el-option
                   v-for="(item,index) in tageTypeArray"
                   :key="index"
@@ -56,57 +115,10 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="flex row">
-              containt name
-              <el-input v-model="containerName" placeholder="请输入内容"></el-input>
-            </div>
-          </div>
-          <div class="flex column content">
-            <div>
-              <button @click="setElementAttr('grow')">grow</button>
-              <button @click="setElementAttr('justift-center')">justift-center</button>
-              <button @click="setElementAttr('align-center')">align-center</button>
-              <button @click="setElementAttr('padding-10')">padding-10</button>
-            </div>
-            <div style="min-height:200px;width: 100%;">
-              <div>
-                <button
-                  v-for="(item,index) in currentItem.classObj"
-                  @click="setExtendAttr(index,item)"
-                >{{index}} {{item}}</button>
-              </div>
-            </div>
-            <div class="insersub-view flex column" style="margin-left:20px;">
-              <div>
-                <el-select placeholder="设置添加位置" v-model="appendPosition">
-                  <el-option label="子级添加" value="subChildAppend"></el-option>
-                  <el-option label="孙级添加" value="subChildInsert"></el-option>
-                </el-select>
-              </div>
-              <div class="flex row">
-                <div class="row-list">
-                  <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
-                  <div
-                    class="subitem flex vcenter"
-                    v-for="(item,index) in rowList"
-                    @click="rowAdd(item)"
-                  >{{item}}</div>
-                </div>
-                <div class="column-list">
-                  <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
-                  <div
-                    class="subitem flex vcenter"
-                    v-for="item in columnList"
-                    @click="columnAdd(item)"
-                  >{{item}}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="原生属性">配置管理</el-tab-pane>
-        <el-tab-pane label="预设">角色管理</el-tab-pane>
-      </el-tabs>
+          </el-tab-pane>
+          <el-tab-pane label="预设">角色管理</el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
   </div>
 </template>
@@ -118,6 +130,9 @@ import uid2 from 'uid2'
 import classname from 'classname'
 window.ccc = classname
 import { mapMutations, mapActions, mapState } from 'vuex'
+
+// import cssObj from '@/css/flex.scss'
+// console.log('cssObj', cssObj)
 export default {
   name: 'index',
   data() {
@@ -125,7 +140,7 @@ export default {
       currentHistroyIndex: 0,
       current_id: ['1'],
       appendPosition: 'subChildAppend',
-      cssType: 'normal', //normal tree
+      // cssType: 'normal', //normal tree
       dataset: [],
       currentItem: {},
       containerName: 'container',
@@ -151,21 +166,18 @@ export default {
       console.log('result', result)
       return tidy_html5(element.outerHTML, options)
     },
-    csscode: function() {
+    csscodeList: function() {
       let result = []
-      if (this.cssType == 'normal') {
-        this.jsonToCssStyle1(this.dataset, '', 1, result)
-        let newResult = result.map(item => {
-          return '<p>' + item + '</p>'
-        })
-        return newResult.join('\n')
-      }
-      if (this.cssType == 'tree') {
-        let res = this.jsonToCssStyle2(this.dataset, '', true)
+      this.jsonToCssStyle1(this.dataset, '', 1, result)
+      let newResult = result.map(item => {
+        return '<p>' + item + '</p>'
+      })
+      return newResult.join('\n')
+    },
+    csscodeTree: function() {
+      let res = this.jsonToCssStyle2(this.dataset, '', true)
 
-        return res
-      }
-      // console.log(result);
+      return res
     }
   },
   methods: {
@@ -213,12 +225,12 @@ export default {
       this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       // })
     },
-    cssNormal() {
-      this.cssType = 'normal'
-    },
-    cssTree() {
-      this.cssType = 'tree'
-    },
+    // cssNormal() {
+    //   this.cssType = 'normal'
+    // },
+    // cssTree() {
+    //   this.cssType = 'tree'
+    // },
     currentTagChange(event) {
       console.log(event)
       this.getNodeByIdChaneType(this.dataset, this.current_id, event)
@@ -477,10 +489,10 @@ export default {
 <style>
 .html-box,
 .css-box {
-  display: block;
-  margin-top: 20px;
-  width: 100%;
-  border: 1px solid #ddd;
+  /* display: block; */
+  /* margin-top: 20px; */
+  /* width: 100%; */
+  /* border: 1px solid #ddd; */
   text-align: left;
 }
 
