@@ -7,6 +7,7 @@
     'selected':onSelected,
     [dataset.className]:true
     }"
+    :style="dataset.style"
   >
     <span class="status-bar">{{dataset.direction}}</span>
     <template v-if="dataset.subset!=undefined">

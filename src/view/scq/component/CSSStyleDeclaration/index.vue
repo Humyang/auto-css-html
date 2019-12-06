@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div style="margin-top: 20px">
+      <el-checkbox-group v-model="filterGroupPick" size="small">
+        <el-checkbox v-for="(item,index) in filterGroup" :label="item" :key="index">{{item}}</el-checkbox>
+      </el-checkbox-group>
+    </div>
     <el-row class="keyboard">
       <div v-for="(item,index) in Alphabetical" :key="index" :class="'keyboard-row'+index">
         <el-button
@@ -18,12 +23,17 @@
           class="filter-tree"
           :data="data"
           :props="defaultProps"
-          default-expand-all
+          highlight-current
           :filter-node-method="filterNode"
+          @node-click="nodeClick"
           ref="tree"
         ></el-tree>
       </el-col>
-      <el-col :span="12"></el-col>
+      <el-col :span="12">
+        <p>{{desc}}</p>
+        <el-input v-model="saveInputValue"></el-input>
+        <el-button size="mini" @click="save">保存</el-button>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -44,6 +54,11 @@ export default {
       }
     }
     return {
+      saveInputValue: '',
+      rules: '',
+      desc: '',
+      filterGroupPick: '',
+      filterGroup: ['已有属性'],
       labelStr: labelArr.join(','),
       Alphabetical: [
         ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -62,6 +77,14 @@ export default {
     }
   },
   methods: {
+    save() {
+      this.$emit('save', { rules: this.rules, value: this.saveInputValue })
+    },
+    nodeClick(data, node, nodeSelf) {
+      console.log('nodeClick', data, node, nodeSelf)
+      this.desc = data.desc
+      this.rules = data.label
+    },
     isDisable(alpha) {
       if (this.allDisable) {
         return true

@@ -119,7 +119,7 @@
             <div style="    text-align: left;">
               <el-tabs type="border-card">
                 <el-tab-pane label="CSS">
-                  <css-declaration />
+                  <css-declaration @save="onCssDeclarationSave" />
                 </el-tab-pane>
                 <el-tab-pane label="HTML">
                   <el-select v-model="tagType" @change="currentTagChange">
@@ -205,6 +205,13 @@ export default {
   },
   methods: {
     ...mapActions(['setElement', 'timeTravel']),
+    onCssDeclarationSave(obj) {
+      let item = this.getNode(this.dataset, this.current_id)
+      item.style = `${obj.rules}:${obj.value}`
+      this.currentItem = item
+
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+    },
     actionTimeTravel(index) {
       this.timeTravel(index)
       this.currentHistroyIndex = index
@@ -219,28 +226,7 @@ export default {
     },
     setElementAttr(type) {
       let item = this.getNode(this.dataset, this.current_id)
-      // switch (type) {
-      //   case "grow":
-      //     item.classObj = Object.assign({}, item.classObj, { grow: true });
-      //     item.className = classname(item.className, "grow");
-      //     break;
-      //   case "justift-center":
-      //     item.classObj = Object.assign({}, item.classObj, { center: true });
-      //     item.className = classname(item.className, "center");
-      //     break;
-      //   case "align-center":
-      //     item.classObj = Object.assign({}, item.classObj, {
-      //       "align-center": true
-      //     });
-      //     item.className = classname(item.className, "align-center");
-      //     break;
-      //   case "padding-10":
-      //     item.classObj = Object.assign({}, item.classObj, {
-      //       "p-all-10": true
-      //     });
-      //     item.className = classname(item.className, "p-all-10");
-      //     break;
-      // }
+
       item.classObj = Object.assign({}, item.classObj, {
         [type]: true
       })
@@ -404,7 +390,8 @@ export default {
       if (tagType == undefined) {
         tagType = 'div'
       }
-      let element = document.createElement(tagType)
+      let element = document.createElement(tagType,)
+
       // console.log('array.tagType',tagType)
       // }
       // 子级
