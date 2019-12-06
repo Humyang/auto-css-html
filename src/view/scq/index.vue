@@ -207,7 +207,8 @@ export default {
     ...mapActions(['setElement', 'timeTravel']),
     onCssDeclarationSave(obj) {
       let item = this.getNode(this.dataset, this.current_id)
-      item.style = `${obj.rules}:${obj.value}`
+      item.style[obj.rules] = obj.value
+      // item.style = `${obj.rules}:${obj.value}`
       this.currentItem = item
 
       this.setElement(JSON.parse(JSON.stringify(this.dataset)))
@@ -357,7 +358,8 @@ export default {
               id: uid2(10),
               className: '',
               classObj: { grow: true },
-              subset: []
+              subset: [],
+              style: {}
             })
           })
         }
@@ -375,7 +377,8 @@ export default {
               id: uid2(10),
               className: '',
               classObj: { grow: true },
-              subset: nSubset
+              subset: nSubset,
+              style: {}
             })
           })
         }
@@ -390,8 +393,8 @@ export default {
       if (tagType == undefined) {
         tagType = 'div'
       }
-      let element = document.createElement(tagType,)
-
+      let element = document.createElement(tagType)
+      // element.style = array.style
       // console.log('array.tagType',tagType)
       // }
       // 子级
@@ -403,6 +406,7 @@ export default {
           'flex',
           item.direction
         )
+        childElement.style = item.style
         element.appendChild(childElement)
       })
       // 返回元素
