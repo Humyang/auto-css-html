@@ -13,7 +13,7 @@
     </div>
     <div class="flex row">
       <div style="width: 50%;height:100%;overflow:auto;margin-right:10px;" class="flex column">
-        <el-tabs type="border-card">
+        <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
             <div class="flex">
               <div class="history flex" style="flex-flow: row-reverse;">
@@ -26,11 +26,11 @@
                 >{{ index + 1 }}</span>
               </div>
             </div>
-            <div>
+            <div ref="preview">
               <preview
                 v-on:current="getCurrent"
                 :dataset="dataset[0]"
-                class="paremt_preview"
+                class="flex preview"
                 :currentSelect="current_id"
                 :tagType="dataset[0].tagType"
                 style
@@ -38,7 +38,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
-            <code class="css-code">{{ htmlcode }}</code>
+            <code class="css-code">{{ htmlCode }}</code>
           </el-tab-pane>
           <el-tab-pane label="CSS">
             <div class="css-box">
@@ -159,6 +159,7 @@ export default {
   components: { cssDeclaration, preview },
   data() {
     return {
+      htmlCode: '',
       preClass,
       currentHistroyIndex: 0,
       current_id: ['1'],
@@ -182,13 +183,15 @@ export default {
       dset: state => JSON.parse(JSON.stringify(state.element)),
       elementHistory: state => state.elementHistory
     }),
-    htmlcode: function() {
-      let element = this.jsonToHtmlStyle1(this.dataset)
-      console.log('change', element.outerHTML)
-      var result = tidy_html5(element.outerHTML, options)
-      console.log('result', result)
-      return tidy_html5(element.outerHTML, options)
-    },
+    // htmlcode: function() {
+    // return this.$refs.preview.outerHTML
+    // let element = this.jsonToHtmlStyle1(this.dataset)
+    // console.log('change', element, options)
+    // var result = tidy_html5(element.outerHTML, options)
+    // console.log('result', result)
+    // return tidy_html5(element.outerHTML, options)
+    // return element.outerHTML
+    // },
     csscodeList: function() {
       let result = []
       this.jsonToCssStyle1(this.dataset, '', 1, result)
@@ -205,6 +208,12 @@ export default {
   },
   methods: {
     ...mapActions(['setElement', 'timeTravel']),
+    resultClick(r) {
+      console.log('resultClick', r)
+      if (r.label == 'HTML') {
+        this.htmlCode = this.$refs.preview.outerHTML
+      }
+    },
     onCssDeclarationSave(obj) {
       let item = this.getNode(this.dataset, this.current_id)
       item.style[obj.rules] = obj.value
@@ -386,32 +395,29 @@ export default {
       this.setDatasetClassName(this.dataset, 1)
       this.setElement(JSON.parse(JSON.stringify(this.dataset)))
     },
-    jsonToHtmlStyle1(array, tagType) {
-      // 操作
-      // let element = null
-      // if(parentElement==null){
-      if (tagType == undefined) {
-        tagType = 'div'
-      }
-      let element = document.createElement(tagType)
-      // element.style = array.style
-      // console.log('array.tagType',tagType)
-      // }
-      // 子级
-      array.forEach(item => {
-        console.log('item.tagType', item.tagType)
-        let childElement = this.jsonToHtmlStyle1(item.subset, item.tagType)
-        childElement.className = classname(
-          item.className,
-          'flex',
-          item.direction
-        )
-        childElement.style = item.style
-        element.appendChild(childElement)
-      })
-      // 返回元素
-      return element
-    },
+    // jsonToHtmlStyle1(array, tagType) {
+    //   // 操作
+    //   // let element = null
+    //   // if(parentElement==null){
+    //   if (tagType == undefined) {
+    //     tagType = 'div'
+    //   }
+    //   let element = document.createElement(tagType)
+    //   // 子级
+    //   array.forEach(item => {
+    //     console.log('item.tagType', item.tagType)
+    //     let childElement = this.jsonToHtmlStyle1(item.subset, item.tagType)
+    //     childElement.className = classname(
+    //       item.className,
+    //       'flex',
+    //       item.direction
+    //     )
+    //     childElement.style = item.style
+    //     element.appendChild(childElement)
+    //   })
+    //   // 返回元素
+    //   return element
+    // },
 
     jsonToCssStyle1(array, parentHeader, parentLevel, result) {
       array.forEach((item, index) => {

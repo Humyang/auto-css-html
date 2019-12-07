@@ -1,32 +1,35 @@
-<template>
-  <div
-    @click.stop="actionClick"
-    class="preview flex"
-    :class="{'row':dataset.direction=='row',
-    'column':dataset.direction=='column',
-    'selected':onSelected,
-    [dataset.className]:true
-    }"
-    :style="dataset.style"
-  >
-    <span class="status-bar">{{dataset.direction}}</span>
-    <template v-if="dataset.subset!=undefined">
-      <preview
-        v-for="item,index in dataset.subset"
-        :dataset="item"
-        :current_length="clength"
-        :key="index"
-        :tagType="item.tagType"
-        :direction="item.direction"
-        v-on:current="getCurrent"
-        :currentSelect="currentSelect"
-      ></preview>
-    </template>
-  </div>
-</template>
 <script>
+// <template>
+//   <div>
+//     <!-- <div
+//       @click.stop="actionClick"
+//       class="preview flex"
+//       :class="{'row':dataset.direction=='row',
+//     'column':dataset.direction=='column',
+//     'selected':onSelected,
+//     [dataset.className]:true
+//     }"
+//       :style="dataset.style"
+//     >
+//       <span class="status-bar">{{dataset.direction}}</span>
+//       <template v-if="dataset.subset!=undefined">
+//         <preview
+//           v-for="item,index in dataset.subset"
+//           :dataset="item"
+//           :current_length="clength"
+//           :key="index"
+//           :tagType="item.tagType"
+//           :direction="item.direction"
+//           v-on:current="getCurrent"
+//           :currentSelect="currentSelect"
+//         ></preview>
+//       </template>
+//     </div> -->
+//     {{}}
+//   </div>
+// </template>
 // import HelloWorld from "./components/HelloWorld";
-
+import classname from 'classname'
 export default {
   name: 'preview',
   props: ['dataset', 'current_length', 'direction', 'currentSelect', 'tagType'],
@@ -35,7 +38,44 @@ export default {
       clength: 1
     }
   },
+  render: function(createElement) {
+    let r = this.getElement(this.dataset)
+    console.log('getElement', r)
+
+    return r
+  },
   methods: {
+    getElement(dataset) {
+      let sub = []
+      for (let index = 0; index < dataset.subset.length; index++) {
+        const element = dataset.subset[index]
+        sub.push(this.getElement(element))
+      }
+      let eee = this.$createElement(
+        'div',
+        {
+          on: {
+            click: this.actionClick
+          },
+          attrs: {
+            class: classname({
+              row: dataset.direction == 'row',
+              column: dataset.direction == 'column',
+              selected: this.onSelected,
+              [dataset.className]: true,
+              preview: true,
+              flex: true
+            }),
+            style: dataset.style
+          }
+        },
+        sub
+      )
+      return eee
+    },
+    render() {
+      return this.getElement(this.ataset)
+    },
     actionClick() {
       // console.log(this.dataset.id)
       this.$emit('current', { id: this.dataset.id, tagType: this.tagType })
