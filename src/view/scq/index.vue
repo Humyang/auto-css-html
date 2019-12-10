@@ -26,15 +26,24 @@
                 >{{ index + 1 }}</span>
               </div>
             </div>
-            <div ref="preview">
+            <div>
               <preview
                 v-on:current="getCurrent"
                 :dataset="dataset[0]"
-                class="flex preview"
                 :currentSelect="current_id"
                 :tagType="dataset[0].tagType"
-                style
               ></preview>
+              <div style="display:none;">
+                <div ref="preview">
+                  <preview
+                    v-on:current="getCurrent"
+                    :dataset="dataset[0]"
+                    :currentSelect="current_id"
+                    :tagType="dataset[0].tagType"
+                    :isHide="true"
+                  ></preview>
+                </div>
+              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
@@ -46,10 +55,10 @@
               <button @click="cssTree">tree</button>-->
 
               <el-tabs type="border-card">
-                <el-tab-pane label="List">
+                <el-tab-pane label="RAW">
                   <code class="css-code" v-html="csscodeList"></code>
                 </el-tab-pane>
-                <el-tab-pane label="Tree">
+                <el-tab-pane label="SCSS、LESS">
                   <code class="css-code" v-html="csscodeTree"></code>
                 </el-tab-pane>
               </el-tabs>
@@ -61,13 +70,14 @@
         <el-tabs type="border-card">
           <el-tab-pane label="预设类名">
             <div class="flex column content" style="text-align: left;">
-              <div>
+              <!-- <div>
                 <el-button
                   v-for="(item, index) in preClass"
                   :key="index"
                   @click.native="setElementAttr(item.className)"
                 >{{ item.className }}</el-button>
-              </div>
+              </div>-->
+              <preClass @actionClick="setElementAttr" />
               <!-- <div style>
                 <div>
                   <button
@@ -87,7 +97,7 @@
                   size="medium"
                 ></el-checkbox>
               </div>
-              <div class="insersub-view flex column" style="margin-left:20px;">
+              <div class="insersub-view flex column" style="margin-left:0;margin-top:10px;">
                 <div>
                   <el-select placeholder="设置添加位置" v-model="appendPosition">
                     <el-option label="子级添加" value="subChildAppend"></el-option>
@@ -153,14 +163,14 @@ import { mapMutations, mapActions, mapState } from 'vuex'
 // import cssObj from '@/css/flex.scss'
 // console.log('cssObj', cssObj)
 import cssDeclaration from './component/CSSStyleDeclaration'
-import preClass from './preClass'
+import preClass from './component/preClass'
 export default {
-  name: 'index',
-  components: { cssDeclaration, preview },
+  name: 'SCQ',
+  components: { cssDeclaration, preview, preClass },
   data() {
     return {
       htmlCode: '',
-      preClass,
+      // preClass,
       currentHistroyIndex: 0,
       current_id: ['1'],
       appendPosition: 'subChildAppend',
@@ -216,8 +226,8 @@ export default {
     },
     onCssDeclarationSave(obj) {
       let item = this.getNode(this.dataset, this.current_id)
+      console.log('onCssDeclarationSave item', item)
       item.style[obj.rules] = obj.value
-      // item.style = `${obj.rules}:${obj.value}`
       this.currentItem = item
 
       this.setElement(JSON.parse(JSON.stringify(this.dataset)))
@@ -527,24 +537,11 @@ export default {
 .content {
   height: 100%;
 }
-/* .paremt_preview {
-  height: 800px;
-} */
-.flex {
-  display: flex;
-}
-.row {
-  flex-direction: row;
-}
-.flex .grow {
-  flex-grow: 1;
-}
-.flex.vcenter {
-  justify-content: center;
-  align-items: center;
-}
-.column {
-  flex-direction: column;
+.scq-view .el-button + .el-button,
+.scq-view .el-button {
+  margin-left: 0;
+  margin-right: 10px;
+  margin-top: 5px;
 }
 
 .insersub-view {

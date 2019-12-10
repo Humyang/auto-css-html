@@ -30,55 +30,89 @@
 // </template>
 // import HelloWorld from "./components/HelloWorld";
 import classname from 'classname'
+function formatStyle(obj) {
+  let res = ''
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const element = obj[key]
+      res += `${key}:${element};`
+    }
+  }
+}
+function getSelectedStatus(dataset, currentSelect) {
+  let result = currentSelect.find(item => {
+    return item == dataset.id
+  })
+  // console.log('getSelectedStatus', result)
+  return result != undefined ? true : false
+}
 export default {
   name: 'preview',
-  props: ['dataset', 'current_length', 'direction', 'currentSelect', 'tagType'],
+  props: [
+    'isHide',
+    'dataset',
+    'current_length',
+    'direction',
+    'currentSelect',
+    'tagType'
+  ],
   data() {
     return {
       clength: 1
     }
   },
   render: function(createElement) {
-    let r = this.getElement(this.dataset)
-    console.log('getElement', r)
+    let r = this.getElement(createElement, this.dataset)
 
     return r
   },
   methods: {
-    getElement(dataset) {
+    getElement(createElement, dataset) {
+      console.log('getElement 111')
       let sub = []
+      if (!this.isHide) {
+        sub.push(
+          createElement(
+            'span',
+            { attrs: { class: 'status-bar' } },
+            dataset.direction
+          )
+        )
+      }
       for (let index = 0; index < dataset.subset.length; index++) {
         const element = dataset.subset[index]
-        sub.push(this.getElement(element))
+        sub.push(this.getElement(createElement, element))
       }
-      let eee = this.$createElement(
-        'div',
+      let eee = createElement(
+        dataset.tagType || 'div',
         {
           on: {
-            click: this.actionClick
+            click: event => {
+              this.actionClick(dataset)
+              event.stopPropagation()
+            }
           },
           attrs: {
             class: classname({
               row: dataset.direction == 'row',
               column: dataset.direction == 'column',
-              selected: this.onSelected,
+              selected:
+                getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
               [dataset.className]: true,
               preview: true,
               flex: true
             }),
-            style: dataset.style
+            style: formatStyle(dataset.style)
           }
         },
         sub
       )
+      console.log('getElement', eee)
       return eee
     },
-    render() {
-      return this.getElement(this.ataset)
-    },
-    actionClick() {
+    actionClick(dataset) {
       // console.log(this.dataset.id)
-      this.$emit('current', { id: this.dataset.id, tagType: this.tagType })
+      this.$emit('current', { id: dataset.id, tagType: dataset.tagType })
     },
     getCurrent(event) {
       this.$emit('current', event)
@@ -86,7 +120,6 @@ export default {
   },
   computed: {
     onSelected() {
-      console.log(this.currentSelect)
       let result = this.currentSelect.find(item => {
         return item == this.dataset.id
       })
