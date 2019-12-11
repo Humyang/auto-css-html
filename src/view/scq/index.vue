@@ -356,6 +356,7 @@ export default {
               direction: this.addDirection,
               id: uid2(10),
               className: '',
+              levelClassName: '',
               classObj: { grow: true },
               subset: [],
               style: {}
@@ -375,6 +376,7 @@ export default {
               direction: this.addDirection,
               id: uid2(10),
               className: '',
+              levelClassName: '',
               classObj: { grow: true },
               subset: nSubset,
               style: {}
@@ -447,7 +449,8 @@ export default {
           sublevel = ''
         } else {
           sublevel = parentLevel + '-' + index
-          item.className = classname({}, 's' + sublevel, item.classObj)
+          item.className = classname({}, item.classObj)
+          item.levelClassName = 's' + sublevel
         }
 
         this.setDatasetClassName(item.subset, sublevel)

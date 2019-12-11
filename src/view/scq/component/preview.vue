@@ -99,6 +99,8 @@ export default {
               selected:
                 getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
               [dataset.className]: true,
+              [dataset.levelClassName]: true,
+
               preview: true,
               flex: true
             }),

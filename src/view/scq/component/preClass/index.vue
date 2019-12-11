@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     actionEmit(item) {
-      this.$emit('actionClick', item.className)
+      this.$emit('actionClick', item.value)
     }
   },
   computed: {},

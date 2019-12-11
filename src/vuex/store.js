@@ -16,6 +16,7 @@ let store = new Vuex.Store({
         tagType: "div",
         direction: "row",
         className: "",
+        levelClassName: "",
         classObj: {},
         subset: []
       }
