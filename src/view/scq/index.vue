@@ -68,61 +68,28 @@
       </div>
       <div style="width: 50%;overflow:hidden;">
         <el-tabs type="border-card">
+          <el-tab-pane label="预设">
+            <div style="margin-top: 20px">
+              <el-checkbox
+                v-for="(item, index) in currentItem.classObj"
+                :key="index"
+                @click.native="actionSetExtendAttr(index, item)"
+                :label="index"
+                :value="item"
+                border
+                size="medium"
+              ></el-checkbox>
+            </div>
+            <collection
+              @actionColumnAdd="columnAdd"
+              @actionRowAdd="rowAdd"
+              @onChangePosition="onChangePosition"
+              @actionSetExtendAttr="setExtendAttr"
+            />
+          </el-tab-pane>
           <el-tab-pane label="预设类名">
             <div class="flex column content" style="text-align: left;">
-              <!-- <div>
-                <el-button
-                  v-for="(item, index) in preClass"
-                  :key="index"
-                  @click.native="setElementAttr(item.className)"
-                >{{ item.className }}</el-button>
-              </div>-->
               <preClass @actionClick="setElementAttr" />
-              <!-- <div style>
-                <div>
-                  <button
-                    v-for="(item,index) in currentItem.classObj"
-                    @click="setExtendAttr(index,item)"
-                  >{{index}} {{item}}</button>
-                </div>
-              </div>-->
-              <div style="margin-top: 20px">
-                <el-checkbox
-                  v-for="(item, index) in currentItem.classObj"
-                  :key="index"
-                  @click.native="setExtendAttr(index, item)"
-                  :label="index"
-                  :value="item"
-                  border
-                  size="medium"
-                ></el-checkbox>
-              </div>
-              <div class="insersub-view flex column" style="margin-left:0;margin-top:10px;">
-                <div>
-                  <el-select placeholder="设置添加位置" v-model="appendPosition">
-                    <el-option label="子级添加" value="subChildAppend"></el-option>
-                    <el-option label="孙级添加" value="subChildInsert"></el-option>
-                  </el-select>
-                </div>
-                <div class="flex row">
-                  <div class="row-list">
-                    <div class="subitem flex vcenter" @click="rowAdd(0)">ROW</div>
-                    <div
-                      class="subitem flex vcenter"
-                      v-for="(item, index) in rowList"
-                      @click="rowAdd(item)"
-                    >{{ item }}</div>
-                  </div>
-                  <div class="column-list">
-                    <div class="subitem flex vcenter" @click="columnAdd(0)">COLUMN</div>
-                    <div
-                      class="subitem flex vcenter"
-                      v-for="item in columnList"
-                      @click="columnAdd(item)"
-                    >{{ item }}</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="原生属性">
@@ -145,7 +112,6 @@
               </el-tabs>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="预设">角色管理</el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -164,9 +130,10 @@ import { mapMutations, mapActions, mapState } from 'vuex'
 // console.log('cssObj', cssObj)
 import cssDeclaration from './component/CSSStyleDeclaration'
 import preClass from './component/preClass'
+import collection from './component/collection'
 export default {
   name: 'SCQ',
-  components: { cssDeclaration, preview, preClass },
+  components: { cssDeclaration, preview, preClass, collection },
   data() {
     return {
       htmlCode: '',
@@ -176,13 +143,11 @@ export default {
       appendPosition: 'subChildAppend',
       // cssType: 'normal', //normal tree
       dataset: [],
-      currentItem: {},
       containerName: 'container',
       addDirection: 'row',
       addNumber: 1,
+      currentItem: {},
       tagType: 'div',
-      rowList: [1, 2, 3, 4, 5],
-      columnList: [1, 2, 3, 4, 5],
       tageTypeArray: ['div', 'view', 'image', 'text', 'span'],
       isMulitle: false
     }
@@ -218,6 +183,10 @@ export default {
   },
   methods: {
     ...mapActions(['setElement', 'timeTravel']),
+
+    onChangePosition(value) {
+      this.appendPosition = value
+    },
     resultClick(r) {
       console.log('resultClick', r)
       if (r.label == 'HTML') {
@@ -236,10 +205,11 @@ export default {
       this.timeTravel(index)
       this.currentHistroyIndex = index
     },
-    setExtendAttr(index, item) {
-      console.log('setExtendArrt')
+    setExtendAttr(oo) {
+      // index, item
+      console.log('setExtendArrt', oo)
       let obj = JSON.parse(JSON.stringify(this.currentItem.classObj))
-      obj[index] = !item
+      obj[oo.index] = !oo.item
       this.currentItem.classObj = obj
       this.currentItem.className = classname(this.currentItem.className, obj)
       this.setElement(JSON.parse(JSON.stringify(this.dataset)))
@@ -351,6 +321,7 @@ export default {
       this.getNodeById(this.dataset, this.current_id)
     },
     rowAdd(number) {
+      console.log(number)
       this.addNumber = number
       this.addDirection = 'row'
       this.getNodeById(this.dataset, this.current_id)
@@ -364,6 +335,7 @@ export default {
       }
     },
     addElement(item) {
+      // console.log('add element', item)
       let addArray = new Array(this.addNumber)
       addArray.fill(1)
       item.forEach(subitem => {
