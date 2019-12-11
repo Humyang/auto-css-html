@@ -15,17 +15,18 @@
       <div style="width: 50%;height:100%;overflow:auto;margin-right:10px;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
-            <div class="flex">
-              <div class="history flex" style="flex-flow: row-reverse;">
-                <span
-                  class="vcenter flex"
-                  v-for="(item, index) in elementHistory"
-                  :key="index"
-                  @click="actionTimeTravel(index)"
-                  :class="{ active: index == currentHistroyIndex }"
-                >{{ index + 1 }}</span>
-              </div>
+            <div>
+              <el-checkbox
+                v-for="(item, index) in currentItem.classObj"
+                :key="index"
+                @click.native="setExtendAttr(index, item)"
+                :label="index"
+                :value="item"
+                border
+                size="medium"
+              ></el-checkbox>
             </div>
+
             <div>
               <preview
                 v-on:current="getCurrent"
@@ -36,13 +37,23 @@
               <div style="display:none;">
                 <div ref="preview">
                   <preview
-                    v-on:current="getCurrent"
                     :dataset="dataset[0]"
                     :currentSelect="current_id"
                     :tagType="dataset[0].tagType"
                     :isHide="true"
                   ></preview>
                 </div>
+              </div>
+            </div>
+            <div class="flex">
+              <div class="history flex" style="flex-flow: row-reverse;">
+                <span
+                  class="vcenter flex"
+                  v-for="(item, index) in elementHistory"
+                  :key="index"
+                  @click="actionTimeTravel(index)"
+                  :class="{ active: index == currentHistroyIndex }"
+                >{{ index + 1 }}</span>
               </div>
             </div>
           </el-tab-pane>
@@ -69,22 +80,13 @@
       <div style="width: 50%;overflow:hidden;">
         <el-tabs type="border-card">
           <el-tab-pane label="预设">
-            <div style="margin-top: 20px">
-              <el-checkbox
-                v-for="(item, index) in currentItem.classObj"
-                :key="index"
-                @click.native="actionSetExtendAttr(index, item)"
-                :label="index"
-                :value="item"
-                border
-                size="medium"
-              ></el-checkbox>
-            </div>
+            <!-- 
+            @actionSetExtendAttr="setExtendAttr"-->
             <collection
               @actionColumnAdd="columnAdd"
               @actionRowAdd="rowAdd"
               @onChangePosition="onChangePosition"
-              @actionSetExtendAttr="setExtendAttr"
+              @onSelected="collectionInsert"
             />
           </el-tab-pane>
           <el-tab-pane label="预设类名">
@@ -183,7 +185,13 @@ export default {
   },
   methods: {
     ...mapActions(['setElement', 'timeTravel']),
+    collectionInsert(data) {
+      console.log('collectionInsert', data)
+      let item = this.getNode(this.dataset, this.current_id)
+      item.subset.push(data)
 
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+    },
     onChangePosition(value) {
       this.appendPosition = value
     },
@@ -195,7 +203,7 @@ export default {
     },
     onCssDeclarationSave(obj) {
       let item = this.getNode(this.dataset, this.current_id)
-      console.log('onCssDeclarationSave item', item)
+      // console.log('onCssDeclarationSave item', item)
       item.style[obj.rules] = obj.value
       this.currentItem = item
 
@@ -205,11 +213,11 @@ export default {
       this.timeTravel(index)
       this.currentHistroyIndex = index
     },
-    setExtendAttr(oo) {
-      // index, item
-      console.log('setExtendArrt', oo)
+    // setExtendAttr(oo) {
+
+    setExtendAttr(index, item) {
       let obj = JSON.parse(JSON.stringify(this.currentItem.classObj))
-      obj[oo.index] = !oo.item
+      obj[index] = !item
       this.currentItem.classObj = obj
       this.currentItem.className = classname(this.currentItem.className, obj)
       this.setElement(JSON.parse(JSON.stringify(this.dataset)))
@@ -516,14 +524,6 @@ export default {
   margin-top: 5px;
 }
 
-.insersub-view {
-  width: 200px;
-}
-.insersub-view .subitem {
-  height: 50px;
-  width: 100px;
-  border: 1px solid #ddd;
-}
 .preview {
   background-color: #d4d4d4;
 }

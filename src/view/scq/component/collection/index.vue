@@ -1,7 +1,12 @@
 <template>
   <div class="insersub-view flex column" style="margin-left:0;margin-top:10px;">
     <div>
-      <preview :dataset="preSetImg[0]" :tagType="preSetImg[0].tagType" :currentSelect="['1']"></preview>
+      <preview
+        v-on:current="getCurrent"
+        :currentSelect="current_id"
+        :dataset="preSetImg[0]"
+        :tagType="preSetImg[0].tagType"
+      ></preview>
     </div>
     <div>
       <el-select placeholder="设置添加位置" v-model="appendPosition">
@@ -34,33 +39,86 @@
 <script>
 import uid2 from 'uid2'
 import preview from '../preview'
+import lara from '@/assets/lara.jpg'
 export default {
-  name: 'index',
+  name: 'collection',
   //   props:[''],
   components: { preview },
   data() {
     return {
       appendPosition: 'subChildAppend',
+      current_id: ['1'],
       preSetImg: [
         {
-          tagType: 'img',
+          tagType: 'div',
           direction: 'row',
           id: uid2(10),
           className: '',
           classObj: { grow: true },
-          subset: [],
-          style: {},
-          raw: {
-            url: '~/assets/lara.jpg'
-          }
+          subset: [
+            {
+              tagType: 'img',
+              direction: 'row',
+              id: uid2(10),
+              className: '',
+              classObj: { grow: true },
+              subset: [],
+              style: {},
+              raw: {
+                src: lara,
+                width: '150px',
+                height: '150px'
+              }
+            },
+            {
+              tagType: 'img',
+              direction: 'row',
+              id: uid2(10),
+              className: '',
+              classObj: { grow: true },
+              subset: [],
+              style: {},
+              raw: {
+                src: lara,
+                width: '300px',
+                height: '150px'
+              }
+            }
+          ],
+          style: {}
         }
       ],
-
+      currentItem: {},
       rowList: [1, 2, 3, 4, 5],
       columnList: [1, 2, 3, 4, 5]
     }
   },
   methods: {
+    getNode(subset, id) {
+      let res = ''
+      for (let index = 0; index < subset.length; index++) {
+        const element = subset[index]
+        let findresult = id.find(subitem => {
+          return subitem == element.id
+        })
+        if (findresult) {
+          res = element
+          break
+        } else {
+          res = this.getNode(element.subset, id)
+          if (res != '') {
+            break
+          }
+        }
+      }
+      return res
+    },
+    getCurrent(event) {
+      this.current_id = JSON.parse(JSON.stringify([event.id]))
+      let arr = this.getNode(this.preSetImg, this.current_id)
+      this.currentItem = arr
+      this.$emit('onSelected', this.currentItem)
+    },
     actionSetExtendAttr(index, item) {
       this.$emit('actionSetExtendAttr', { index, item })
     },
@@ -85,3 +143,13 @@ export default {
   mounted() {}
 }
 </script>
+<style >
+.insersub-view {
+  /* width: 200px; */
+}
+.insersub-view .subitem {
+  height: 50px;
+  width: 100px;
+  border: 1px solid #ddd;
+}
+</style>

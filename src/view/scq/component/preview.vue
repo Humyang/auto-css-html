@@ -102,7 +102,8 @@ export default {
               preview: true,
               flex: true
             }),
-            style: formatStyle(dataset.style)
+            style: formatStyle(dataset.style),
+            ...dataset.raw
           }
         },
         sub
