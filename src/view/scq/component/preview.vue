@@ -1,34 +1,4 @@
 <script>
-// <template>
-//   <div>
-//     <!-- <div
-//       @click.stop="actionClick"
-//       class="preview flex"
-//       :class="{'row':dataset.direction=='row',
-//     'column':dataset.direction=='column',
-//     'selected':onSelected,
-//     [dataset.className]:true
-//     }"
-//       :style="dataset.style"
-//     >
-//       <span class="status-bar">{{dataset.direction}}</span>
-//       <template v-if="dataset.subset!=undefined">
-//         <preview
-//           v-for="item,index in dataset.subset"
-//           :dataset="item"
-//           :current_length="clength"
-//           :key="index"
-//           :tagType="item.tagType"
-//           :direction="item.direction"
-//           v-on:current="getCurrent"
-//           :currentSelect="currentSelect"
-//         ></preview>
-//       </template>
-//     </div> -->
-//     {{}}
-//   </div>
-// </template>
-// import HelloWorld from "./components/HelloWorld";
 import classname from 'classname'
 function formatStyle(obj) {
   let res = ''
@@ -54,7 +24,8 @@ export default {
     'current_length',
     'direction',
     'currentSelect',
-    'tagType'
+    'tagType',
+    'deviceType'
   ],
   data() {
     return {
@@ -102,7 +73,8 @@ export default {
               [dataset.levelClassName]: true,
 
               preview: true,
-              flex: true
+              flex: true,
+              [this.deviceType]: dataset.id == '1'
             }),
             style: formatStyle(dataset.style),
             ...dataset.raw
@@ -110,7 +82,7 @@ export default {
         },
         sub
       )
-      console.log('getElement', eee)
+      // console.log('getElement', eee)
       return eee
     },
     actionClick(dataset) {
@@ -151,5 +123,24 @@ span.status-bar {
 
 .preview {
   position: relative;
+}
+.mobile {
+  width: 414px;
+  height: 736px;
+  background: #fff;
+  margin: 0 auto;
+  border: 2px solid #000;
+  border-style: dotted;
+  box-sizing: content-box;
+}
+.pc {
+  width: 800px;
+  height: 400px;
+  background: #fff;
+  margin: 0 auto;
+  border: 2px solid #000;
+  border-style: dotted;
+  box-sizing: content-box;
+  box-sizing: content-box;
 }
 </style>

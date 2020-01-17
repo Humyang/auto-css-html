@@ -1,10 +1,10 @@
-# 
+#
 
-> 
+>
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
@@ -19,3 +19,19 @@ npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+# 设计规范
+
+## 大的方面
+
+整体布局
+
+## 中
+
+NavBar 导航栏
+底部标签页
+
+## 小
+
+按钮
+form 表单组件

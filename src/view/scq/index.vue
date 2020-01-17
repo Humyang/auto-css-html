@@ -15,6 +15,13 @@
       <div style="width: 50%;height:100%;overflow:auto;margin-right:10px;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
+            <!-- 设备选择 -->
+            <div>
+              <el-radio-group v-model="deviceType" size="mini">
+                <el-radio-button label="mobile"></el-radio-button>
+                <el-radio-button label="pc"></el-radio-button>
+              </el-radio-group>
+            </div>
             <div>
               <el-checkbox
                 v-for="(item, index) in currentItem.classObj"
@@ -29,6 +36,7 @@
 
             <div>
               <preview
+                :deviceType="deviceType"
                 v-on:current="getCurrent"
                 :dataset="dataset[0]"
                 :currentSelect="current_id"
@@ -138,6 +146,7 @@ export default {
   components: { cssDeclaration, preview, preClass, collection },
   data() {
     return {
+      deviceType: 'mobile',
       htmlCode: '',
       // preClass,
       currentHistroyIndex: 0,
@@ -266,6 +275,7 @@ export default {
     getCurrent(event) {
       this.tagType = event.tagType
       if (this.isMulitle) {
+        // alert(444)
         let finditem = this.current_id.find(item => {
           return item == event.id
         })
@@ -283,6 +293,9 @@ export default {
         let newarray = JSON.parse(JSON.stringify(this.current_id))
         this.current_id = newarray
       } else {
+        // console.log('getCurrent')
+        // debugger
+        // alert(123)
         this.current_id = JSON.parse(JSON.stringify([event.id]))
         let arr = this.getNode(this.dataset, this.current_id)
         this.currentItem = arr
@@ -512,6 +525,8 @@ export default {
   box-sizing: border-box;
   border: 1px solid black;
   padding: 20px;
+
+  box-sizing: content-box;
 }
 .scq-view {
   /* height: 800px; */
