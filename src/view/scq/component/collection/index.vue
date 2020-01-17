@@ -1,38 +1,47 @@
 <template>
   <div class="insersub-view flex column" style="margin-left:0;margin-top:10px;">
-    <div>
-      <preview
-        v-on:current="getCurrent"
-        :currentSelect="current_id"
-        :dataset="preSetImg[0]"
-        :tagType="preSetImg[0].tagType"
-      ></preview>
-    </div>
-    <div>
-      <el-select placeholder="设置添加位置" v-model="appendPosition">
-        <el-option label="子级添加" value="subChildAppend"></el-option>
-        <el-option label="孙级添加" value="subChildInsert"></el-option>
-      </el-select>
-    </div>
+    <el-tabs tab-position="left">
+      <el-tab-pane label="DIV">
+        <div style="    text-align: left;margin-bottom: 10px;">
+          <el-select placeholder="设置添加位置" v-model="appendPosition">
+            <el-option label="子级添加" value="subChildAppend"></el-option>
+            <el-option label="孙级添加" value="subChildInsert"></el-option>
+          </el-select>
+        </div>
 
-    <div class="flex row">
-      <div class="row-list">
-        <div class="subitem flex vcenter" @click="actionRowAdd(0)">ROW</div>
-        <div
-          class="subitem flex vcenter"
-          v-for="(item, index) in rowList"
-          @click="actionRowAdd(item)"
-        >{{ item }}</div>
-      </div>
-      <div class="column-list">
-        <div class="subitem flex vcenter" @click="actionColumnAdd(0)">COLUMN</div>
-        <div
-          class="subitem flex vcenter"
-          v-for="item in columnList"
-          @click="actionColumnAdd(item)"
-        >{{ item }}</div>
-      </div>
-    </div>
+        <div class="flex row">
+          <div class="row-list">
+            <div class="subitem flex vcenter" @click="actionRowAdd(0)">ROW</div>
+            <div
+              class="subitem flex vcenter"
+              v-for="(item, index) in rowList"
+              @click="actionRowAdd(item)"
+            >{{ item }}</div>
+          </div>
+          <div class="column-list">
+            <div class="subitem flex vcenter" @click="actionColumnAdd(0)">COLUMN</div>
+            <div
+              class="subitem flex vcenter"
+              v-for="item in columnList"
+              @click="actionColumnAdd(item)"
+            >{{ item }}</div>
+          </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="预设图片">
+        <div>
+          <preview
+            v-on:current="getCurrent"
+            :currentSelect="current_id"
+            :dataset="preSetImg[0]"
+            :tagType="preSetImg[0].tagType"
+          ></preview>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane label="预设框架"></el-tab-pane>
+      <el-tab-pane label="NavMenu 导航菜单"></el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 

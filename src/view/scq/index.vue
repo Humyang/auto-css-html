@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="flex row">
-      <div style="width: 50%;height:100%;overflow:auto;margin-right:10px;" class="flex column">
+      <div style="height:100%;overflow:auto;margin-right:10px;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
             <!-- 设备选择 -->
@@ -85,7 +85,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div style="width: 50%;overflow:hidden;">
+      <div style="    flex-grow: 1;">
         <el-tabs type="border-card">
           <el-tab-pane label="预设">
             <!-- 
@@ -522,7 +522,7 @@ export default {
 
 .preview {
   /* height: 100%; */
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   border: 1px solid black;
   padding: 20px;
 
