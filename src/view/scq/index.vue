@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="flex row">
-      <div style="height:100%;overflow:auto;margin-right:10px;" class="flex column">
+      <div style="height:100%;overflow:auto;margin-right:10px;    min-width: 490px;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
             <!-- 设备选择 -->
@@ -117,10 +117,15 @@
                       :value="item"
                     ></el-option>
                   </el-select>
+                  
                 </el-tab-pane>
                 <el-tab-pane label="属性组合"></el-tab-pane>
               </el-tabs>
             </div>
+          </el-tab-pane>
+          <el-tab-pane label="操作">
+            <p>删除选中</p>
+            <p>选中上级</p>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -141,6 +146,7 @@ import { mapMutations, mapActions, mapState } from 'vuex'
 import cssDeclaration from './component/CSSStyleDeclaration'
 import preClass from './component/preClass'
 import collection from './component/collection'
+
 export default {
   name: 'SCQ',
   components: { cssDeclaration, preview, preClass, collection },
@@ -159,7 +165,7 @@ export default {
       addNumber: 1,
       currentItem: {},
       tagType: 'div',
-      tageTypeArray: ['div', 'view', 'image', 'text', 'span'],
+      tageTypeArray: ['div', 'view', 'image', 'text', 'span','van-nav-bar'],
       isMulitle: false
     }
   },

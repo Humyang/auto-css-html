@@ -14,6 +14,14 @@ Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.prototype.api = api;
 
+
+
+import Vant from 'vant';
+import 'vant/lib/index.css';
+
+Vue.use(Vant);
+
+
 /* eslint-disable no-new */
 new Vue({
   router,
