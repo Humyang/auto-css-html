@@ -40,7 +40,9 @@
       </el-tab-pane>
 
       <el-tab-pane label="预设框架"></el-tab-pane>
-      <el-tab-pane label="NavMenu 导航菜单"></el-tab-pane>
+      <el-tab-pane label="NavMenu 导航菜单">
+        <nav-menu @actionInsert="actionInsert"/>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -49,10 +51,11 @@
 import uid2 from 'uid2'
 import preview from '../preview'
 import lara from '@/assets/lara.jpg'
+import navMenu from './navMenu.vue'
 export default {
   name: 'collection',
   //   props:[''],
-  components: { preview },
+  components: { preview,navMenu },
   data() {
     return {
       appendPosition: 'subChildAppend',
@@ -103,6 +106,10 @@ export default {
     }
   },
   methods: {
+    actionInsert(data){
+
+            this.$emit('actionInsert',data)
+    },
     getNode(subset, id) {
       let res = ''
       for (let index = 0; index < subset.length; index++) {

@@ -63,6 +63,9 @@ export default {
               event.stopPropagation()
             }
           },
+          props:
+            dataset.props
+          ,
           attrs: {
             class: classname({
               row: dataset.direction == 'row',

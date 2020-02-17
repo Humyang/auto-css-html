@@ -95,6 +95,7 @@
               @actionRowAdd="rowAdd"
               @onChangePosition="onChangePosition"
               @onSelected="collectionInsert"
+              @actionInsert="actionInsert"
             />
           </el-tab-pane>
           <el-tab-pane label="预设类名">
@@ -200,6 +201,34 @@ export default {
   },
   methods: {
     ...mapActions(['setElement', 'timeTravel']),
+    actionInsert(data){
+      // subitem.subset.push({
+      //         tagType: this.tagType,
+      //         direction: this.addDirection,
+      //         id: uid2(10),
+      //         className: '',
+      //         levelClassName: '',
+      //         classObj: { grow: true },
+      //         subset: nSubset,
+      //         style: {}
+      //       })
+      let obj = {
+        tagType:data.tagName,
+        direction: this.addDirection,
+        id: uid2(10),
+        className: 'grow',
+        props:{title:'标题'},
+        levelClassName: '',
+        classObj: { grow: true },
+        subset: [],
+        style: {}
+      }
+      console.log('actionInsert',data)
+      let item = this.getNode(this.dataset, this.current_id)
+      item.subset.push(obj)
+
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+    },
     collectionInsert(data) {
       console.log('collectionInsert', data)
       let item = this.getNode(this.dataset, this.current_id)
