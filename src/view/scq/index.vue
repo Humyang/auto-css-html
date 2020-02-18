@@ -12,16 +12,16 @@
       </div>
     </div>
     <div class="flex row">
-      <div style="height:100%;overflow:auto;margin-right:10px;    min-width: 490px;" class="flex column">
+      <div style="height:100%;overflow:auto;margin-right:10px;flex-grow: 1;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
             <!-- 设备选择 -->
-            <div>
+            <!-- <div>
               <el-radio-group v-model="deviceType" size="mini">
                 <el-radio-button label="mobile"></el-radio-button>
                 <el-radio-button label="pc"></el-radio-button>
               </el-radio-group>
-            </div>
+            </div> -->
             <div>
               <el-checkbox
                 v-for="(item, index) in currentItem.classObj"
@@ -34,7 +34,13 @@
               ></el-checkbox>
             </div>
 
-            <div>
+            <div class="flex row"><realView
+                :deviceType="deviceType"
+                v-on:current="getCurrent"
+                :dataset="dataset[0]"
+                :currentSelect="current_id"
+                :tagType="dataset[0].tagType"
+              ></realView>
               <preview
                 :deviceType="deviceType"
                 v-on:current="getCurrent"
@@ -42,7 +48,8 @@
                 :currentSelect="current_id"
                 :tagType="dataset[0].tagType"
               ></preview>
-              <div style="display:none;">
+              
+              <!-- <div style="display:none;">
                 <div ref="preview">
                   <preview
                     :dataset="dataset[0]"
@@ -51,7 +58,7 @@
                     :isHide="true"
                   ></preview>
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="flex">
               <div class="history flex" style="flex-flow: row-reverse;">
@@ -85,7 +92,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div style="    flex-grow: 1;">
+      <div style="width:500px">
         <el-tabs type="border-card">
           <el-tab-pane label="预设">
             <!-- 
@@ -147,10 +154,10 @@ import { mapMutations, mapActions, mapState } from 'vuex'
 import cssDeclaration from './component/CSSStyleDeclaration'
 import preClass from './component/preClass'
 import collection from './component/collection'
-
+import realView from './component/realView'
 export default {
   name: 'SCQ',
-  components: { cssDeclaration, preview, preClass, collection },
+  components: { cssDeclaration, preview, preClass, collection ,realView},
   data() {
     return {
       deviceType: 'mobile',
