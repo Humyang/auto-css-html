@@ -9,19 +9,19 @@
 </template>
 
 <script>
-import config from './config.js'
+import config from "./config.js";
 export default {
-  name: 'preClass',
+  name: "preClass",
   //   props:[''],
   components: {},
   data() {
     return {
       config
-    }
+    };
   },
   methods: {
     actionEmit(item) {
-      this.$emit('actionClick', item.value)
+      this.$emit("actionClick", item.value);
     }
   },
   computed: {},
@@ -34,6 +34,6 @@ export default {
   },
   created() {},
   mounted() {}
-}
+};
 </script>
 

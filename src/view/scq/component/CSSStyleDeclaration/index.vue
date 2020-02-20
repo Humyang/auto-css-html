@@ -39,97 +39,97 @@
 </template>
 
 <script>
-import config from './config'
+import config from "./config";
 export default {
-  name: 'CSSStyleDeclaration',
+  name: "CSSStyleDeclaration",
   //   props:[''],
   components: {},
   data() {
-    let labelArr = []
+    let labelArr = [];
     for (let index = 0; index < config.length; index++) {
-      const element = config[index]
+      const element = config[index];
       for (let si = 0; si < element.children.length; si++) {
-        const ee = element.children[si]
-        labelArr.push(ee.label)
+        const ee = element.children[si];
+        labelArr.push(ee.label);
       }
     }
     return {
-      saveInputValue: '',
-      rules: '',
-      desc: '',
-      filterGroupPick: '',
-      filterGroup: ['已有属性'],
-      labelStr: labelArr.join(','),
+      saveInputValue: "",
+      rules: "",
+      desc: "",
+      filterGroupPick: "",
+      filterGroup: ["已有属性"],
+      labelStr: labelArr.join(","),
       Alphabetical: [
-        ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-        ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-        ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+        ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+        ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+        ["z", "x", "c", "v", "b", "n", "m"]
       ],
-      input: '',
+      input: "",
       data: config,
-      filterText: '',
+      filterText: "",
       allowList: [],
       allDisable: false,
       defaultProps: {
-        children: 'children',
-        label: 'label'
+        children: "children",
+        label: "label"
       }
-    }
+    };
   },
   methods: {
     save() {
-      this.$emit('save', { rules: this.rules, value: this.saveInputValue })
+      this.$emit("save", { rules: this.rules, value: this.saveInputValue });
     },
     nodeClick(data, node, nodeSelf) {
-      console.log('nodeClick', data, node, nodeSelf)
-      this.desc = data.desc
-      this.rules = data.label
+      console.log("nodeClick", data, node, nodeSelf);
+      this.desc = data.desc;
+      this.rules = data.label;
     },
     isDisable(alpha) {
       if (this.allDisable) {
-        return true
+        return true;
       }
       return (
         this.allowList.length > 0 &&
         JSON.stringify(this.allowList).indexOf(alpha) == -1
-      )
+      );
     },
     find(alpha) {
-      this.allowList = []
-      this.allDisable = true
+      this.allowList = [];
+      this.allDisable = true;
       for (let index = 0; index < this.Alphabetical.length; index++) {
-        const element = this.Alphabetical[index]
+        const element = this.Alphabetical[index];
         for (let c = 0; c < element.length; c++) {
-          const ee = element[c]
-          let v = alpha + ee
-          let i = this.labelStr.indexOf(v)
+          const ee = element[c];
+          let v = alpha + ee;
+          let i = this.labelStr.indexOf(v);
           if (i > 0) {
-            this.allDisable = false
-            this.allowList.push(ee)
-            console.log('find', v, i)
+            this.allDisable = false;
+            this.allowList.push(ee);
+            console.log("find", v, i);
           }
         }
       }
     },
     alphabetClick(item) {
-      this.filterText += item
-      this.find(this.filterText)
+      this.filterText += item;
+      this.find(this.filterText);
       // 循环搜索允许点击的字母
     },
     filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
     }
   },
   computed: {},
   watch: {
     filterText(val) {
-      if (val == '') {
-        this.allowList = []
-        this.allDisable = false
+      if (val == "") {
+        this.allowList = [];
+        this.allDisable = false;
       }
-      this.find(val)
-      this.$refs.tree.filter(val)
+      this.find(val);
+      this.$refs.tree.filter(val);
     }
     // example: {
     //   handler() {},
@@ -146,7 +146,7 @@ export default {
     // }
     // this.obj = JSON.parse(JSON.stringify(this.obj));
   }
-}
+};
 </script>
 <style>
 .el-tabs--left .el-tabs__item.is-left {

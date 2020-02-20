@@ -41,59 +41,59 @@
 
       <el-tab-pane label="预设框架"></el-tab-pane>
       <el-tab-pane label="NavMenu 导航菜单">
-        <nav-menu @actionInsert="actionInsert"/>
+        <nav-menu @actionInsert="actionInsert" />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
-import uid2 from 'uid2'
-import preview from '../preview'
-import lara from '@/assets/lara.jpg'
-import navMenu from './navMenu.vue'
+import uid2 from "uid2";
+import preview from "../preview";
+import lara from "@/assets/lara.jpg";
+import navMenu from "./navMenu.vue";
 export default {
-  name: 'collection',
+  name: "collection",
   //   props:[''],
-  components: { preview,navMenu },
+  components: { preview, navMenu },
   data() {
     return {
-      appendPosition: 'subChildAppend',
-      current_id: ['1'],
+      appendPosition: "subChildAppend",
+      current_id: ["1"],
       preSetImg: [
         {
-          tagType: 'div',
-          direction: 'row',
+          tagType: "div",
+          direction: "row",
           id: uid2(10),
-          className: '',
+          className: "",
           classObj: { grow: true },
           subset: [
             {
-              tagType: 'img',
-              direction: 'row',
+              tagType: "img",
+              direction: "row",
               id: uid2(10),
-              className: '',
+              className: "",
               classObj: { grow: true },
               subset: [],
               style: {},
               raw: {
                 src: lara,
-                width: '150px',
-                height: '150px'
+                width: "150px",
+                height: "150px"
               }
             },
             {
-              tagType: 'img',
-              direction: 'row',
+              tagType: "img",
+              direction: "row",
               id: uid2(10),
-              className: '',
+              className: "",
               classObj: { grow: true },
               subset: [],
               style: {},
               raw: {
                 src: lara,
-                width: '300px',
-                height: '150px'
+                width: "300px",
+                height: "150px"
               }
             }
           ],
@@ -103,53 +103,52 @@ export default {
       currentItem: {},
       rowList: [1, 2, 3, 4, 5],
       columnList: [1, 2, 3, 4, 5]
-    }
+    };
   },
   methods: {
-    actionInsert(data){
-
-            this.$emit('actionInsert',data)
+    actionInsert(data) {
+      this.$emit("actionInsert", data);
     },
     getNode(subset, id) {
-      let res = ''
+      let res = "";
       for (let index = 0; index < subset.length; index++) {
-        const element = subset[index]
+        const element = subset[index];
         let findresult = id.find(subitem => {
-          return subitem == element.id
-        })
+          return subitem == element.id;
+        });
         if (findresult) {
-          res = element
-          break
+          res = element;
+          break;
         } else {
-          res = this.getNode(element.subset, id)
-          if (res != '') {
-            break
+          res = this.getNode(element.subset, id);
+          if (res != "") {
+            break;
           }
         }
       }
-      return res
+      return res;
     },
     getCurrent(event) {
-      this.current_id = JSON.parse(JSON.stringify([event.id]))
-      let arr = this.getNode(this.preSetImg, this.current_id)
-      this.currentItem = arr
-      this.$emit('onSelected', this.currentItem)
+      this.current_id = JSON.parse(JSON.stringify([event.id]));
+      let arr = this.getNode(this.preSetImg, this.current_id);
+      this.currentItem = arr;
+      this.$emit("onSelected", this.currentItem);
     },
     actionSetExtendAttr(index, item) {
-      this.$emit('actionSetExtendAttr', { index, item })
+      this.$emit("actionSetExtendAttr", { index, item });
     },
     actionRowAdd(number) {
-      this.$emit('actionRowAdd', number)
+      this.$emit("actionRowAdd", number);
     },
     actionColumnAdd(number) {
-      this.$emit('actionColumnAdd', number)
+      this.$emit("actionColumnAdd", number);
     }
   },
   computed: {},
   watch: {
     appendPosition: {
       handler() {
-        this.$emit('onChangePosition', this.appendPosition)
+        this.$emit("onChangePosition", this.appendPosition);
       },
       deep: true,
       immediate: true
@@ -157,7 +156,7 @@ export default {
   },
   created() {},
   mounted() {}
-}
+};
 </script>
 <style >
 .insersub-view {

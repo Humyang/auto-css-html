@@ -1,5 +1,8 @@
 <template>
   <div class="scq-view flex column" style="height: 100%;">
+    <!-- <van-nav-bar title="标题" left-text="返回" left-arrow class="grow" ref="vanNavBar">
+  <van-icon name="search" slot="right" />
+    </van-nav-bar>-->
     <div>
       <div class="current flex row" style="width:100%;">
         <div>按下多选：{{ isMulitle }}</div>
@@ -21,25 +24,29 @@
                 <el-radio-button label="mobile"></el-radio-button>
                 <el-radio-button label="pc"></el-radio-button>
               </el-radio-group>
-            </div> -->
+            </div>-->
             <div>
-              <el-checkbox
+              <el-switch
                 v-for="(item, index) in currentItem.classObj"
                 :key="index"
-                @click.native="setExtendAttr(index, item)"
-                :label="index"
                 :value="item"
-                border
-                size="medium"
-              ></el-checkbox>
+                @change="setExtendAttr(index, item)"
+                :inactive-text="index"
+                inactive-color="#13ce66"
+                active-color="#ff4949"
+                :active-value="false"
+                :inactive-value="true"
+              ></el-switch>
             </div>
 
-            <div class="flex row"><realView
+            <div class="flex row">
+              <realView
                 :deviceType="deviceType"
                 v-on:current="getCurrent"
                 :dataset="dataset[0]"
                 :currentSelect="current_id"
                 :tagType="dataset[0].tagType"
+                :controlRealView="controlRealView"
               ></realView>
               <preview
                 :deviceType="deviceType"
@@ -47,8 +54,9 @@
                 :dataset="dataset[0]"
                 :currentSelect="current_id"
                 :tagType="dataset[0].tagType"
+                :controlRealView="controlRealView"
               ></preview>
-              
+
               <!-- <div style="display:none;">
                 <div ref="preview">
                   <preview
@@ -58,18 +66,7 @@
                     :isHide="true"
                   ></preview>
                 </div>
-              </div> -->
-            </div>
-            <div class="flex">
-              <div class="history flex" style="flex-flow: row-reverse;">
-                <span
-                  class="vcenter flex"
-                  v-for="(item, index) in elementHistory"
-                  :key="index"
-                  @click="actionTimeTravel(index)"
-                  :class="{ active: index == currentHistroyIndex }"
-                >{{ index + 1 }}</span>
-              </div>
+              </div>-->
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
@@ -95,8 +92,6 @@
       <div style="width:500px">
         <el-tabs type="border-card">
           <el-tab-pane label="预设">
-            <!-- 
-            @actionSetExtendAttr="setExtendAttr"-->
             <collection
               @actionColumnAdd="columnAdd"
               @actionRowAdd="rowAdd"
@@ -125,7 +120,6 @@
                       :value="item"
                     ></el-option>
                   </el-select>
-                  
                 </el-tab-pane>
                 <el-tab-pane label="属性组合"></el-tab-pane>
               </el-tabs>
@@ -134,6 +128,17 @@
           <el-tab-pane label="操作">
             <p>删除选中</p>
             <p>选中上级</p>
+            <div class="flex">
+              <div class="history flex" style="flex-flow: row-reverse;">
+                <span
+                  class="vcenter flex"
+                  v-for="(item, index) in elementHistory"
+                  :key="index"
+                  @click="actionTimeTravel(index)"
+                  :class="{ active: index == currentHistroyIndex }"
+                >{{ index + 1 }}</span>
+              </div>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -143,39 +148,40 @@
 
 <script>
 // import HelloWorld from "./components/HelloWorld";
-import preview from './component/preview'
-import uid2 from 'uid2'
-import classname from 'classname'
-window.ccc = classname
-import { mapMutations, mapActions, mapState } from 'vuex'
+import preview from "./component/preview";
+import uid2 from "uid2";
+import classname from "classname";
+window.ccc = classname;
+import { mapMutations, mapActions, mapState } from "vuex";
 
 // import cssObj from '@/css/flex.scss'
 // console.log('cssObj', cssObj)
-import cssDeclaration from './component/CSSStyleDeclaration'
-import preClass from './component/preClass'
-import collection from './component/collection'
-import realView from './component/realView'
+import cssDeclaration from "./component/CSSStyleDeclaration";
+import preClass from "./component/preClass";
+import collection from "./component/collection";
+import realView from "./component/realView";
 export default {
-  name: 'SCQ',
-  components: { cssDeclaration, preview, preClass, collection ,realView},
+  name: "SCQ",
+  components: { cssDeclaration, preview, preClass, collection, realView },
   data() {
     return {
-      deviceType: 'mobile',
-      htmlCode: '',
+      controlRealView: true,
+      deviceType: "mobile",
+      htmlCode: "",
       // preClass,
       currentHistroyIndex: 0,
-      current_id: ['1'],
-      appendPosition: 'subChildAppend',
+      current_id: ["1"],
+      appendPosition: "subChildAppend",
       // cssType: 'normal', //normal tree
       dataset: [],
-      containerName: 'container',
-      addDirection: 'row',
+      containerName: "container",
+      addDirection: "row",
       addNumber: 1,
       currentItem: {},
-      tagType: 'div',
-      tageTypeArray: ['div', 'view', 'image', 'text', 'span','van-nav-bar'],
+      tagType: "div",
+      tageTypeArray: ["div", "view", "image", "text", "span", "van-nav-bar"],
       isMulitle: false
-    }
+    };
   },
 
   computed: {
@@ -193,22 +199,22 @@ export default {
     // return element.outerHTML
     // },
     csscodeList: function() {
-      let result = []
-      this.jsonToCssStyle1(this.dataset, '', 1, result)
+      let result = [];
+      this.jsonToCssStyle1(this.dataset, "", 1, result);
       let newResult = result.map(item => {
-        return '<p>' + item + '</p>'
-      })
-      return newResult.join('\n')
+        return "<p>" + item + "</p>";
+      });
+      return newResult.join("\n");
     },
     csscodeTree: function() {
-      let res = this.jsonToCssStyle2(this.dataset, '', true)
+      let res = this.jsonToCssStyle2(this.dataset, "", true);
 
-      return res
+      return res;
     }
   },
   methods: {
-    ...mapActions(['setElement', 'timeTravel']),
-    actionInsert(data){
+    ...mapActions(["setElement", "timeTravel"]),
+    actionInsert(data) {
       // subitem.subset.push({
       //         tagType: this.tagType,
       //         direction: this.addDirection,
@@ -219,70 +225,96 @@ export default {
       //         subset: nSubset,
       //         style: {}
       //       })
+      let props = {};
+      data.props.forEach(item => {
+        props[item.name] = item.value;
+      });
       let obj = {
-        tagType:data.tagName,
+        tagType: data.tagName,
         direction: this.addDirection,
         id: uid2(10),
-        className: 'grow',
-        props:{title:'标题'},
-        levelClassName: '',
+        props: props,
+        levelClassName: "",
         classObj: { grow: true },
         subset: [],
         style: {}
-      }
-      console.log('actionInsert',data)
-      let item = this.getNode(this.dataset, this.current_id)
-      item.subset.push(obj)
+      };
+      // console.log('actionInsert',data)
+      let parent = {
+        tagType: "div",
+        // direction: 'row',
+        id: uid2(10),
+        className: "",
+        // classObj: { grow: true },
+        subset: [obj],
+        style: {}
+      };
+      let item = this.getNode(this.dataset, this.current_id);
+      item.subset.push(parent);
 
-      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      // // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      this.updateElementSetElement();
     },
     collectionInsert(data) {
-      console.log('collectionInsert', data)
-      let item = this.getNode(this.dataset, this.current_id)
-      item.subset.push(data)
+      console.log("collectionInsert", data);
+      let item = this.getNode(this.dataset, this.current_id);
+      item.subset.push(data);
 
-      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      // // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      this.updateElementSetElement();
+    },
+    updateElementSetElement() {
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)));
+      this.refreshRealView();
     },
     onChangePosition(value) {
-      this.appendPosition = value
+      this.appendPosition = value;
     },
     resultClick(r) {
-      console.log('resultClick', r)
-      if (r.label == 'HTML') {
-        this.htmlCode = this.$refs.preview.outerHTML
+      console.log("resultClick", r);
+      if (r.label == "HTML") {
+        this.htmlCode = this.$refs.preview.outerHTML;
       }
     },
     onCssDeclarationSave(obj) {
-      let item = this.getNode(this.dataset, this.current_id)
+      let item = this.getNode(this.dataset, this.current_id);
       // console.log('onCssDeclarationSave item', item)
-      item.style[obj.rules] = obj.value
-      this.currentItem = item
+      item.style[obj.rules] = obj.value;
+      this.currentItem = item;
 
-      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      this.updateElementSetElement();
     },
     actionTimeTravel(index) {
-      this.timeTravel(index)
-      this.currentHistroyIndex = index
+      this.timeTravel(index);
+      this.currentHistroyIndex = index;
     },
-    // setExtendAttr(oo) {
-
+    refreshRealView() {
+      this.controlRealView = false;
+      setTimeout(() => {
+        this.controlRealView = true;
+      }, 50);
+    },
     setExtendAttr(index, item) {
-      let obj = JSON.parse(JSON.stringify(this.currentItem.classObj))
-      obj[index] = !item
-      this.currentItem.classObj = obj
-      this.currentItem.className = classname(this.currentItem.className, obj)
-      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      let obj = JSON.parse(JSON.stringify(this.currentItem.classObj));
+      obj[index] = !item;
+      this.currentItem.classObj = obj;
+      this.currentItem.className = classname(this.currentItem.className, obj);
+      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      this.updateElementSetElement();
+      // this.updateElementSetElement()
     },
     setElementAttr(type) {
-      let item = this.getNode(this.dataset, this.current_id)
+      let item = this.getNode(this.dataset, this.current_id);
 
       item.classObj = Object.assign({}, item.classObj, {
         [type]: true
-      })
-      item.className = classname(item.className, type)
-      this.currentItem = item
+      });
+      item.className = classname(item.className, type);
+      this.currentItem = item;
 
-      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      this.updateElementSetElement();
     },
     // cssNormal() {
     //   this.cssType = 'normal'
@@ -291,156 +323,157 @@ export default {
     //   this.cssType = 'tree'
     // },
     currentTagChange(event) {
-      console.log(event)
-      this.getNodeByIdChaneType(this.dataset, this.current_id, event)
+      console.log(event);
+      this.getNodeByIdChaneType(this.dataset, this.current_id, event);
     },
     getNodeByIdChaneType(subset, id, tagType) {
       let item = subset.filter(item => {
         // return item.id == id
         let findresult = id.find(subitem => {
-          return subitem == item.id
-        })
-        console.log(!!findresult)
-        return !!findresult
-      })
+          return subitem == item.id;
+        });
+        console.log(!!findresult);
+        return !!findresult;
+      });
       if (item.length > 0) {
         item.forEach(subitem => {
-          subitem.tagType = tagType
-        })
-        this.setDatasetClassName(this.dataset, 1)
+          subitem.tagType = tagType;
+        });
+        this.setDatasetClassName(this.dataset, 1);
       } else {
         subset.map(item => {
-          this.getNodeByIdChaneType(item.subset, id, tagType)
-        })
+          this.getNodeByIdChaneType(item.subset, id, tagType);
+        });
       }
     },
     getCurrent(event) {
-      this.tagType = event.tagType
+      this.tagType = event.tagType;
       if (this.isMulitle) {
         // alert(444)
         let finditem = this.current_id.find(item => {
-          return item == event.id
-        })
+          return item == event.id;
+        });
         if (finditem === undefined) {
-          this.current_id.push(event.id)
+          this.current_id.push(event.id);
         } else {
           this.current_id.splice(
             this.current_id.findIndex(item => {
-              return item === finditem
+              return item === finditem;
             }),
             1
-          )
+          );
         }
 
-        let newarray = JSON.parse(JSON.stringify(this.current_id))
-        this.current_id = newarray
+        let newarray = JSON.parse(JSON.stringify(this.current_id));
+        this.current_id = newarray;
       } else {
         // console.log('getCurrent')
         // debugger
         // alert(123)
-        this.current_id = JSON.parse(JSON.stringify([event.id]))
-        let arr = this.getNode(this.dataset, this.current_id)
-        this.currentItem = arr
+        this.current_id = JSON.parse(JSON.stringify([event.id]));
+        let arr = this.getNode(this.dataset, this.current_id);
+        this.currentItem = arr;
       }
     },
     getNode(subset, id) {
-      let res = ''
+      let res = "";
       for (let index = 0; index < subset.length; index++) {
-        const element = subset[index]
+        const element = subset[index];
         let findresult = id.find(subitem => {
-          return subitem == element.id
-        })
+          return subitem == element.id;
+        });
         if (findresult) {
-          res = element
-          break
+          res = element;
+          break;
         } else {
-          res = this.getNode(element.subset, id)
-          if (res != '') {
-            break
+          res = this.getNode(element.subset, id);
+          if (res != "") {
+            break;
           }
         }
       }
-      return res
+      return res;
     },
     //   遍历树结构，找到指定值
     getNodeById(subset, id) {
       let item = subset.filter(item => {
         let findresult = id.find(subitem => {
-          return subitem == item.id
-        })
-        return !!findresult
-      })
+          return subitem == item.id;
+        });
+        return !!findresult;
+      });
       if (item.length > 0) {
-        this.addElement(item)
+        this.addElement(item);
       } else {
         subset.map(item => {
-          this.getNodeById(item.subset, id)
-        })
+          this.getNodeById(item.subset, id);
+        });
       }
     },
     columnAdd(number) {
-      this.addDirection = 'column'
-      this.addNumber = number
-      this.getNodeById(this.dataset, this.current_id)
+      this.addDirection = "column";
+      this.addNumber = number;
+      this.getNodeById(this.dataset, this.current_id);
     },
     rowAdd(number) {
-      console.log(number)
-      this.addNumber = number
-      this.addDirection = 'row'
-      this.getNodeById(this.dataset, this.current_id)
+      console.log(number);
+      this.addNumber = number;
+      this.addDirection = "row";
+      this.getNodeById(this.dataset, this.current_id);
     },
     resetUid(dataset) {
       if (dataset.length > 0) {
         dataset.forEach(item => {
-          item.id = uid2(10)
-          this.resetUid(item.subset)
-        })
+          item.id = uid2(10);
+          this.resetUid(item.subset);
+        });
       }
     },
     addElement(item) {
       // console.log('add element', item)
-      let addArray = new Array(this.addNumber)
-      addArray.fill(1)
+      let addArray = new Array(this.addNumber);
+      addArray.fill(1);
       item.forEach(subitem => {
-        subitem.direction = this.addDirection
+        subitem.direction = this.addDirection;
 
-        if (this.appendPosition == 'subChildAppend') {
+        if (this.appendPosition == "subChildAppend") {
           addArray.forEach(() => {
             subitem.subset.push({
               tagType: this.tagType,
               direction: this.addDirection,
               id: uid2(10),
-              className: '',
-              levelClassName: '',
+              className: "",
+              levelClassName: "",
               classObj: { grow: true },
               subset: [],
               style: {}
-            })
-          })
+            });
+          });
         }
-        if (this.appendPosition == 'subChildInsert') {
-          let subset = JSON.parse(JSON.stringify(subitem.subset))
+        if (this.appendPosition == "subChildInsert") {
+          let subset = JSON.parse(JSON.stringify(subitem.subset));
 
-          subitem.subset = []
+          subitem.subset = [];
 
           addArray.forEach(() => {
-            let nSubset = JSON.parse(JSON.stringify(subset))
-            this.resetUid(nSubset)
+            let nSubset = JSON.parse(JSON.stringify(subset));
+            this.resetUid(nSubset);
             subitem.subset.push({
               tagType: this.tagType,
               direction: this.addDirection,
               id: uid2(10),
-              className: '',
-              levelClassName: '',
+              className: "",
+              levelClassName: "",
               classObj: { grow: true },
               subset: nSubset,
               style: {}
-            })
-          })
+            });
+          });
         }
-      })
-      this.setDatasetClassName(this.dataset, 1)
-      this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      });
+      this.setDatasetClassName(this.dataset, 1);
+      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      this.updateElementSetElement();
     },
     // jsonToHtmlStyle1(array, tagType) {
     //   // 操作
@@ -468,88 +501,95 @@ export default {
 
     jsonToCssStyle1(array, parentHeader, parentLevel, result) {
       array.forEach((item, index) => {
-        let nodeHeader = ''
-        let sublevel = ''
-        if (parentHeader == '') {
-          nodeHeader = '.' + this.containerName
-          sublevel = ''
+        let nodeHeader = "";
+        let sublevel = "";
+        if (parentHeader == "") {
+          nodeHeader = "." + this.containerName;
+          sublevel = "";
         } else {
           nodeHeader =
-            parentHeader + ' ' + item.tagType + '.s' + parentLevel + '-' + index
-          sublevel = parentLevel + '-' + index
+            parentHeader +
+            " " +
+            item.tagType +
+            ".s" +
+            parentLevel +
+            "-" +
+            index;
+          sublevel = parentLevel + "-" + index;
         }
 
-        result.push(nodeHeader + ' {}')
-        this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result)
-      })
+        result.push(nodeHeader + " {}");
+        this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result);
+      });
     },
     jsonToCssStyle2(array, result, top) {
       // console.log('2222222222', array)
-      let res = ''
+      let res = "";
       array.forEach((item, index) => {
-        res = res + '.' + item.className + '{'
+        res = res + "." + item.className + "{";
         if (item.subset) {
-          res += this.jsonToCssStyle2(item.subset, result, false)
+          res += this.jsonToCssStyle2(item.subset, result, false);
         }
-      })
+      });
       if (!top) {
-        res += '}'
+        res += "}";
       }
-      return res
+      return res;
     },
     setDatasetClassName(array, parentLevel) {
       array.forEach((item, index) => {
-        let sublevel = ''
+        let sublevel = "";
         if (parentLevel == 1) {
-          sublevel = ''
+          sublevel = "";
         } else {
-          sublevel = parentLevel + '-' + index
-          item.className = classname({}, item.classObj)
-          item.levelClassName = 's' + sublevel
+          sublevel = parentLevel + "-" + index;
+          item.className = classname({}, item.classObj);
+          item.levelClassName = "s" + sublevel;
         }
 
-        this.setDatasetClassName(item.subset, sublevel)
-      })
+        this.setDatasetClassName(item.subset, sublevel);
+      });
     }
   },
   watch: {
     elementHistory: {
       handler: function() {
-        this.currentHistroyIndex = this.elementHistory.length - 1
+        this.currentHistroyIndex = this.elementHistory.length - 1;
       },
       immediate: true
     },
     dset: {
       handler: function() {
-        this.dataset = this.dset
-        let arr = this.getNode(this.dataset, this.current_id)
-        this.currentItem = arr
+        this.dataset = this.dset;
+        let arr = this.getNode(this.dataset, this.current_id);
+        this.currentItem = arr;
       },
       immediate: true
     },
     containerName(newValue) {
       // console.log(v,e)
-      this.dataset[0].className = newValue
-      this.setElement(this.dataset)
+      this.dataset[0].className = newValue;
+      this.setElement(this.dataset);
     }
   },
   created() {
     //   let body = document.getElementsByTagName('body')
-    this.dataset[0].className = this.containerName
-    window.addEventListener('keydown', event => {
+    this.dataset[0].className = this.containerName;
+    window.addEventListener("keydown", event => {
       //   console.log(event)
       if (event.keyCode == 17) {
-        this.isMulitle = true
+        this.isMulitle = true;
       }
-    })
-    window.addEventListener('keyup', event => {
+    });
+    window.addEventListener("keyup", event => {
       //   console.log(event)
       if (event.keyCode == 17) {
-        this.isMulitle = false
+        this.isMulitle = false;
       }
-    })
+    });
+    window.deb = this;
   }
-}
+};
 </script>
 
 <style>
