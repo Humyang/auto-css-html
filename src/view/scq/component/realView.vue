@@ -30,7 +30,7 @@ export default {
   ],
   data() {
     return {
-      clength: 1
+      // clength: 1
     };
   },
   render: function(createElement) {
@@ -112,8 +112,7 @@ export default {
   updated: function() {
     //   计算当前自己元素数量
     // console.log(this.dataset.subset.length)
-    this.clength = this.dataset.subset && this.dataset.subset.length;
-
+    // this.clength = this.dataset.subset && this.dataset.subset.length;
     // console.log(this.current_length)
   }
 };

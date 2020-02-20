@@ -126,8 +126,9 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="操作">
-            <p>删除选中</p>
-            <p>选中上级</p>
+            <!-- <p>删除选中</p> -->
+            <el-button type="danger" plain @click="actionRemoveSelected">删除选中</el-button>
+            <!-- <p>选中上级</p> -->
             <div class="flex">
               <div class="history flex" style="flex-flow: row-reverse;">
                 <span
@@ -214,6 +215,31 @@ export default {
   },
   methods: {
     ...mapActions(["setElement", "timeTravel"]),
+    actionRemoveSelected() {
+      // let item = this.getNode(this.dataset, this.current_id);
+      // item.subset = [];
+      this.dataset = this.removeSelected(this.dataset, this.current_id);
+      this.updateElementSetElement();
+
+      console.log("removeSelected2", this.dataset);
+    },
+    removeSelected(subset, id) {
+      let res = "";
+      for (let index = 0; index < subset.length; index++) {
+        const element = subset[index];
+        let findresult = id.find(subitem => {
+          return subitem == element.id;
+        });
+
+        if (findresult) {
+          subset = [...subset.slice(0, index), ...subset.slice(index + 1)];
+          break;
+        } else {
+          element.subset = this.removeSelected(element.subset, id);
+        }
+      }
+      return subset;
+    },
     actionInsert(data) {
       // subitem.subset.push({
       //         tagType: this.tagType,

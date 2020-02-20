@@ -35,6 +35,7 @@
             :currentSelect="current_id"
             :dataset="preSetImg[0]"
             :tagType="preSetImg[0].tagType"
+            :controlRealView="true"
           ></preview>
         </div>
       </el-tab-pane>
