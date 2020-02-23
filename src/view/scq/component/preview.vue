@@ -1,134 +1,49 @@
+<template>
+  <div>
+    <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
+    <div class="preview mobile" @click="rootClick">
+      <engine
+        instanceType="preView"
+        v-for="item,index in dataset"
+        :key="index"
+        :currentSelect="currentSelect"
+        v-on:actionClick="actionClick"
+        :dataset="item"
+        :controlView="controlView"
+      ></engine>
+    </div>
+  </div>
+</template>
+
 <script>
-import classname from "classname";
-function formatStyle(obj) {
-  let res = "";
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const element = obj[key];
-      res += `${key}:${element};`;
-    }
-  }
-}
-function getSelectedStatus(dataset, currentSelect) {
-  let result = currentSelect.find(item => {
-    return item == dataset.id;
-  });
-  // console.log('getSelectedStatus', result)
-  return result != undefined ? true : false;
-}
+import engine from "./engine";
 export default {
-  name: "preview",
-  props: [
-    "isHide",
-    "dataset",
-    "current_length",
-    "direction",
-    "currentSelect",
-    "tagType",
-    "deviceType",
-    "controlRealView"
-  ],
+  props: ["dataset", "controlView"],
+  components: {
+    engine
+  },
   data() {
     return {
-      clength: 1
+      currentSelect: []
     };
   },
-  render: function(createElement) {
-    let r = this.getElement(createElement, this.dataset);
-
-    return r;
-  },
   methods: {
-    getElement(createElement, dataset) {
-      // console.log('getElement 111')
-      let sub = [];
-      if (!this.isHide) {
-        sub.push(
-          createElement(
-            "span",
-            { attrs: { class: "status-bar" } },
-            dataset.tagType
-          )
-        );
-      }
-      // for (let index = 0; index < dataset.subset.length; index++) {
-      //   const element = dataset.subset[index]
-      //   sub.push(this.getElement(createElement, element))
-      // }
-      if (this.controlRealView) {
-        for (let index = 0; index < dataset.subset.length; index++) {
-          const element = dataset.subset[index];
-          sub.push(this.getElement(createElement, element));
-        }
-      }
-      let eee = createElement(
-        dataset.tagType || "div",
-        {
-          on: {
-            click: event => {
-              this.actionClick(dataset);
-              event.stopPropagation();
-            }
-          },
-          props: dataset.props,
-          attrs: {
-            class: classname({
-              row: dataset.direction == "row",
-              column: dataset.direction == "column",
-              selected:
-                getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
-              [dataset.className]: true,
-              [dataset.levelClassName]: true,
-
-              preview: true,
-              // flex: true,
-              [this.deviceType]: dataset.id == "1"
-            }),
-            style: formatStyle(dataset.style),
-            ...dataset.raw
-          }
-        },
-        sub
-      );
-      // console.log('getElement', eee)
-      return eee;
+    actionSaveSelected() {
+      this.$emit("actionSaveSelected", this.currentSelect);
+    },
+    rootClick() {
+      this.currentSelect = [];
+      this.$emit("rootClick");
     },
     actionClick(dataset) {
-      // console.log(this.dataset.id)
-      this.$emit("current", { id: dataset.id, tagType: dataset.tagType });
-    },
-    getCurrent(event) {
-      this.$emit("current", event);
+      this.currentSelect = [dataset.id];
+      this.$emit("currentSelect", dataset);
     }
-  },
-  computed: {
-    onSelected() {
-      let result = this.currentSelect.find(item => {
-        return item == this.dataset.id;
-      });
-      return result != undefined ? true : false;
-    }
-  },
-  updated: function() {
-    //   计算当前自己元素数量
-    // console.log(this.dataset.subset.length)
-    this.clength = this.dataset.subset && this.dataset.subset.length;
-
-    // console.log(this.current_length)
   }
 };
 </script>
-<style >
-span.status-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  /* display: inherit; */
-  border: 1px solid #1000ff;
-  margin: 2px;
-  padding: 2px;
-}
 
+<style>
 .preview {
   position: relative;
 }
@@ -139,16 +54,6 @@ span.status-bar {
   margin: 0 auto;
   border: 2px solid #000;
   border-style: dotted;
-  box-sizing: content-box;
-}
-.pc {
-  width: 800px;
-  height: 400px;
-  background: #fff;
-  margin: 0 auto;
-  border: 2px solid #000;
-  border-style: dotted;
-  box-sizing: content-box;
   box-sizing: content-box;
 }
 </style>

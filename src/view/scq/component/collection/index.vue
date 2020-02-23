@@ -30,17 +30,26 @@
       </el-tab-pane>
       <el-tab-pane label="预设图片">
         <div>
-          <preview
+          <!-- <preview
             v-on:current="getCurrent"
             :currentSelect="current_id"
             :dataset="preSetImg[0]"
             :tagType="preSetImg[0].tagType"
-            :controlRealView="true"
-          ></preview>
+            :controlView="true"
+          ></preview>-->
+          <div class="flex column" v-for="item,index in preSetImg.subset">
+            <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
+            <engine instanceType="preView" :key="index" :dataset="item" :controlView="true"></engine>
+          </div>
         </div>
       </el-tab-pane>
 
-      <el-tab-pane label="预设框架"></el-tab-pane>
+      <el-tab-pane label="预设框架">
+        <div class="flex column" v-for="item,index in preSave">
+          <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
+          <engine instanceType="preView" :key="index" :dataset="item"></engine>
+        </div>
+      </el-tab-pane>
       <el-tab-pane label="NavMenu 导航菜单">
         <nav-menu @actionInsert="actionInsert" />
       </el-tab-pane>
@@ -53,60 +62,82 @@ import uid2 from "uid2";
 import preview from "../preview";
 import lara from "@/assets/lara.jpg";
 import navMenu from "./navMenu.vue";
+import engine from "../engine";
+
+import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   name: "collection",
   //   props:[''],
-  components: { preview, navMenu },
+  components: { engine, preview, navMenu },
   data() {
     return {
       appendPosition: "subChildAppend",
       current_id: ["1"],
-      preSetImg: [
-        {
-          tagType: "div",
-          direction: "row",
-          id: uid2(10),
-          className: "",
-          classObj: { grow: true },
-          subset: [
-            {
-              tagType: "img",
-              direction: "row",
-              id: uid2(10),
-              className: "",
-              classObj: { grow: true },
-              subset: [],
-              style: {},
-              raw: {
-                src: lara,
-                width: "150px",
-                height: "150px"
-              }
-            },
-            {
-              tagType: "img",
-              direction: "row",
-              id: uid2(10),
-              className: "",
-              classObj: { grow: true },
-              subset: [],
-              style: {},
-              raw: {
-                src: lara,
-                width: "300px",
-                height: "150px"
-              }
+      preSetImg: {
+        tagType: "div",
+        direction: "row",
+        id: uid2(10),
+        className: "",
+        classObj: { grow: true },
+        subset: [
+          {
+            tagType: "img",
+            direction: "row",
+            id: uid2(10),
+            className: "",
+            classObj: { grow: true },
+            subset: [],
+            style: {},
+            raw: {
+              src: lara,
+              width: "150px",
+              height: "150px"
             }
-          ],
-          style: {}
-        }
-      ],
+          },
+          {
+            tagType: "img",
+            direction: "row",
+            id: uid2(10),
+            className: "",
+            classObj: { grow: true },
+            subset: [],
+            style: {},
+            raw: {
+              src: lara,
+              width: "300px",
+              height: "150px"
+            }
+          }
+        ],
+        style: {}
+      },
       currentItem: {},
       rowList: [1, 2, 3, 4, 5],
       columnList: [1, 2, 3, 4, 5]
     };
   },
+  computed: {
+    ...mapState({
+      preSave: state => state.preSave
+    })
+  },
   methods: {
+    resetUid(data) {
+      data.id = uid2(10);
+      for (let index = 0; index < data.subset.length; index++) {
+        const element = data.subset[index];
+        this.resetUid(element);
+      }
+      return data;
+    },
+    rawToPreView(data) {
+      console.log(JSON.parse(JSON.stringify(this.resetUid(data))));
+
+      this.$emit(
+        "rawToPreView",
+        JSON.parse(JSON.stringify(this.resetUid(data)))
+      );
+    },
     actionInsert(data) {
       this.$emit("actionInsert", data);
     },
@@ -129,12 +160,12 @@ export default {
       }
       return res;
     },
-    getCurrent(event) {
-      this.current_id = JSON.parse(JSON.stringify([event.id]));
-      let arr = this.getNode(this.preSetImg, this.current_id);
-      this.currentItem = arr;
-      this.$emit("onSelected", this.currentItem);
-    },
+    // getCurrent(event) {
+    // this.current_id = JSON.parse(JSON.stringify([event.id]));
+    // let arr = this.getNode(this.preSetImg, this.current_id);
+    // this.currentItem = arr;
+    // this.$emit("onSelected", this.currentItem);
+    // },
     actionSetExtendAttr(index, item) {
       this.$emit("actionSetExtendAttr", { index, item });
     },
@@ -145,7 +176,6 @@ export default {
       this.$emit("actionColumnAdd", number);
     }
   },
-  computed: {},
   watch: {
     appendPosition: {
       handler() {

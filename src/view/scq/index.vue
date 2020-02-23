@@ -18,13 +18,6 @@
       <div style="height:100%;overflow:auto;margin-right:10px;flex-grow: 1;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
-            <!-- 设备选择 -->
-            <!-- <div>
-              <el-radio-group v-model="deviceType" size="mini">
-                <el-radio-button label="mobile"></el-radio-button>
-                <el-radio-button label="pc"></el-radio-button>
-              </el-radio-group>
-            </div>-->
             <div>
               <el-switch
                 v-for="(item, index) in currentItem.classObj"
@@ -40,33 +33,15 @@
             </div>
 
             <div class="flex row">
-              <realView
-                :deviceType="deviceType"
-                v-on:current="getCurrent"
-                :dataset="dataset[0]"
-                :currentSelect="current_id"
-                :tagType="dataset[0].tagType"
-                :controlRealView="controlRealView"
-              ></realView>
+              <!-- <realView :dataset="dataset" :controlView="controlView"></realView> -->
+              <iframe src="/realview" frameborder="0" class="realviewIframe"></iframe>
               <preview
-                :deviceType="deviceType"
-                v-on:current="getCurrent"
-                :dataset="dataset[0]"
-                :currentSelect="current_id"
-                :tagType="dataset[0].tagType"
-                :controlRealView="controlRealView"
+                @actionSaveSelected="actionSaveSelected"
+                v-on:currentSelect="actionPreviewClick"
+                v-on:rootClick="rootClick"
+                :dataset="dataset"
+                :controlView="controlView"
               ></preview>
-
-              <!-- <div style="display:none;">
-                <div ref="preview">
-                  <preview
-                    :dataset="dataset[0]"
-                    :currentSelect="current_id"
-                    :tagType="dataset[0].tagType"
-                    :isHide="true"
-                  ></preview>
-                </div>
-              </div>-->
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
@@ -95,6 +70,7 @@
             <collection
               @actionColumnAdd="columnAdd"
               @actionRowAdd="rowAdd"
+              @rawToPreView="rawToPreView"
               @onChangePosition="onChangePosition"
               @onSelected="collectionInsert"
               @actionInsert="actionInsert"
@@ -166,12 +142,12 @@ export default {
   components: { cssDeclaration, preview, preClass, collection, realView },
   data() {
     return {
-      controlRealView: true,
+      controlView: true,
       deviceType: "mobile",
       htmlCode: "",
       // preClass,
       currentHistroyIndex: 0,
-      current_id: ["1"],
+      current_id: [],
       appendPosition: "subChildAppend",
       // cssType: 'normal', //normal tree
       dataset: [],
@@ -179,6 +155,7 @@ export default {
       addDirection: "row",
       addNumber: 1,
       currentItem: {},
+      currentItemSubset: [],
       tagType: "div",
       tageTypeArray: ["div", "view", "image", "text", "span", "van-nav-bar"],
       isMulitle: false
@@ -187,18 +164,8 @@ export default {
 
   computed: {
     ...mapState({
-      dset: state => JSON.parse(JSON.stringify(state.element)),
       elementHistory: state => state.elementHistory
     }),
-    // htmlcode: function() {
-    // return this.$refs.preview.outerHTML
-    // let element = this.jsonToHtmlStyle1(this.dataset)
-    // console.log('change', element, options)
-    // var result = tidy_html5(element.outerHTML, options)
-    // console.log('result', result)
-    // return tidy_html5(element.outerHTML, options)
-    // return element.outerHTML
-    // },
     csscodeList: function() {
       let result = [];
       this.jsonToCssStyle1(this.dataset, "", 1, result);
@@ -214,9 +181,24 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setElement", "timeTravel"]),
+    ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
+    actionSaveSelected(selected) {
+      let item = this.getNodeById(this.dataset, this.current_id);
+      this.pushPreSave(item[0]);
+    },
+    rootClick() {
+      this.currentItem = this.dataset;
+      this.currentItemSubset = this.dataset;
+    },
+    rawToPreView(data) {
+      let item = this.getNodeById(this.dataset, this.current_id);
+      // item.push(parent);
+      this.currentItemSubset.push(data);
+
+      // // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
+      this.updateElementSetElement();
+    },
     actionRemoveSelected() {
-      // let item = this.getNode(this.dataset, this.current_id);
       // item.subset = [];
       this.dataset = this.removeSelected(this.dataset, this.current_id);
       this.updateElementSetElement();
@@ -275,8 +257,9 @@ export default {
         subset: [obj],
         style: {}
       };
-      let item = this.getNode(this.dataset, this.current_id);
-      item.subset.push(parent);
+      let item = this.getNodeById(this.dataset, this.current_id);
+      // item.push(parent);
+      this.currentItemSubset.push(parent);
 
       // // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
@@ -316,9 +299,9 @@ export default {
       this.currentHistroyIndex = index;
     },
     refreshRealView() {
-      this.controlRealView = false;
+      this.controlView = false;
       setTimeout(() => {
-        this.controlRealView = true;
+        this.controlView = true;
       }, 50);
     },
     setExtendAttr(index, item) {
@@ -372,35 +355,41 @@ export default {
         });
       }
     },
-    getCurrent(event) {
-      this.tagType = event.tagType;
-      if (this.isMulitle) {
-        // alert(444)
-        let finditem = this.current_id.find(item => {
-          return item == event.id;
-        });
-        if (finditem === undefined) {
-          this.current_id.push(event.id);
-        } else {
-          this.current_id.splice(
-            this.current_id.findIndex(item => {
-              return item === finditem;
-            }),
-            1
-          );
-        }
-
-        let newarray = JSON.parse(JSON.stringify(this.current_id));
-        this.current_id = newarray;
-      } else {
-        // console.log('getCurrent')
-        // debugger
-        // alert(123)
-        this.current_id = JSON.parse(JSON.stringify([event.id]));
-        let arr = this.getNode(this.dataset, this.current_id);
-        this.currentItem = arr;
-      }
+    actionPreviewClick(dataset) {
+      this.current_id = JSON.parse(JSON.stringify([dataset.id]));
+      let arr = this.getNode(this.dataset, this.current_id);
+      this.currentItemSubset = arr.subset;
+      this.currentItem = arr;
     },
+    // getCurrent(event) {
+    //   this.tagType = event.tagType;
+    //   if (this.isMulitle) {
+    //     // alert(444)
+    //     let finditem = this.current_id.find(item => {
+    //       return item == event.id;
+    //     });
+    //     if (finditem === undefined) {
+    //       this.current_id.push(event.id);
+    //     } else {
+    //       this.current_id.splice(
+    //         this.current_id.findIndex(item => {
+    //           return item === finditem;
+    //         }),
+    //         1
+    //       );
+    //     }
+
+    //     let newarray = JSON.parse(JSON.stringify(this.current_id));
+    //     this.current_id = newarray;
+    //   } else {
+    //     // console.log('getCurrent')
+    //     // debugger
+    //     // alert(123)
+    //     this.current_id = JSON.parse(JSON.stringify([event.id]));
+    //     let arr = this.getNode(this.dataset, this.current_id);
+    //     this.currentItem = arr;
+    //   }
+    // },
     getNode(subset, id) {
       let res = "";
       for (let index = 0; index < subset.length; index++) {
@@ -429,23 +418,40 @@ export default {
         return !!findresult;
       });
       if (item.length > 0) {
-        this.addElement(item);
+        return item;
       } else {
-        subset.map(item => {
-          this.getNodeById(item.subset, id);
+        subset.forEach(item => {
+          let res = this.getNodeById(item.subset, id);
+          if (res) {
+            return res;
+          }
         });
       }
+      return false;
     },
     columnAdd(number) {
       this.addDirection = "column";
-      this.addNumber = number;
-      this.getNodeById(this.dataset, this.current_id);
+      if (number == 0) {
+        this.currentItem.direction = this.addDirection;
+        this.updateElementSetElement();
+      } else {
+        this.addNumber = number;
+        let item = this.getNodeById(this.dataset, this.current_id);
+
+        this.addElement(this.currentItemSubset);
+      }
     },
     rowAdd(number) {
-      console.log(number);
-      this.addNumber = number;
       this.addDirection = "row";
-      this.getNodeById(this.dataset, this.current_id);
+      if (number == 0) {
+        this.currentItem.direction = this.addDirection;
+        this.updateElementSetElement();
+      } else {
+        this.addNumber = number;
+        let item = this.getNodeById(this.dataset, this.current_id);
+
+        this.addElement(this.currentItemSubset);
+      }
     },
     resetUid(dataset) {
       if (dataset.length > 0) {
@@ -459,44 +465,44 @@ export default {
       // console.log('add element', item)
       let addArray = new Array(this.addNumber);
       addArray.fill(1);
-      item.forEach(subitem => {
-        subitem.direction = this.addDirection;
+      // item.forEach(subitem => {
+      item.direction = this.addDirection;
 
-        if (this.appendPosition == "subChildAppend") {
-          addArray.forEach(() => {
-            subitem.subset.push({
-              tagType: this.tagType,
-              direction: this.addDirection,
-              id: uid2(10),
-              className: "",
-              levelClassName: "",
-              classObj: { grow: true },
-              subset: [],
-              style: {}
-            });
+      if (this.appendPosition == "subChildAppend") {
+        addArray.forEach(() => {
+          item.push({
+            tagType: this.tagType,
+            direction: this.addDirection,
+            id: uid2(10),
+            className: "",
+            levelClassName: "",
+            classObj: { grow: true },
+            subset: [],
+            style: {}
           });
-        }
-        if (this.appendPosition == "subChildInsert") {
-          let subset = JSON.parse(JSON.stringify(subitem.subset));
+        });
+      }
+      if (this.appendPosition == "subChildInsert") {
+        let subset = JSON.parse(JSON.stringify(item.subset));
 
-          subitem.subset = [];
+        item.subset = [];
 
-          addArray.forEach(() => {
-            let nSubset = JSON.parse(JSON.stringify(subset));
-            this.resetUid(nSubset);
-            subitem.subset.push({
-              tagType: this.tagType,
-              direction: this.addDirection,
-              id: uid2(10),
-              className: "",
-              levelClassName: "",
-              classObj: { grow: true },
-              subset: nSubset,
-              style: {}
-            });
+        addArray.forEach(() => {
+          let nSubset = JSON.parse(JSON.stringify(subset));
+          this.resetUid(nSubset);
+          item.subset.push({
+            tagType: this.tagType,
+            direction: this.addDirection,
+            id: uid2(10),
+            className: "",
+            levelClassName: "",
+            classObj: { grow: true },
+            subset: nSubset,
+            style: {}
           });
-        }
-      });
+        });
+      }
+      // });
       this.setDatasetClassName(this.dataset, 1);
       // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
@@ -584,14 +590,14 @@ export default {
       },
       immediate: true
     },
-    dset: {
-      handler: function() {
-        this.dataset = this.dset;
-        let arr = this.getNode(this.dataset, this.current_id);
-        this.currentItem = arr;
-      },
-      immediate: true
-    },
+    // dset: {
+    //   handler: function() {
+    //     this.dataset = this.dset;
+    //     let arr = this.getNode(this.dataset, this.current_id);
+    //     this.currentItem = arr;
+    //   },
+    //   immediate: true
+    // },
     containerName(newValue) {
       // console.log(v,e)
       this.dataset[0].className = newValue;
@@ -600,7 +606,7 @@ export default {
   },
   created() {
     //   let body = document.getElementsByTagName('body')
-    this.dataset[0].className = this.containerName;
+    // this.dataset[0].className = this.containerName;
     window.addEventListener("keydown", event => {
       //   console.log(event)
       if (event.keyCode == 17) {
@@ -614,11 +620,17 @@ export default {
       }
     });
     window.deb = this;
+    this.currentItemSubset = this.dataset;
   }
 };
 </script>
 
 <style>
+.realviewIframe {
+  width: 414px;
+  height: 700px;
+  border: 4px solid #333;
+}
 .html-box,
 .css-box {
   /* display: block; */

@@ -9,22 +9,26 @@ Vue.use(Vuex);
 // }
 let store = new Vuex.Store({
   state: {
+    preSave: [],
     element: [
-      {
-        id: "1",
-        value: "1",
-        tagType: "div",
-        direction: "row",
-        className: "",
-        levelClassName: "",
-        classObj: {},
-        subset: []
-      }
+      // {
+      //   id: "1",
+      //   value: "1",
+      //   tagType: "div",
+      //   direction: "row",
+      //   className: "",
+      //   levelClassName: "",
+      //   classObj: {},
+      //   subset: []
+      // }
     ],
     elementHistory: [],
     token: ""
   },
   actions: {
+    pushPreSave({ commit, state, dispatch }, obj) {
+      commit("SET_PREVIEW_SAVE", JSON.parse(JSON.stringify(obj)));
+    },
     timeTravel({ commit, state, dispatch }, index) {
       commit("SET_ELEMENT", state.elementHistory[index]);
     },
@@ -36,6 +40,10 @@ let store = new Vuex.Store({
     }
   },
   mutations: {
+    SET_PREVIEW_SAVE(state, data) {
+      let d = JSON.parse(JSON.stringify(data));
+      state.preSave.push(d);
+    },
     SET_ELEMENT_HISTORY(state, data) {
       let d = JSON.parse(JSON.stringify(data));
       state.elementHistory.push(d);
