@@ -14,18 +14,17 @@ Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.prototype.api = api;
 
-
-
-import Vant from 'vant';
-import 'vant/lib/index.css';
+import Vant from "vant";
+import "vant/lib/index.css";
 
 Vue.use(Vant);
 
-
 /* eslint-disable no-new */
-new Vue({
+let ins = new Vue({
   router,
   store,
   render: h => h(App),
   el: "#app"
 });
+window.INS = ins;
+console.log("INS", window.INS);

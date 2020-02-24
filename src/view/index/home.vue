@@ -1,11 +1,7 @@
 
 <template>
   <el-container style="height:100%;">
-    <el-aside width="200px">
-      <!-- <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
-    <el-radio-button :label="false">展开</el-radio-button>
-    <el-radio-button :label="true">收起</el-radio-button>
-      </el-radio-group>-->
+    <!-- <el-aside >
       <el-menu
         :router="true"
         :default-active="activePath"
@@ -31,7 +27,7 @@
           <span slot="title">穷举</span>
         </el-menu-item>
       </el-menu>
-    </el-aside>
+    </el-aside>-->
     <el-main style="margin:0;">
       <router-view></router-view>
     </el-main>
@@ -46,42 +42,42 @@
 // }
 
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
       isCollapse: false,
-      activePath: ''
-    }
+      activePath: ""
+    };
   },
   methods: {
     handleOpen(key, keyPath) {
-      console.log(key, keyPath)
+      console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
-      console.log(key, keyPath)
+      console.log(key, keyPath);
     },
     updateActivePath(routerObj) {
-      this.activePath = routerObj.name
+      this.activePath = routerObj.name;
       //   console.log(routerObj.name);
     }
   },
   watch: {
     $route(to, from) {
       //   console.log(to,from)
-      this.updateActivePath(to)
+      this.updateActivePath(to);
     }
   },
   mounted() {
     // alert(1);
 
-    this.updateActivePath(this.$route)
+    this.updateActivePath(this.$route);
   }
   //   ,
   // beforeRouteEnter(to, from, next){
   //     console.log(to,from)
   //     next()
   // }
-}
+};
 </script>
 <style>
 li.el-menu-item {

@@ -39,7 +39,7 @@
           ></preview>-->
           <div class="flex column" v-for="item,index in preSetImg.subset">
             <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
-            <engine instanceType="preView" :key="index" :dataset="item" :controlView="true"></engine>
+            <engine :controlView="true" instanceType="preView" :key="index" :dataset="item"></engine>
           </div>
         </div>
       </el-tab-pane>
@@ -47,7 +47,7 @@
       <el-tab-pane label="预设框架">
         <div class="flex column" v-for="item,index in preSave">
           <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
-          <engine instanceType="preView" :key="index" :dataset="item"></engine>
+          <engine :controlView="controlView" instanceType="preView" :key="index" :dataset="item"></engine>
         </div>
       </el-tab-pane>
       <el-tab-pane label="NavMenu 导航菜单">
@@ -67,7 +67,7 @@ import engine from "../engine";
 import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   name: "collection",
-  //   props:[''],
+  props: ["controlView"],
   components: { engine, preview, navMenu },
   data() {
     return {

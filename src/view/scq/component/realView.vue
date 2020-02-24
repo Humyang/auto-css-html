@@ -1,5 +1,5 @@
 <template>
-  <div class="realView mobile">
+  <div>
     <engine
       instanceType="realView"
       v-for="item,index in dataset"

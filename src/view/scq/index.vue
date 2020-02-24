@@ -3,17 +3,16 @@
     <!-- <van-nav-bar title="标题" left-text="返回" left-arrow class="grow" ref="vanNavBar">
   <van-icon name="search" slot="right" />
     </van-nav-bar>-->
-    <div>
+    <!-- <div>
       <div class="current flex row" style="width:100%;">
         <div>按下多选：{{ isMulitle }}</div>
-        <!-- <div>当前选中：{{current_id}}</div> -->
 
         <div class="flex row">
           父级名称
           <el-input v-model="containerName" placeholder="请输入内容"></el-input>
         </div>
       </div>
-    </div>
+    </div>-->
     <div class="flex row">
       <div style="height:100%;overflow:auto;margin-right:10px;flex-grow: 1;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
@@ -34,7 +33,11 @@
 
             <div class="flex row">
               <!-- <realView :dataset="dataset" :controlView="controlView"></realView> -->
-              <iframe src="/realview" frameborder="0" class="realviewIframe"></iframe>
+              <iframe
+                ref="iframeRef"
+                :src="'/realview?count='+realViewCount"
+                class="realviewIframe"
+              ></iframe>
               <preview
                 @actionSaveSelected="actionSaveSelected"
                 v-on:currentSelect="actionPreviewClick"
@@ -45,7 +48,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
-            <code class="css-code">{{ htmlCode }}</code>
+            <!-- <code class="css-code">{{ htmlCode }}</code> -->
           </el-tab-pane>
           <el-tab-pane label="CSS">
             <div class="css-box">
@@ -54,10 +57,10 @@
 
               <el-tabs type="border-card">
                 <el-tab-pane label="RAW">
-                  <code class="css-code" v-html="csscodeList"></code>
+                  <!-- <code class="css-code" v-html="csscodeList"></code> -->
                 </el-tab-pane>
                 <el-tab-pane label="SCSS、LESS">
-                  <code class="css-code" v-html="csscodeTree"></code>
+                  <!-- <code class="css-code" v-html="csscodeTree"></code> -->
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -68,6 +71,7 @@
         <el-tabs type="border-card">
           <el-tab-pane label="预设">
             <collection
+              :controlView="controlView"
               @actionColumnAdd="columnAdd"
               @actionRowAdd="rowAdd"
               @rawToPreView="rawToPreView"
@@ -142,6 +146,7 @@ export default {
   components: { cssDeclaration, preview, preClass, collection, realView },
   data() {
     return {
+      realViewCount: 0,
       controlView: true,
       deviceType: "mobile",
       htmlCode: "",
@@ -150,7 +155,7 @@ export default {
       current_id: [],
       appendPosition: "subChildAppend",
       // cssType: 'normal', //normal tree
-      dataset: [],
+      // dataset: [],
       containerName: "container",
       addDirection: "row",
       addNumber: 1,
@@ -164,24 +169,29 @@ export default {
 
   computed: {
     ...mapState({
-      elementHistory: state => state.elementHistory
-    }),
-    csscodeList: function() {
-      let result = [];
-      this.jsonToCssStyle1(this.dataset, "", 1, result);
-      let newResult = result.map(item => {
-        return "<p>" + item + "</p>";
-      });
-      return newResult.join("\n");
-    },
-    csscodeTree: function() {
-      let res = this.jsonToCssStyle2(this.dataset, "", true);
+      elementHistory: state => state.elementHistory,
+      dataset: state => {
+        return JSON.parse(JSON.stringify(state.dataset));
+      }
+    })
 
-      return res;
-    }
+    // csscodeList: function() {
+    //   let result = [];
+    //   this.jsonToCssStyle1(this.dataset, "", 1, result);
+    //   let newResult = result.map(item => {
+    //     return "<p>" + item + "</p>";
+    //   });
+    //   return newResult.join("\n");
+    // },
+    // csscodeTree: function() {
+    //   let res = this.jsonToCssStyle2(this.dataset, "", true);
+
+    //   return res;
+    // }
   },
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
+    ...mapMutations(["SET_DATASET"]),
     actionSaveSelected(selected) {
       let item = this.getNodeById(this.dataset, this.current_id);
       this.pushPreSave(item[0]);
@@ -192,10 +202,8 @@ export default {
     },
     rawToPreView(data) {
       let item = this.getNodeById(this.dataset, this.current_id);
-      // item.push(parent);
       this.currentItemSubset.push(data);
 
-      // // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
     },
     actionRemoveSelected() {
@@ -223,16 +231,6 @@ export default {
       return subset;
     },
     actionInsert(data) {
-      // subitem.subset.push({
-      //         tagType: this.tagType,
-      //         direction: this.addDirection,
-      //         id: uid2(10),
-      //         className: '',
-      //         levelClassName: '',
-      //         classObj: { grow: true },
-      //         subset: nSubset,
-      //         style: {}
-      //       })
       let props = {};
       data.props.forEach(item => {
         props[item.name] = item.value;
@@ -258,10 +256,7 @@ export default {
         style: {}
       };
       let item = this.getNodeById(this.dataset, this.current_id);
-      // item.push(parent);
       this.currentItemSubset.push(parent);
-
-      // // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
     },
     collectionInsert(data) {
@@ -269,7 +264,6 @@ export default {
       let item = this.getNode(this.dataset, this.current_id);
       item.subset.push(data);
 
-      // // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
     },
     updateElementSetElement() {
@@ -287,11 +281,9 @@ export default {
     },
     onCssDeclarationSave(obj) {
       let item = this.getNode(this.dataset, this.current_id);
-      // console.log('onCssDeclarationSave item', item)
       item.style[obj.rules] = obj.value;
       this.currentItem = item;
 
-      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
     },
     actionTimeTravel(index) {
@@ -300,6 +292,7 @@ export default {
     },
     refreshRealView() {
       this.controlView = false;
+      this.realViewCount++;
       setTimeout(() => {
         this.controlView = true;
       }, 50);
@@ -309,9 +302,7 @@ export default {
       obj[index] = !item;
       this.currentItem.classObj = obj;
       this.currentItem.className = classname(this.currentItem.className, obj);
-      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
-      // this.updateElementSetElement()
     },
     setElementAttr(type) {
       let item = this.getNode(this.dataset, this.current_id);
@@ -322,22 +313,14 @@ export default {
       item.className = classname(item.className, type);
       this.currentItem = item;
 
-      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
     },
-    // cssNormal() {
-    //   this.cssType = 'normal'
-    // },
-    // cssTree() {
-    //   this.cssType = 'tree'
-    // },
     currentTagChange(event) {
       console.log(event);
       this.getNodeByIdChaneType(this.dataset, this.current_id, event);
     },
     getNodeByIdChaneType(subset, id, tagType) {
       let item = subset.filter(item => {
-        // return item.id == id
         let findresult = id.find(subitem => {
           return subitem == item.id;
         });
@@ -361,35 +344,6 @@ export default {
       this.currentItemSubset = arr.subset;
       this.currentItem = arr;
     },
-    // getCurrent(event) {
-    //   this.tagType = event.tagType;
-    //   if (this.isMulitle) {
-    //     // alert(444)
-    //     let finditem = this.current_id.find(item => {
-    //       return item == event.id;
-    //     });
-    //     if (finditem === undefined) {
-    //       this.current_id.push(event.id);
-    //     } else {
-    //       this.current_id.splice(
-    //         this.current_id.findIndex(item => {
-    //           return item === finditem;
-    //         }),
-    //         1
-    //       );
-    //     }
-
-    //     let newarray = JSON.parse(JSON.stringify(this.current_id));
-    //     this.current_id = newarray;
-    //   } else {
-    //     // console.log('getCurrent')
-    //     // debugger
-    //     // alert(123)
-    //     this.current_id = JSON.parse(JSON.stringify([event.id]));
-    //     let arr = this.getNode(this.dataset, this.current_id);
-    //     this.currentItem = arr;
-    //   }
-    // },
     getNode(subset, id) {
       let res = "";
       for (let index = 0; index < subset.length; index++) {
@@ -504,7 +458,6 @@ export default {
       }
       // });
       this.setDatasetClassName(this.dataset, 1);
-      // this.setElement(JSON.parse(JSON.stringify(this.dataset)))
       this.updateElementSetElement();
     },
     // jsonToHtmlStyle1(array, tagType) {
@@ -589,7 +542,7 @@ export default {
         this.currentHistroyIndex = this.elementHistory.length - 1;
       },
       immediate: true
-    },
+    }
     // dset: {
     //   handler: function() {
     //     this.dataset = this.dset;
@@ -598,11 +551,14 @@ export default {
     //   },
     //   immediate: true
     // },
-    containerName(newValue) {
-      // console.log(v,e)
-      this.dataset[0].className = newValue;
-      this.setElement(this.dataset);
-    }
+    // containerName(newValue) {
+    // console.log(v,e)
+    // this.dataset[0].className = newValue;
+    // this.setElement(this.dataset);
+    // }
+  },
+  mounted() {
+    console.log("aaaa", this.$refs.iframeRef);
   },
   created() {
     //   let body = document.getElementsByTagName('body')

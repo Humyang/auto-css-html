@@ -10,6 +10,7 @@ Vue.use(Vuex);
 let store = new Vuex.Store({
   state: {
     preSave: [],
+    dataset: [],
     element: [
       // {
       //   id: "1",
@@ -35,11 +36,15 @@ let store = new Vuex.Store({
     setElement({ commit, state, dispatch }, obj) {
       // state.elementHistory.push(JSON.parse(JSON.stringify(data)));
 
-      commit("SET_ELEMENT", obj);
+      commit("SET_DATASET", obj);
       commit("SET_ELEMENT_HISTORY", obj);
     }
   },
   mutations: {
+    SET_DATASET(state, data) {
+      let d = JSON.parse(JSON.stringify(data));
+      state.dataset = d;
+    },
     SET_PREVIEW_SAVE(state, data) {
       let d = JSON.parse(JSON.stringify(data));
       state.preSave.push(d);
