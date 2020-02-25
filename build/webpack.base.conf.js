@@ -3,7 +3,7 @@ const path = require("path");
 const utils = require("./utils");
 const config = require("../config");
 const vueLoaderConfig = require("./vue-loader.conf");
-
+const context = path.resolve(__dirname, "dist"); // path to source map
 function resolve(dir) {
   return path.join(__dirname, "..", dir);
 }
@@ -14,6 +14,10 @@ module.exports = {
     app: "./src/main.js"
   },
   output: {
+    // devtoolModuleFilenameTemplate(info) {
+    //   let rel = info.resourcePath.substr(info.resourcePath.indexOf(__dirname));
+    //   return path.relative(context, rel);
+    // },
     path: config.build.assetsRoot,
     filename: "[name].js",
     publicPath:

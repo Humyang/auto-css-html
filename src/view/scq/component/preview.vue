@@ -1,6 +1,7 @@
 <template>
   <div class="flex">
     <div class="preview mobile" @click="rootClick">
+      <!-- {{dataset}} -->
       <engine
         instanceType="preView"
         v-for="item,index in dataset"

@@ -1,6 +1,34 @@
 <template>
   <div>
-    <div style="margin-top: 20px">
+    <el-button type="primary" @click="addProperty">添加属性</el-button>
+    <div v-for="property,index in propertyList" :key="index">
+      <div class="flex align-baseline">
+        <div>
+          <!-- <el-select filterable v-model="property.property" slot="prepend" placeholder="请选择">
+            <el-option-group v-for="group,index in config" :key="group.id" :label="group.label">
+              <el-option
+                v-for="item in group.children"
+                :key="item.id"
+                :label="item.label"
+                :value="item.label"
+              ></el-option>
+            </el-option-group>
+          </el-select>-->
+          <el-autocomplete
+            class="inline-input"
+            v-model="property.property"
+            :fetch-suggestions="querySearch"
+            placeholder="请输入内容"
+          ></el-autocomplete>
+        </div>
+        <div class="flex align-baseline">
+          <el-input placeholder="请输入内容" v-model="property.value" class="input-with-select"></el-input>
+          <!-- <el-button>保存</el-button> -->
+          <el-button type="danger" @click="actionRemove(index)">删除</el-button>
+        </div>
+      </div>
+    </div>
+    <!-- <div style="margin-top: 20px">
       <el-checkbox-group v-model="filterGroupPick" size="small">
         <el-checkbox v-for="(item,index) in filterGroup" :label="item" :key="index">{{item}}</el-checkbox>
       </el-checkbox-group>
@@ -34,7 +62,7 @@
         <el-input v-model="saveInputValue"></el-input>
         <el-button size="mini" @click="save">保存</el-button>
       </el-col>
-    </el-row>
+    </el-row>-->
   </div>
 </template>
 
@@ -42,7 +70,6 @@
 import config from "./config";
 export default {
   name: "CSSStyleDeclaration",
-  //   props:[''],
   components: {},
   data() {
     let labelArr = [];
@@ -54,6 +81,13 @@ export default {
       }
     }
     return {
+      config,
+      propertyList: [
+        // {
+        //   property: "",
+        //   value: ""
+        // }
+      ],
       saveInputValue: "",
       rules: "",
       desc: "",
@@ -77,6 +111,46 @@ export default {
     };
   },
   methods: {
+    setList(data) {
+      this.propertyList = data;
+    },
+    // createFilter(queryString) {
+    //   return config => {
+
+    //     // return config.value.toLowerCase().indexOf(config.toLowerCase()) === 0;
+    //   };
+    // },
+    querySearch(queryString, cb) {
+      var config = this.config;
+      let arr = [];
+      for (let index = 0; index < config.length; index++) {
+        const element = config[index];
+        for (let subIndex = 0; subIndex < element.children.length; subIndex++) {
+          const subElement = element.children[subIndex];
+          if (subElement.label.indexOf(queryString) != -1) {
+            arr.push({ value: subElement.label });
+          }
+        }
+      }
+      arr = arr.sort((a, b) => {
+        return a.value.length - b.value.length;
+      });
+      console.log("arr");
+      // var results = queryString
+      //   ? config.filter(this.createFilter(queryString))
+      //   : config;
+      // 调用 callback 返回建议列表的数据
+      cb(arr);
+    },
+    actionRemove(i) {
+      this.propertyList = [
+        ...this.propertyList.slice(0, i),
+        ...this.propertyList.slice(i + 1)
+      ];
+    },
+    addProperty() {
+      this.propertyList.push({ property: "", value: "" });
+    },
     save() {
       this.$emit("save", { rules: this.rules, value: this.saveInputValue });
     },
@@ -123,14 +197,29 @@ export default {
   },
   computed: {},
   watch: {
-    filterText(val) {
-      if (val == "") {
-        this.allowList = [];
-        this.allDisable = false;
-      }
-      this.find(val);
-      this.$refs.tree.filter(val);
-    }
+    // property: {
+    //   handler: function() {
+    //     // this.$emit("change", this.propertyList);
+    //     if (this.propertyList.length == 0) {
+    //       this.propertyList = this.property;
+    //     }
+    //   },
+    //   deep: true
+    // },
+    // propertyList: {
+    //   handler: function() {
+    //     this.$emit("change", this.propertyList);
+    //   },
+    //   deep: true
+    // }
+    // filterText(val) {
+    //   if (val == "") {
+    //     this.allowList = [];
+    //     this.allDisable = false;
+    //   }
+    //   this.find(val);
+    //   this.$refs.tree.filter(val);
+    // }
     // example: {
     //   handler() {},
     //   deep: true,

@@ -87,7 +87,7 @@ export default {
             className: "",
             classObj: { grow: true },
             subset: [],
-            style: {},
+            style: [],
             raw: {
               src: lara,
               width: "150px",
@@ -109,7 +109,7 @@ export default {
             }
           }
         ],
-        style: {}
+        style: []
       },
       currentItem: {},
       rowList: [1, 2, 3, 4, 5],

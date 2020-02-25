@@ -1,13 +1,18 @@
 <script>
 import classname from "classname";
-function formatStyle(obj) {
+function formatStyle(arr) {
   let res = "";
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const element = obj[key];
-      res += `${key}:${element};`;
-    }
+  for (let index = 0; index < arr.length; index++) {
+    const element = arr[index];
+    res += `${element.property}:${element.value};`;
   }
+  // for (const key in obj) {
+  //   if (obj.hasOwnProperty(key)) {
+  //     const element = obj[key];
+  //     res += `${key}:${element};`;
+  //   }
+  // }
+  return res;
 }
 function getSelectedStatus(dataset, currentSelect) {
   let result =
@@ -122,8 +127,6 @@ export default {
           props: dataset.props,
           attrs: {
             class: classname({
-              row: dataset.direction == "row",
-              column: dataset.direction == "column",
               selected:
                 getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
               [dataset.className]: true,
@@ -139,57 +142,58 @@ export default {
         },
         sub
       );
+      // console.log("eee", eee, formatStyle(dataset.style));
       return eee;
     },
-    renderEngine(createElement) {
-      let sub = [];
-      let dataset = this.dataset;
-      if (!this.isHide) {
-        sub.push(
-          createElement(
-            "span",
-            { attrs: { class: "status-bar" } },
-            dataset.tagType
-          )
-        );
-      }
-      if (this.controlView) {
-        for (let index = 0; index < dataset.subset.length; index++) {
-          const element = dataset.subset[index];
-          sub.push(this.renderEngine(createElement, element));
-        }
-      }
-      let eee = createElement(
-        dataset.tagType || "div",
-        {
-          on: {
-            click: event => {
-              this.actionClick(dataset);
-              event.stopPropagation();
-            }
-          },
-          props: dataset.props,
-          attrs: {
-            class: classname({
-              row: dataset.direction == "row",
-              column: dataset.direction == "column",
-              selected:
-                getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
-              [dataset.className]: true,
-              [dataset.levelClassName]: true,
+    // renderEngine(createElement) {
+    //   let sub = [];
+    //   let dataset = this.dataset;
+    //   if (!this.isHide) {
+    //     sub.push(
+    //       createElement(
+    //         "span",
+    //         { attrs: { class: "status-bar" } },
+    //         dataset.tagType
+    //       )
+    //     );
+    //   }
+    //   if (this.controlView) {
+    //     for (let index = 0; index < dataset.subset.length; index++) {
+    //       const element = dataset.subset[index];
+    //       sub.push(this.renderEngine(createElement, element));
+    //     }
+    //   }
+    //   let eee = createElement(
+    //     dataset.tagType || "div",
+    //     {
+    //       on: {
+    //         click: event => {
+    //           this.actionClick(dataset);
+    //           event.stopPropagation();
+    //         }
+    //       },
+    //       props: dataset.props,
+    //       attrs: {
+    //         class: classname({
+    //           row: dataset.direction == "row",
+    //           column: dataset.direction == "column",
+    //           selected:
+    //             getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
+    //           [dataset.className]: true,
+    //           [dataset.levelClassName]: true,
 
-              preview: true
-              // flex: true,
-              //   [this.deviceType]: dataset.id == "1"
-            }),
-            style: formatStyle(dataset.style),
-            ...dataset.raw
-          }
-        },
-        sub
-      );
-      return eee;
-    },
+    //           preview: true
+    //           // flex: true,
+    //           //   [this.deviceType]: dataset.id == "1"
+    //         }),
+    //         style: formatStyle(dataset.style),
+    //         ...dataset.raw
+    //       }
+    //     },
+    //     sub
+    //   );
+    //   return eee;
+    // },
     actionClick(dataset) {
       this.$emit("actionClick", dataset);
     }

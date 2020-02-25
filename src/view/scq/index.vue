@@ -89,7 +89,7 @@
             <div style="    text-align: left;">
               <el-tabs type="border-card">
                 <el-tab-pane label="CSS">
-                  <css-declaration @save="onCssDeclarationSave" />
+                  <css-declaration @change="inlineCSS" ref="CssDec" />
                 </el-tab-pane>
                 <el-tab-pane label="HTML">
                   <el-select v-model="tagType" @change="currentTagChange">
@@ -137,7 +137,7 @@ import { mapMutations, mapActions, mapState } from "vuex";
 
 // import cssObj from '@/css/flex.scss'
 // console.log('cssObj', cssObj)
-import cssDeclaration from "./component/CSSStyleDeclaration";
+import cssDeclaration from "./component/CSSStyleDeclaration/CSSStyleDeclaration";
 import preClass from "./component/preClass";
 import collection from "./component/collection";
 import realView from "./component/realView";
@@ -193,6 +193,15 @@ export default {
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
     ...mapMutations(["SET_DATASET"]),
+    inlineCSS(data) {
+      let item = this.getNode(this.dataset, this.current_id);
+      item.style = [];
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        item.style[element.property] = element.value;
+      }
+      this.updateElementSetElement();
+    },
     actionSaveSelected(selected) {
       let item = this.getNodeById(this.dataset, this.current_id);
       this.pushPreSave(item[0]);
@@ -213,8 +222,6 @@ export default {
 
       // this.setElement(JSON.parse(JSON.stringify(dataset)));
       this.updateElementSetElement();
-
-      console.log("removeSelected2", this.dataset);
     },
     removeSelected(subset, id) {
       let res = "";
@@ -346,6 +353,8 @@ export default {
       let arr = this.getNode(this.dataset, this.current_id);
       this.currentItemSubset = arr.subset;
       this.currentItem = arr;
+      console.log("CssDec");
+      this.$refs.CssDec.setList(this.currentItem.style);
     },
     getNode(subset, id) {
       let res = "";
@@ -435,7 +444,7 @@ export default {
             levelClassName: "",
             classObj: { grow: true },
             subset: [],
-            style: {}
+            style: []
           });
         });
       }
@@ -455,7 +464,7 @@ export default {
             levelClassName: "",
             classObj: { grow: true },
             subset: nSubset,
-            style: {}
+            style: []
           });
         });
       }
