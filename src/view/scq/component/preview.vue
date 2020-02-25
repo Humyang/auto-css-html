@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
+  <div class="flex">
     <div class="preview mobile" @click="rootClick">
       <engine
         instanceType="preView"
@@ -11,6 +10,9 @@
         :dataset="item"
         :controlView="controlView"
       ></engine>
+    </div>
+    <div style="padding-left: 20px;">
+      <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
     </div>
   </div>
 </template>

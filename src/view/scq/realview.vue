@@ -18,7 +18,9 @@ export default {
   },
   mounted() {
     // console.log("mounted", parent);
-    this.dataset = parent.INS.$store.state.dataset;
+    setInterval(() => {
+      this.dataset = parent.INS.$store.state.dataset;
+    }, 500);
   }
   //   watch: {
   //     $route(to, from) {

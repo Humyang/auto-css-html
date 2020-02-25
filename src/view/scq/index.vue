@@ -17,34 +17,34 @@
       <div style="height:100%;overflow:auto;margin-right:10px;flex-grow: 1;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
-            <div>
-              <el-switch
-                v-for="(item, index) in currentItem.classObj"
-                :key="index"
-                :value="item"
-                @change="setExtendAttr(index, item)"
-                :inactive-text="index"
-                inactive-color="#13ce66"
-                active-color="#ff4949"
-                :active-value="false"
-                :inactive-value="true"
-              ></el-switch>
-            </div>
-
             <div class="flex row">
               <!-- <realView :dataset="dataset" :controlView="controlView"></realView> -->
-              <iframe
-                ref="iframeRef"
-                :src="'/realview?count='+realViewCount"
-                class="realviewIframe"
-              ></iframe>
-              <preview
-                @actionSaveSelected="actionSaveSelected"
-                v-on:currentSelect="actionPreviewClick"
-                v-on:rootClick="rootClick"
-                :dataset="dataset"
-                :controlView="controlView"
-              ></preview>
+
+              <div>
+                <iframe ref="iframeRef" :src="'/realview'" class="realviewIframe"></iframe>
+              </div>
+              <div class="grow flex row" style="padding-left: 20px;">
+                <preview
+                  @actionSaveSelected="actionSaveSelected"
+                  v-on:currentSelect="actionPreviewClick"
+                  v-on:rootClick="rootClick"
+                  :dataset="dataset"
+                  :controlView="controlView"
+                ></preview>
+                <div>
+                  <el-switch
+                    v-for="(item, index) in currentItem.classObj"
+                    :key="index"
+                    :value="item"
+                    @change="setExtendAttr(index, item)"
+                    :inactive-text="index"
+                    inactive-color="#13ce66"
+                    active-color="#ff4949"
+                    :active-value="false"
+                    :inactive-value="true"
+                  ></el-switch>
+                </div>
+              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
@@ -163,15 +163,16 @@ export default {
       currentItemSubset: [],
       tagType: "div",
       tageTypeArray: ["div", "view", "image", "text", "span", "van-nav-bar"],
-      isMulitle: false
+      isMulitle: false,
+      dataset: []
     };
   },
 
   computed: {
     ...mapState({
       elementHistory: state => state.elementHistory,
-      dataset: state => {
-        return JSON.parse(JSON.stringify(state.dataset));
+      datasetStore: state => {
+        this.dataset = JSON.parse(JSON.stringify(state.dataset));
       }
     })
 
@@ -209,6 +210,8 @@ export default {
     actionRemoveSelected() {
       // item.subset = [];
       this.dataset = this.removeSelected(this.dataset, this.current_id);
+
+      // this.setElement(JSON.parse(JSON.stringify(dataset)));
       this.updateElementSetElement();
 
       console.log("removeSelected2", this.dataset);
