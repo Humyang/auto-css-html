@@ -14,6 +14,17 @@ function formatStyle(arr) {
   // }
   return res;
 }
+function formatProperty(arr) {
+  let obj = {};
+  for (let index = 0; index < arr.length; index++) {
+    const element = arr[index];
+    if (element.property != "" && element.value != "") {
+      obj[element.property] = element.value;
+    }
+  }
+  console.log("formatProperty", obj);
+  return obj;
+}
 function getSelectedStatus(dataset, currentSelect) {
   let result =
     currentSelect &&
@@ -52,46 +63,27 @@ export default {
   methods: {
     renderForRealView(createElement, dataset) {
       let sub = [];
-      // if (!this.isHide) {
-      //   sub.push(
-      //     createElement(
-      //       "span",
-      //       { attrs: { class: "status-bar" } },
-      //       dataset.tagType
-      //     )
-      //   );
-      // }
       if (this.controlView) {
         for (let index = 0; index < dataset.subset.length; index++) {
           const element = dataset.subset[index];
-          sub.push(this.renderForRealView(createElement, element));
+          if (typeof element == "object") {
+            sub.push(this.renderForRealView(createElement, element));
+          } else {
+            sub.push(element);
+          }
         }
       }
       let eee = createElement(
         dataset.tagType,
         {
-          // on: {
-          //   click: event => {
-          //     this.actionClick(dataset);
-          //     event.stopPropagation();
-          //   }
-          // },
           props: dataset.props,
           attrs: {
             class: classname({
-              // row: dataset.direction == "row",
-              // column: dataset.direction == "column",
-              // selected:
-              // getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
               [dataset.className]: true,
               [dataset.levelClassName]: true
-
-              // preview: true
-              // flex: true,
-              //   [this.deviceType]: dataset.id == "1"
             }),
             style: formatStyle(dataset.style),
-            ...dataset.raw
+            ...formatProperty(dataset.property)
           }
         },
         sub
@@ -112,7 +104,11 @@ export default {
       if (this.controlView) {
         for (let index = 0; index < dataset.subset.length; index++) {
           const element = dataset.subset[index];
-          sub.push(this.renderForPreView(createElement, element));
+          if (typeof element == "object") {
+            sub.push(this.renderForPreView(createElement, element));
+          } else {
+            sub.push(element);
+          }
         }
       }
       let eee = createElement(
@@ -133,67 +129,15 @@ export default {
               [dataset.levelClassName]: true,
 
               preview: true
-              // flex: true,
-              //   [this.deviceType]: dataset.id == "1"
             }),
             style: formatStyle(dataset.style),
-            ...dataset.raw
+            ...formatProperty(dataset.property)
           }
         },
         sub
       );
-      // console.log("eee", eee, formatStyle(dataset.style));
       return eee;
     },
-    // renderEngine(createElement) {
-    //   let sub = [];
-    //   let dataset = this.dataset;
-    //   if (!this.isHide) {
-    //     sub.push(
-    //       createElement(
-    //         "span",
-    //         { attrs: { class: "status-bar" } },
-    //         dataset.tagType
-    //       )
-    //     );
-    //   }
-    //   if (this.controlView) {
-    //     for (let index = 0; index < dataset.subset.length; index++) {
-    //       const element = dataset.subset[index];
-    //       sub.push(this.renderEngine(createElement, element));
-    //     }
-    //   }
-    //   let eee = createElement(
-    //     dataset.tagType || "div",
-    //     {
-    //       on: {
-    //         click: event => {
-    //           this.actionClick(dataset);
-    //           event.stopPropagation();
-    //         }
-    //       },
-    //       props: dataset.props,
-    //       attrs: {
-    //         class: classname({
-    //           row: dataset.direction == "row",
-    //           column: dataset.direction == "column",
-    //           selected:
-    //             getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
-    //           [dataset.className]: true,
-    //           [dataset.levelClassName]: true,
-
-    //           preview: true
-    //           // flex: true,
-    //           //   [this.deviceType]: dataset.id == "1"
-    //         }),
-    //         style: formatStyle(dataset.style),
-    //         ...dataset.raw
-    //       }
-    //     },
-    //     sub
-    //   );
-    //   return eee;
-    // },
     actionClick(dataset) {
       this.$emit("actionClick", dataset);
     }

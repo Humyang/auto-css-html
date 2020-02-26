@@ -88,11 +88,10 @@ export default {
             classObj: { grow: true },
             subset: [],
             style: [],
-            raw: {
-              src: lara,
-              width: "150px",
-              height: "150px"
-            }
+            property: [
+              { property: "src", value: lara },
+              { property: "width", value: "300px" }
+            ]
           },
           {
             tagType: "img",
@@ -101,12 +100,12 @@ export default {
             className: "",
             classObj: { grow: true },
             subset: [],
-            style: {},
-            raw: {
-              src: lara,
-              width: "300px",
-              height: "150px"
-            }
+            style: [],
+            property: [
+              { property: "src", value: lara },
+              { property: "width", value: "150px" },
+              { property: "height", value: "150px" }
+            ]
           }
         ],
         style: []
@@ -123,10 +122,12 @@ export default {
   },
   methods: {
     resetUid(data) {
-      data.id = uid2(10);
-      for (let index = 0; index < data.subset.length; index++) {
-        const element = data.subset[index];
-        this.resetUid(element);
+      if (typeof data == "object") {
+        data.id = uid2(10);
+        for (let index = 0; index < data.subset.length; index++) {
+          const element = data.subset[index];
+          this.resetUid(element);
+        }
       }
       return data;
     },
@@ -141,25 +142,25 @@ export default {
     actionInsert(data) {
       this.$emit("actionInsert", data);
     },
-    getNode(subset, id) {
-      let res = "";
-      for (let index = 0; index < subset.length; index++) {
-        const element = subset[index];
-        let findresult = id.find(subitem => {
-          return subitem == element.id;
-        });
-        if (findresult) {
-          res = element;
-          break;
-        } else {
-          res = this.getNode(element.subset, id);
-          if (res != "") {
-            break;
-          }
-        }
-      }
-      return res;
-    },
+    // getNode(subset, id) {
+    //   let res = "";
+    //   for (let index = 0; index < subset.length; index++) {
+    //     const element = subset[index];
+    //     let findresult = id.find(subitem => {
+    //       return subitem == element.id;
+    //     });
+    //     if (findresult) {
+    //       res = element;
+    //       break;
+    //     } else {
+    //       res = this.getNode(element.subset, id);
+    //       if (res != "") {
+    //         break;
+    //       }
+    //     }
+    //   }
+    //   return res;
+    // },
     // getCurrent(event) {
     // this.current_id = JSON.parse(JSON.stringify([event.id]));
     // let arr = this.getNode(this.preSetImg, this.current_id);

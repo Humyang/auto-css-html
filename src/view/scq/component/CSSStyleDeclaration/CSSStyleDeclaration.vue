@@ -28,41 +28,6 @@
         </div>
       </div>
     </div>
-    <!-- <div style="margin-top: 20px">
-      <el-checkbox-group v-model="filterGroupPick" size="small">
-        <el-checkbox v-for="(item,index) in filterGroup" :label="item" :key="index">{{item}}</el-checkbox>
-      </el-checkbox-group>
-    </div>
-    <el-row class="keyboard">
-      <div v-for="(item,index) in Alphabetical" :key="index" :class="'keyboard-row'+index">
-        <el-button
-          :disabled="isDisable(im)"
-          v-for="(im,ix) in item"
-          @click.native="alphabetClick(im)"
-          :key="ix"
-        >{{im}}</el-button>
-      </div>
-    </el-row>
-    <el-row>
-      <el-col :span="12">
-        <el-input placeholder="输入关键字进行过滤" v-model="filterText" clearable></el-input>
-
-        <el-tree
-          class="filter-tree"
-          :data="data"
-          :props="defaultProps"
-          highlight-current
-          :filter-node-method="filterNode"
-          @node-click="nodeClick"
-          ref="tree"
-        ></el-tree>
-      </el-col>
-      <el-col :span="12">
-        <p>{{desc}}</p>
-        <el-input v-model="saveInputValue"></el-input>
-        <el-button size="mini" @click="save">保存</el-button>
-      </el-col>
-    </el-row>-->
   </div>
 </template>
 
@@ -227,14 +192,7 @@ export default {
     // }
   },
   created() {},
-  mounted() {
-    // for (var i in document.body.style) {
-    //   this.obj[i] = "";
-    //   // this.list.push(i);
-    //   // console.log(i);
-    // }
-    // this.obj = JSON.parse(JSON.stringify(this.obj));
-  }
+  mounted() {}
 };
 </script>
 <style>

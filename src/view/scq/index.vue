@@ -89,17 +89,18 @@
             <div style="    text-align: left;">
               <el-tabs type="border-card">
                 <el-tab-pane label="CSS">
-                  <css-declaration @change="inlineCSS" ref="CssDec" />
+                  <css-declaration ref="CssDec" />
                 </el-tab-pane>
                 <el-tab-pane label="HTML">
-                  <el-select v-model="tagType" @change="currentTagChange">
+                  <htmlProperty ref="HtmlDec" />
+                  <!-- <el-select v-model="tagType" @change="currentTagChange">
                     <el-option
                       v-for="(item, index) in tageTypeArray"
                       :key="index"
                       :label="item"
                       :value="item"
                     ></el-option>
-                  </el-select>
+                  </el-select>-->
                 </el-tab-pane>
                 <el-tab-pane label="属性组合"></el-tab-pane>
               </el-tabs>
@@ -138,12 +139,20 @@ import { mapMutations, mapActions, mapState } from "vuex";
 // import cssObj from '@/css/flex.scss'
 // console.log('cssObj', cssObj)
 import cssDeclaration from "./component/CSSStyleDeclaration/CSSStyleDeclaration";
+import htmlProperty from "./component/HTMLProperty/index";
 import preClass from "./component/preClass";
 import collection from "./component/collection";
 import realView from "./component/realView";
 export default {
   name: "SCQ",
-  components: { cssDeclaration, preview, preClass, collection, realView },
+  components: {
+    cssDeclaration,
+    preview,
+    preClass,
+    collection,
+    realView,
+    htmlProperty
+  },
   data() {
     return {
       realViewCount: 0,
@@ -162,7 +171,7 @@ export default {
       currentItem: {},
       currentItemSubset: [],
       tagType: "div",
-      tageTypeArray: ["div", "view", "image", "text", "span", "van-nav-bar"],
+
       isMulitle: false,
       dataset: []
     };
@@ -193,15 +202,6 @@ export default {
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
     ...mapMutations(["SET_DATASET"]),
-    inlineCSS(data) {
-      let item = this.getNode(this.dataset, this.current_id);
-      item.style = [];
-      for (let index = 0; index < data.length; index++) {
-        const element = data[index];
-        item.style[element.property] = element.value;
-      }
-      this.updateElementSetElement();
-    },
     actionSaveSelected(selected) {
       let item = this.getNodeById(this.dataset, this.current_id);
       this.pushPreSave(item[0]);
@@ -253,7 +253,8 @@ export default {
         levelClassName: "",
         classObj: { grow: true },
         subset: [],
-        style: {}
+        style: [],
+        property: []
       };
       // console.log('actionInsert',data)
       let parent = {
@@ -263,7 +264,8 @@ export default {
         className: "",
         // classObj: { grow: true },
         subset: [obj],
-        style: {}
+        style: [],
+        property: []
       };
       let item = this.getNodeById(this.dataset, this.current_id);
       this.currentItemSubset.push(parent);
@@ -288,13 +290,6 @@ export default {
       if (r.label == "HTML") {
         this.htmlCode = this.$refs.preview.outerHTML;
       }
-    },
-    onCssDeclarationSave(obj) {
-      let item = this.getNode(this.dataset, this.current_id);
-      item.style[obj.rules] = obj.value;
-      this.currentItem = item;
-
-      this.updateElementSetElement();
     },
     actionTimeTravel(index) {
       this.timeTravel(index);
@@ -355,21 +350,24 @@ export default {
       this.currentItem = arr;
       console.log("CssDec");
       this.$refs.CssDec.setList(this.currentItem.style);
+      this.$refs.HtmlDec.setList(this.currentItem);
     },
     getNode(subset, id) {
       let res = "";
       for (let index = 0; index < subset.length; index++) {
         const element = subset[index];
-        let findresult = id.find(subitem => {
-          return subitem == element.id;
-        });
-        if (findresult) {
-          res = element;
-          break;
-        } else {
-          res = this.getNode(element.subset, id);
-          if (res != "") {
+        if (typeof element == "object") {
+          let findresult = id.find(subitem => {
+            return subitem == element.id;
+          });
+          if (findresult) {
+            res = element;
             break;
+          } else {
+            res = this.getNode(element.subset, id);
+            if (res != "") {
+              break;
+            }
           }
         }
       }
@@ -386,14 +384,31 @@ export default {
       if (item.length > 0) {
         return item;
       } else {
-        subset.forEach(item => {
-          let res = this.getNodeById(item.subset, id);
-          if (res) {
-            return res;
+        let res = false;
+        for (let index = 0; index < subset.length; index++) {
+          const element = subset[index];
+          if (typeof element == "object") {
+            res = this.getNodeById(element.subset, id);
+            if (res) {
+              // continue;
+              break;
+            }
           }
-        });
+        }
+        // subset.forEach(item => {
+        //   if (typeof item == "object") {
+        //     res = this.getNodeById(item.subset, id);
+        //     if (res) {
+        //       continue;
+        //     }
+        //   }
+        // });
+        if (res) {
+          return res;
+        } else {
+          return false;
+        }
       }
-      return false;
     },
     columnAdd(number) {
       this.addDirection = "column";
@@ -422,8 +437,10 @@ export default {
     resetUid(dataset) {
       if (dataset.length > 0) {
         dataset.forEach(item => {
-          item.id = uid2(10);
-          this.resetUid(item.subset);
+          if (typeof item == "object") {
+            item.id = uid2(10);
+            this.resetUid(item.subset);
+          }
         });
       }
     },
@@ -444,7 +461,9 @@ export default {
             levelClassName: "",
             classObj: { grow: true },
             subset: [],
-            style: []
+            style: [],
+            property: [],
+            props: []
           });
         });
       }
@@ -464,7 +483,9 @@ export default {
             levelClassName: "",
             classObj: { grow: true },
             subset: nSubset,
-            style: []
+            style: [],
+            property: [],
+            props: []
           });
         });
       }
@@ -554,6 +575,12 @@ export default {
         this.currentHistroyIndex = this.elementHistory.length - 1;
       },
       immediate: true
+    },
+    dataset: {
+      handler: function() {
+        this.SET_DATASET(this.dataset);
+      },
+      deep: true
     }
     // dset: {
     //   handler: function() {
@@ -571,6 +598,9 @@ export default {
   },
   mounted() {
     console.log("aaaa", this.$refs.iframeRef);
+    // setInterval(() => {
+    //   this.updateElementSetElement();
+    // }, 500);
   },
   created() {
     //   let body = document.getElementsByTagName('body')
