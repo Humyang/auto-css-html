@@ -10,11 +10,16 @@
         :name="item.tagName"
       >
         <div class="flex">
-          <div>
-            <el-button type="primary" @click="saveToCache(item)">存入</el-button>
+          <div style="min-width:300px">
+            <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
             <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" />
           </div>
-          <div></div>
+          <div class="grow">
+            <div class="flex column" v-for="item,index in preSet[item.tagName]">
+              <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
+              <engine :controlView="true" instanceType="preView" :key="index" :dataset="item"></engine>
+            </div>
+          </div>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -24,20 +29,38 @@
 import setPropery from "../setPropery";
 import config from "./index.js";
 
+import engine from "../../engine";
+import { getFormatedData } from "@/utils/formatMethods";
 import { mapMutations, mapActions, mapState } from "vuex";
+
+import resetUid from "@/utils/resetUid.js";
 export default {
   name: "pickOnAll",
-  components: { setPropery },
+  components: { setPropery, engine },
   data() {
     return {
       rootPick: "1",
       config
     };
   },
+  computed: {
+    ...mapState({
+      preSet: state => state.preSet
+    })
+  },
   methods: {
     ...mapMutations(["SET_PRESET"]),
-    saveToCache() {
-      this.SET_PRESET({ tagname: item.tagName });
+    rawToPreView(data) {
+      this.$emit("rawToPreView", resetUid(JSON.parse(JSON.stringify(data))));
+    },
+    // actionInsert() {
+    //   this.$emit("actionInsert", this.rawData);
+    // },
+    saveToCache(data) {
+      this.SET_PRESET({
+        tagName: data.tagName,
+        dataset: getFormatedData(data)
+      });
     },
     actionInsert(data) {
       this.$emit("actionInsert", data);

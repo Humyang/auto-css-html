@@ -58,6 +58,7 @@ import navMenu from "./navMenu.vue";
 import engine from "../engine";
 
 import { mapMutations, mapActions, mapState } from "vuex";
+import resetUid from "@/utils/resetUid.js";
 export default {
   name: "collection",
   props: ["controlView"],
@@ -114,23 +115,20 @@ export default {
     })
   },
   methods: {
-    resetUid(data) {
-      if (typeof data == "object") {
-        data.id = uid2(10);
-        for (let index = 0; index < data.subset.length; index++) {
-          const element = data.subset[index];
-          this.resetUid(element);
-        }
-      }
-      return data;
-    },
+    // resetUid(data) {
+    //   if (typeof data == "object") {
+    //     data.id = uid2(10);
+    //     for (let index = 0; index < data.subset.length; index++) {
+    //       const element = data.subset[index];
+    //       this.resetUid(element);
+    //     }
+    //   }
+    //   return data;
+    // },
     rawToPreView(data) {
-      console.log(JSON.parse(JSON.stringify(this.resetUid(data))));
+      console.log(JSON.parse(JSON.stringify(resetUid(data))));
 
-      this.$emit(
-        "rawToPreView",
-        JSON.parse(JSON.stringify(this.resetUid(data)))
-      );
+      this.$emit("rawToPreView", JSON.parse(JSON.stringify(resetUid(data))));
     },
     actionInsert(data) {
       this.$emit("actionInsert", data);

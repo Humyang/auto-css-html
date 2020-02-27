@@ -31,6 +31,7 @@
                   v-on:rootClick="rootClick"
                   :dataset="dataset"
                   :controlView="controlView"
+                  @rawToPreView="rawToPreView"
                 ></preview>
                 <div>
                   <el-switch
@@ -136,6 +137,9 @@ import htmlProperty from "./component/HTMLProperty/index";
 import preClass from "./component/preClass";
 import collection from "./component/collection";
 import realView from "./component/realView";
+import { getFormatedData } from "@/utils/formatMethods";
+
+import resetUid from "@/utils/resetUid.js";
 export default {
   name: "SCQ",
   components: {
@@ -233,53 +237,10 @@ export default {
       }
       return subset;
     },
+
     actionInsert(data) {
-      let props = {};
-      data.props.forEach(item => {
-        props[item.name] = item.value;
-      });
-      let obj = {
-        tagName: data.tagName,
-        id: uid2(10),
-        options: {
-          props: props,
-          attrs: {
-            class: [],
-            style: [],
-            property: []
-          }
-        },
-        subset: []
-        // tagName: data.tagName,
-        // direction: this.addDirection,
-        // id: uid2(10),
-        // props: props,
-        // levelClassName: "",
-        // subset: [],
-        // style: [],
-        // property: []
-      };
-      let parent = {
-        tagName: "div",
-        id: uid2(10),
-        options: {
-          props: props,
-          attrs: {
-            class: [],
-            style: [],
-            property: []
-          }
-        },
-        subset: [obj]
-        // tagName: "div",
-        // id: uid2(10),
-        // className: "",
-        // subset: [obj],
-        // style: [],
-        // property: []
-      };
       let item = this.getNodeById(this.dataset, this.current_id);
-      this.currentItemSubset.push(parent);
+      this.currentItemSubset.push(getFormatedData(data));
       this.updateElementSetElement();
     },
     collectionInsert(data) {
@@ -438,16 +399,16 @@ export default {
         this.addElement(this.currentItemSubset);
       }
     },
-    resetUid(dataset) {
-      if (dataset.length > 0) {
-        dataset.forEach(item => {
-          if (typeof item == "object") {
-            item.id = uid2(10);
-            this.resetUid(item.subset);
-          }
-        });
-      }
-    },
+    // resetUid(dataset) {
+    //   if (dataset.length > 0) {
+    //     dataset.forEach(item => {
+    //       if (typeof item == "object") {
+    //         item.id = uid2(10);
+    //         this.resetUid(item.subset);
+    //       }
+    //     });
+    //   }
+    // },
     addElement(item) {
       // console.log('add element', item)
       let addArray = new Array(this.addNumber);
@@ -485,7 +446,7 @@ export default {
 
         addArray.forEach(() => {
           let nSubset = JSON.parse(JSON.stringify(subset));
-          this.resetUid(nSubset);
+          resetUid(nSubset);
           item.subset.push({
             tagName: this.tagName,
             id: uid2(10),

@@ -9,7 +9,7 @@
       <el-tabs v-model="rootPick">
         <el-tab-pane label="Element-UI" name="0">用户管理</el-tab-pane>
         <el-tab-pane label="Vant" name="1">
-          <Vant @actionInsert="actionInsert" />
+          <Vant @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -27,6 +27,9 @@ export default {
     };
   },
   methods: {
+    rawToPreView(data) {
+      this.$emit("rawToPreView", data);
+    },
     actionInsert(data) {
       this.pickOnAllVisible = false;
       this.$emit("actionInsert", data);

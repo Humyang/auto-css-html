@@ -15,7 +15,7 @@
     <div style="padding-left: 20px;">
       <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
 
-      <pickOnAll @actionInsert="actionInsert" />
+      <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
     </div>
   </div>
 </template>
@@ -23,6 +23,8 @@
 <script>
 import engine from "./engine";
 import pickOnAll from "./pickOnAll";
+
+import resetUid from "@/utils/resetUid.js";
 export default {
   props: ["dataset", "controlView"],
   components: {
@@ -35,6 +37,9 @@ export default {
     };
   },
   methods: {
+    rawToPreView(data) {
+      this.$emit("rawToPreView", JSON.parse(JSON.stringify(resetUid(data))));
+    },
     actionInsert(data) {
       this.$emit("actionInsert", data);
     },
