@@ -14,16 +14,20 @@
     </div>
     <div style="padding-left: 20px;">
       <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
+
+      <pickOnAll @actionInsert="actionInsert" />
     </div>
   </div>
 </template>
 
 <script>
 import engine from "./engine";
+import pickOnAll from "./pickOnAll";
 export default {
   props: ["dataset", "controlView"],
   components: {
-    engine
+    engine,
+    pickOnAll
   },
   data() {
     return {
@@ -31,6 +35,9 @@ export default {
     };
   },
   methods: {
+    actionInsert(data) {
+      this.$emit("actionInsert", data);
+    },
     actionSaveSelected() {
       this.$emit("actionSaveSelected", this.currentSelect);
     },

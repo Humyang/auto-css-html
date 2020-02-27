@@ -27,6 +27,7 @@
                 <preview
                   @actionSaveSelected="actionSaveSelected"
                   v-on:currentSelect="actionPreviewClick"
+                  @actionInsert="actionInsert"
                   v-on:rootClick="rootClick"
                   :dataset="dataset"
                   :controlView="controlView"
@@ -93,14 +94,6 @@
                 </el-tab-pane>
                 <el-tab-pane label="HTML">
                   <htmlProperty ref="HtmlDec" />
-                  <!-- <el-select v-model="tagType" @change="currentTagChange">
-                    <el-option
-                      v-for="(item, index) in tageTypeArray"
-                      :key="index"
-                      :label="item"
-                      :value="item"
-                    ></el-option>
-                  </el-select>-->
                 </el-tab-pane>
                 <el-tab-pane label="属性组合"></el-tab-pane>
               </el-tabs>
@@ -251,18 +244,14 @@ export default {
         id: uid2(10),
         props: props,
         levelClassName: "",
-        classObj: { grow: true },
         subset: [],
         style: [],
         property: []
       };
-      // console.log('actionInsert',data)
       let parent = {
         tagType: "div",
-        // direction: 'row',
         id: uid2(10),
         className: "",
-        // classObj: { grow: true },
         subset: [obj],
         style: [],
         property: []

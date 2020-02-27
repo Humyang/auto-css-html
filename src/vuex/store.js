@@ -11,6 +11,7 @@ let store = new Vuex.Store({
   state: {
     preSave: [],
     dataset: [],
+    preSet: {},
     element: [
       // {
       //   id: "1",
@@ -41,6 +42,9 @@ let store = new Vuex.Store({
     }
   },
   mutations: {
+    SET_PRESET(state, data) {
+      state.preSet[data.tagname] = data.obj;
+    },
     SET_DATASET(state, data) {
       let d = JSON.parse(JSON.stringify(data));
       state.dataset = d;
