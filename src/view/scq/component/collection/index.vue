@@ -28,21 +28,14 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="预设图片">
+      <!-- <el-tab-pane label="预设图片">
         <div>
-          <!-- <preview
-            v-on:current="getCurrent"
-            :currentSelect="current_id"
-            :dataset="preSetImg[0]"
-            :tagType="preSetImg[0].tagType"
-            :controlView="true"
-          ></preview>-->
           <div class="flex column" v-for="item,index in preSetImg.subset">
             <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
             <engine :controlView="true" instanceType="preView" :key="index" :dataset="item"></engine>
           </div>
         </div>
-      </el-tab-pane>
+      </el-tab-pane>-->
 
       <el-tab-pane label="预设框架">
         <div class="flex column" v-for="item,index in preSave">
@@ -73,43 +66,43 @@ export default {
     return {
       appendPosition: "subChildAppend",
       current_id: ["1"],
-      preSetImg: {
-        tagType: "div",
-        direction: "row",
-        id: uid2(10),
-        className: "",
-        classObj: { grow: true },
-        subset: [
-          {
-            tagType: "img",
-            direction: "row",
-            id: uid2(10),
-            className: "",
-            classObj: { grow: true },
-            subset: [],
-            style: [],
-            property: [
-              { property: "src", value: lara },
-              { property: "width", value: "300px" }
-            ]
-          },
-          {
-            tagType: "img",
-            direction: "row",
-            id: uid2(10),
-            className: "",
-            classObj: { grow: true },
-            subset: [],
-            style: [],
-            property: [
-              { property: "src", value: lara },
-              { property: "width", value: "150px" },
-              { property: "height", value: "150px" }
-            ]
-          }
-        ],
-        style: []
-      },
+      // preSetImg: {
+      //   tagName: "div",
+      //   direction: "row",
+      //   id: uid2(10),
+      //   className: "",
+      //   classObj: { grow: true },
+      //   subset: [
+      //     {
+      //       tagName: "img",
+      //       direction: "row",
+      //       id: uid2(10),
+      //       className: "",
+      //       classObj: { grow: true },
+      //       subset: [],
+      //       style: [],
+      //       property: [
+      //         { property: "src", value: lara },
+      //         { property: "width", value: "300px" }
+      //       ]
+      //     },
+      //     {
+      //       tagName: "img",
+      //       direction: "row",
+      //       id: uid2(10),
+      //       className: "",
+      //       classObj: { grow: true },
+      //       subset: [],
+      //       style: [],
+      //       property: [
+      //         { property: "src", value: lara },
+      //         { property: "width", value: "150px" },
+      //         { property: "height", value: "150px" }
+      //       ]
+      //     }
+      //   ],
+      //   style: []
+      // },
       currentItem: {},
       rowList: [1, 2, 3, 4, 5],
       columnList: [1, 2, 3, 4, 5]

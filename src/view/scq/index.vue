@@ -34,7 +34,7 @@
                 ></preview>
                 <div>
                   <el-switch
-                    v-for="(item, index) in currentItem.classObj"
+                    v-for="(item, index) in currentItem.options&&currentItem.options.attrs.class"
                     :key="index"
                     :value="item"
                     @change="setExtendAttr(index, item)"
@@ -159,11 +159,11 @@ export default {
       // cssType: 'normal', //normal tree
       // dataset: [],
       containerName: "container",
-      addDirection: "row",
+      // addDirection: "row",
       addNumber: 1,
       currentItem: {},
       currentItemSubset: [],
-      tagType: "div",
+      tagName: "div",
 
       isMulitle: false,
       dataset: []
@@ -239,22 +239,44 @@ export default {
         props[item.name] = item.value;
       });
       let obj = {
-        tagType: data.tagName,
-        direction: this.addDirection,
+        tagName: data.tagName,
         id: uid2(10),
-        props: props,
-        levelClassName: "",
-        subset: [],
-        style: [],
-        property: []
+        options: {
+          props: props,
+          attrs: {
+            class: [],
+            style: [],
+            property: []
+          }
+        },
+        subset: []
+        // tagName: data.tagName,
+        // direction: this.addDirection,
+        // id: uid2(10),
+        // props: props,
+        // levelClassName: "",
+        // subset: [],
+        // style: [],
+        // property: []
       };
       let parent = {
-        tagType: "div",
+        tagName: "div",
         id: uid2(10),
-        className: "",
-        subset: [obj],
-        style: [],
-        property: []
+        options: {
+          props: props,
+          attrs: {
+            class: [],
+            style: [],
+            property: []
+          }
+        },
+        subset: [obj]
+        // tagName: "div",
+        // id: uid2(10),
+        // className: "",
+        // subset: [obj],
+        // style: [],
+        // property: []
       };
       let item = this.getNodeById(this.dataset, this.current_id);
       this.currentItemSubset.push(parent);
@@ -292,53 +314,54 @@ export default {
       }, 50);
     },
     setExtendAttr(index, item) {
-      let obj = JSON.parse(JSON.stringify(this.currentItem.classObj));
+      let obj = JSON.parse(
+        JSON.stringify(this.currentItem.options.attrs.class)
+      );
       obj[index] = !item;
-      this.currentItem.classObj = obj;
-      this.currentItem.className = classname(this.currentItem.className, obj);
+      this.currentItem.options.attrs.class = obj;
+      // this.currentItem.className = classname(this.currentItem.className, obj);
       this.updateElementSetElement();
     },
     setElementAttr(type) {
       let item = this.getNode(this.dataset, this.current_id);
 
-      item.classObj = Object.assign({}, item.classObj, {
+      item.options.attrs.class = Object.assign({}, item.options.attrs.class, {
         [type]: true
       });
-      item.className = classname(item.className, type);
+      // item.className = classname(item.className, type);
       this.currentItem = item;
 
       this.updateElementSetElement();
     },
-    currentTagChange(event) {
-      console.log(event);
-      this.getNodeByIdChaneType(this.dataset, this.current_id, event);
-    },
-    getNodeByIdChaneType(subset, id, tagType) {
-      let item = subset.filter(item => {
-        let findresult = id.find(subitem => {
-          return subitem == item.id;
-        });
-        console.log(!!findresult);
-        return !!findresult;
-      });
-      if (item.length > 0) {
-        item.forEach(subitem => {
-          subitem.tagType = tagType;
-        });
-        this.setDatasetClassName(this.dataset, 1);
-      } else {
-        subset.map(item => {
-          this.getNodeByIdChaneType(item.subset, id, tagType);
-        });
-      }
-    },
+    // currentTagChange(event) {
+    //   console.log(event);
+    //   this.getNodeByIdChaneType(this.dataset, this.current_id, event);
+    // },
+    // getNodeByIdChaneType(subset, id, tagName) {
+    //   let item = subset.filter(item => {
+    //     let findresult = id.find(subitem => {
+    //       return subitem == item.id;
+    //     });
+    //     console.log(!!findresult);
+    //     return !!findresult;
+    //   });
+    //   if (item.length > 0) {
+    //     item.forEach(subitem => {
+    //       subitem.tagName = tagName;
+    //     });
+    //     this.setDatasetClassName(this.dataset, 1);
+    //   } else {
+    //     subset.map(item => {
+    //       this.getNodeByIdChaneType(item.subset, id, tagName);
+    //     });
+    //   }
+    // },
     actionPreviewClick(dataset) {
       this.current_id = JSON.parse(JSON.stringify([dataset.id]));
       let arr = this.getNode(this.dataset, this.current_id);
       this.currentItemSubset = arr.subset;
       this.currentItem = arr;
-      console.log("CssDec");
-      this.$refs.CssDec.setList(this.currentItem.style);
+      this.$refs.CssDec.setList(this.currentItem.options.attrs.style);
       this.$refs.HtmlDec.setList(this.currentItem);
     },
     getNode(subset, id) {
@@ -384,14 +407,6 @@ export default {
             }
           }
         }
-        // subset.forEach(item => {
-        //   if (typeof item == "object") {
-        //     res = this.getNodeById(item.subset, id);
-        //     if (res) {
-        //       continue;
-        //     }
-        //   }
-        // });
         if (res) {
           return res;
         } else {
@@ -400,9 +415,9 @@ export default {
       }
     },
     columnAdd(number) {
-      this.addDirection = "column";
+      // this.addDirection = "column";
       if (number == 0) {
-        this.currentItem.direction = this.addDirection;
+        // this.currentItem.direction = this.addDirection;
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
@@ -412,9 +427,9 @@ export default {
       }
     },
     rowAdd(number) {
-      this.addDirection = "row";
+      // this.addDirection = "row";
       if (number == 0) {
-        this.currentItem.direction = this.addDirection;
+        // this.currentItem.direction = this.addDirection;
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
@@ -437,22 +452,29 @@ export default {
       // console.log('add element', item)
       let addArray = new Array(this.addNumber);
       addArray.fill(1);
-      // item.forEach(subitem => {
-      item.direction = this.addDirection;
 
       if (this.appendPosition == "subChildAppend") {
         addArray.forEach(() => {
           item.push({
-            tagType: this.tagType,
-            direction: this.addDirection,
+            tagName: this.tagName,
             id: uid2(10),
-            className: "",
-            levelClassName: "",
-            classObj: { grow: true },
-            subset: [],
-            style: [],
-            property: [],
-            props: []
+            options: {
+              props: {},
+              attrs: {
+                class: [],
+                style: [],
+                property: []
+              }
+            },
+            subset: []
+            // direction: this.addDirection,
+            // className: "",
+            // levelClassName: "",
+            // classObj: { grow: true },
+            // subset: [],
+            // style: [],
+            // property: [],
+            // props: []
           });
         });
       }
@@ -465,35 +487,46 @@ export default {
           let nSubset = JSON.parse(JSON.stringify(subset));
           this.resetUid(nSubset);
           item.subset.push({
-            tagType: this.tagType,
-            direction: this.addDirection,
+            tagName: this.tagName,
             id: uid2(10),
-            className: "",
-            levelClassName: "",
-            classObj: { grow: true },
-            subset: nSubset,
-            style: [],
-            property: [],
-            props: []
+            options: {
+              props: {},
+              attrs: {
+                class: [],
+                style: [],
+                property: []
+              }
+            },
+            subset: [nSubset]
+            // tagName: this.tagName,
+            // direction: this.addDirection,
+            // id: uid2(10),
+            // className: "",
+            // levelClassName: "",
+            // classObj: { grow: true },
+            // subset: nSubset,
+            // style: [],
+            // property: [],
+            // props: []
           });
         });
       }
       // });
-      this.setDatasetClassName(this.dataset, 1);
+      // this.setDatasetClassName(this.dataset, 1);
       this.updateElementSetElement();
     },
-    // jsonToHtmlStyle1(array, tagType) {
+    // jsonToHtmlStyle1(array, tagName) {
     //   // 操作
     //   // let element = null
     //   // if(parentElement==null){
-    //   if (tagType == undefined) {
-    //     tagType = 'div'
+    //   if (tagName == undefined) {
+    //     tagName = 'div'
     //   }
-    //   let element = document.createElement(tagType)
+    //   let element = document.createElement(tagName)
     //   // 子级
     //   array.forEach(item => {
-    //     console.log('item.tagType', item.tagType)
-    //     let childElement = this.jsonToHtmlStyle1(item.subset, item.tagType)
+    //     console.log('item.tagName', item.tagName)
+    //     let childElement = this.jsonToHtmlStyle1(item.subset, item.tagName)
     //     childElement.className = classname(
     //       item.className,
     //       'flex',
@@ -517,7 +550,7 @@ export default {
           nodeHeader =
             parentHeader +
             " " +
-            item.tagType +
+            item.tagName +
             ".s" +
             parentLevel +
             "-" +
@@ -528,35 +561,35 @@ export default {
         result.push(nodeHeader + " {}");
         this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result);
       });
-    },
-    jsonToCssStyle2(array, result, top) {
-      // console.log('2222222222', array)
-      let res = "";
-      array.forEach((item, index) => {
-        res = res + "." + item.className + "{";
-        if (item.subset) {
-          res += this.jsonToCssStyle2(item.subset, result, false);
-        }
-      });
-      if (!top) {
-        res += "}";
-      }
-      return res;
-    },
-    setDatasetClassName(array, parentLevel) {
-      array.forEach((item, index) => {
-        let sublevel = "";
-        if (parentLevel == 1) {
-          sublevel = "";
-        } else {
-          sublevel = parentLevel + "-" + index;
-          item.className = classname({}, item.classObj);
-          item.levelClassName = "s" + sublevel;
-        }
-
-        this.setDatasetClassName(item.subset, sublevel);
-      });
     }
+    // jsonToCssStyle2(array, result, top) {
+    //   // console.log('2222222222', array)
+    //   let res = "";
+    //   array.forEach((item, index) => {
+    //     res = res + "." + item.className + "{";
+    //     if (item.subset) {
+    //       res += this.jsonToCssStyle2(item.subset, result, false);
+    //     }
+    //   });
+    //   if (!top) {
+    //     res += "}";
+    //   }
+    //   return res;
+    // }
+    // setDatasetClassName(array, parentLevel) {
+    //   array.forEach((item, index) => {
+    //     let sublevel = "";
+    //     if (parentLevel == 1) {
+    //       sublevel = "";
+    //     } else {
+    //       sublevel = parentLevel + "-" + index;
+    //       item.className = classname({}, item.options.attrs.class);
+    //       item.levelClassName = "s" + sublevel;
+    //     }
+
+    //     this.setDatasetClassName(item.subset, sublevel);
+    //   });
+    // }
   },
   watch: {
     elementHistory: {

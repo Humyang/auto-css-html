@@ -49,7 +49,7 @@ export default {
 //     "current_length",
 //     "direction",
 //     "currentSelect",
-//     "tagType",
+//     "tagName",
 //     "deviceType",
 //     "controlView"
 //   ],
@@ -83,7 +83,7 @@ export default {
 //         }
 //       }
 //       let eee = createElement(
-//         dataset.tagType,
+//         dataset.tagName,
 //         {
 //           // on: {
 //           //   click: event => {
@@ -120,7 +120,7 @@ export default {
 //     },
 //     actionClick(dataset) {
 //       // console.log(this.dataset.id)
-//       this.$emit("current", { id: dataset.id, tagType: dataset.tagType });
+//       this.$emit("current", { id: dataset.id, tagName: dataset.tagName });
 //     },
 //     getCurrent(event) {
 //       this.$emit("current", event);

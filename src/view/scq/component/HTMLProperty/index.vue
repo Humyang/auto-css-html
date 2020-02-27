@@ -6,8 +6,8 @@
         <div style="margin-left:20px">
           <el-autocomplete
             class="inline-input"
-            v-model="dataObj.tagType"
-            :fetch-suggestions="tagTypeFilter"
+            v-model="dataObj.tagName"
+            :fetch-suggestions="tagNameFilter"
             placeholder="请输入内容"
           ></el-autocomplete>
         </div>
@@ -21,7 +21,7 @@
       </div>
     </div>
     <el-button type="primary" @click="addProperty">添加属性</el-button>
-    <div v-for="property,index in dataObj.property" :key="index">
+    <div v-for="property,index in (dataObj.options&& dataObj.options.attrs.property)" :key="index">
       <div class="flex align-baseline">
         <div>
           <el-autocomplete
@@ -57,7 +57,7 @@ export default {
     }
     return {
       config,
-      tagType: "",
+      tagName: "",
       dataObj: {}
     };
   },
@@ -65,7 +65,7 @@ export default {
     addSubText() {
       this.dataObj.subset.push("");
     },
-    tagTypeFilter(queryString, cb) {
+    tagNameFilter(queryString, cb) {
       let tageTypeArray = [
         "div",
         "view",
@@ -114,13 +114,13 @@ export default {
       cb(arr);
     },
     actionRemove(i) {
-      this.dataObj.property = [
-        ...this.dataObj.property.slice(0, i),
-        ...this.dataObj.property.slice(i + 1)
+      this.dataObj.options.attrs.property = [
+        ...this.dataObj.options.attrs.property.slice(0, i),
+        ...this.dataObj.options.attrs.property.slice(i + 1)
       ];
     },
     addProperty() {
-      this.dataObj.property.push({ property: "", value: "" });
+      this.dataObj.options.attrs.property.push({ property: "", value: "" });
     }
   },
   computed: {},

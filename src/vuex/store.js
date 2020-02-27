@@ -16,7 +16,7 @@ let store = new Vuex.Store({
       // {
       //   id: "1",
       //   value: "1",
-      //   tagType: "div",
+      //   tagName: "div",
       //   direction: "row",
       //   className: "",
       //   levelClassName: "",

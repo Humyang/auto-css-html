@@ -22,7 +22,7 @@ function formatProperty(arr) {
       obj[element.property] = element.value;
     }
   }
-  console.log("formatProperty", obj);
+  // console.log("formatProperty", obj);
   return obj;
 }
 function getSelectedStatus(dataset, currentSelect) {
@@ -44,7 +44,6 @@ export default {
     "dataset",
     "currentSelect",
     "current_length",
-    "direction",
     "controlView"
   ],
   data() {
@@ -74,16 +73,17 @@ export default {
         }
       }
       let eee = createElement(
-        dataset.tagType,
+        dataset.tagName,
         {
-          props: dataset.props,
+          props: dataset.options.props,
           attrs: {
-            class: classname({
-              [dataset.className]: true,
-              [dataset.levelClassName]: true
-            }),
-            style: formatStyle(dataset.style),
-            ...formatProperty(dataset.property)
+            // class: classname({
+            //   [dataset.className]: true,
+            //   [dataset.levelClassName]: true
+            // }),
+            class: classname(dataset.options.attrs.class),
+            style: formatStyle(dataset.options.attrs.style),
+            ...formatProperty(dataset.options.attrs.property)
           }
         },
         sub
@@ -97,7 +97,7 @@ export default {
           createElement(
             "span",
             { attrs: { class: "status-bar" } },
-            dataset.tagType
+            dataset.tagName
           )
         );
       }
@@ -112,7 +112,7 @@ export default {
         }
       }
       let eee = createElement(
-        dataset.tagType || "div",
+        dataset.tagName || "div",
         {
           on: {
             click: event => {
@@ -120,18 +120,19 @@ export default {
               event.stopPropagation();
             }
           },
-          props: dataset.props,
+          props: dataset.options.props,
           attrs: {
             class: classname({
               selected:
                 getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
-              [dataset.className]: true,
-              [dataset.levelClassName]: true,
+              // [dataset.className]: true,
+              // [dataset.levelClassName]: true,
 
-              preview: true
+              preview: true,
+              ...dataset.options.attrs.class
             }),
-            style: formatStyle(dataset.style),
-            ...formatProperty(dataset.property)
+            style: formatStyle(dataset.options.attrs.style),
+            ...formatProperty(dataset.options.attrs.property)
           }
         },
         sub
@@ -152,10 +153,7 @@ export default {
   },
   updated: function() {
     //   计算当前自己元素数量
-    // console.log(this.dataset.subset.length)
     this.clength = this.dataset.subset && this.dataset.subset.length;
-
-    // console.log(this.current_length)
   }
 };
 </script>
