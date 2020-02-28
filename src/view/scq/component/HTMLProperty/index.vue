@@ -13,7 +13,11 @@
         </div>
       </div>
       <el-button type="primary" @click="addSubText">添加文本</el-button>
-      <div class="flex align-center" v-for="item,index in dataObj.subset">
+      <div
+        class="flex align-center"
+        v-for="item,index in dataObj.subset"
+        v-if="typeof item == 'string'"
+      >
         <div>文本</div>
         <div style="margin-left:20px">
           <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="dataObj.subset[index]"></el-input>
