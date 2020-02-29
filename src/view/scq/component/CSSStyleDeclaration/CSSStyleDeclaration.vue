@@ -24,6 +24,7 @@
         <div class="flex align-baseline">
           <el-input placeholder="请输入内容" v-model="property.value" class="input-with-select"></el-input>
           <!-- <el-button>保存</el-button> -->
+          <inputAdvance @valueChange="(value)=>valueChange(property,value)" />
           <el-button type="danger" @click="actionRemove(index)">删除</el-button>
         </div>
       </div>
@@ -33,9 +34,12 @@
 
 <script>
 import config from "./config";
+import inputAdvance from "../inputAdvance/index";
 export default {
   name: "CSSStyleDeclaration",
-  components: {},
+  components: {
+    inputAdvance
+  },
   data() {
     let labelArr = [];
     for (let index = 0; index < config.length; index++) {
@@ -76,6 +80,9 @@ export default {
     };
   },
   methods: {
+    valueChange(property, value) {
+      property.value = value;
+    },
     setList(data) {
       this.propertyList = data;
     },
@@ -100,11 +107,6 @@ export default {
       arr = arr.sort((a, b) => {
         return a.value.length - b.value.length;
       });
-      console.log("arr");
-      // var results = queryString
-      //   ? config.filter(this.createFilter(queryString))
-      //   : config;
-      // 调用 callback 返回建议列表的数据
       cb(arr);
     },
     actionRemove(i) {

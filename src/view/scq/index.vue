@@ -103,7 +103,9 @@
           <el-tab-pane label="操作">
             <!-- <p>删除选中</p> -->
             <el-button type="danger" plain @click="actionRemoveSelected">删除选中</el-button>
-            <!-- <p>选中上级</p> -->
+            <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
+
+            <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
             <div class="flex">
               <div class="history flex" style="flex-flow: row-reverse;">
                 <span
@@ -140,6 +142,8 @@ import realView from "./component/realView";
 import { getFormatedData } from "@/utils/formatMethods";
 
 import resetUid from "@/utils/resetUid.js";
+
+import pickOnAll from "./component/pickOnAll";
 export default {
   name: "SCQ",
   components: {
@@ -148,7 +152,8 @@ export default {
     preClass,
     collection,
     realView,
-    htmlProperty
+    htmlProperty,
+    pickOnAll
   },
   data() {
     return {
