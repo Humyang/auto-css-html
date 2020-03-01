@@ -50,7 +50,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
-            <!-- <code class="css-code">{{ htmlCode }}</code> -->
+            <code class="css-code">{{ htmlCode }}</code>
           </el-tab-pane>
           <el-tab-pane label="CSS">
             <div class="css-box">
@@ -186,24 +186,24 @@ export default {
         this.dataset = JSON.parse(JSON.stringify(state.dataset));
       }
     })
-
-    // csscodeList: function() {
-    //   let result = [];
-    //   this.jsonToCssStyle1(this.dataset, "", 1, result);
-    //   let newResult = result.map(item => {
-    //     return "<p>" + item + "</p>";
-    //   });
-    //   return newResult.join("\n");
-    // },
-    // csscodeTree: function() {
-    //   let res = this.jsonToCssStyle2(this.dataset, "", true);
-
-    //   return res;
-    // }
   },
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
     ...mapMutations(["SET_DATASET"]),
+    getHTML(dataset) {
+      let r = [];
+      for (let index = 0; index < dataset.length; index++) {
+        let sub = "";
+        const element = dataset[index];
+
+        sub = this.getHTML(element.subset);
+        let res = `<${element.tagName} >
+        ${sub}<${element.tagName}/>`;
+        r.push(res);
+      }
+
+      return r.join("");
+    },
     actionSaveSelected(selected) {
       let item = this.getNodeById(this.dataset, this.current_id);
       this.pushPreSave(item[0]);
@@ -263,9 +263,8 @@ export default {
       this.appendPosition = value;
     },
     resultClick(r) {
-      console.log("resultClick", r);
       if (r.label == "HTML") {
-        this.htmlCode = this.$refs.preview.outerHTML;
+        this.htmlCode = this.getHTML(this.dataset);
       }
     },
     actionTimeTravel(index) {
