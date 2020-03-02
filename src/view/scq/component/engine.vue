@@ -22,7 +22,6 @@ function formatProperty(arr) {
       obj[element.property] = element.value;
     }
   }
-  // console.log("formatProperty", obj);
   return obj;
 }
 function getSelectedStatus(dataset, currentSelect) {

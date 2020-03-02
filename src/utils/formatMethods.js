@@ -32,4 +32,21 @@ function getFormatedData(data) {
   };
   return parent;
 }
-export { getFormatedData };
+function propertyToString(obj) {
+  let res = "";
+  for (let index = 0; index < obj.length; index++) {
+    const element = obj[index];
+    res += `${element.property}="${element.value}"`;
+  }
+  return res;
+}
+function styleToString(obj) {
+  let res = "";
+  for (let index = 0; index < obj.length; index++) {
+    const element = obj[index];
+    res += `${element.property}:${element.value};`;
+  }
+  return res;
+}
+
+export { getFormatedData, propertyToString, styleToString };

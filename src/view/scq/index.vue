@@ -139,7 +139,11 @@ import htmlProperty from "./component/HTMLProperty/index";
 import preClass from "./component/preClass";
 import collection from "./component/collection";
 import realView from "./component/realView";
-import { getFormatedData } from "@/utils/formatMethods";
+import {
+  getFormatedData,
+  propertyToString,
+  styleToString
+} from "@/utils/formatMethods";
 
 import resetUid from "@/utils/resetUid.js";
 
@@ -197,7 +201,12 @@ export default {
         const element = dataset[index];
 
         sub = this.getHTML(element.subset);
-        let res = `<${element.tagName} >
+
+        let res = `<${element.tagName} ${propertyToString(
+          element.options.attrs.property
+        )} ${propertyToString(element.options.props)} style="${styleToString(
+          element.options.attrs.style
+        )}" class="${classname(element.options.attrs.class)}">
         ${sub}<${element.tagName}/>`;
         r.push(res);
       }
