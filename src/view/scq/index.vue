@@ -50,7 +50,9 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="HTML">
-            <code class="css-code">{{ htmlCode }}</code>
+            <!-- <code class="css-code">{{htmlCode}}</code> -->
+            <!-- <textarea name id cols="30" rows="10">{{htmlCode}}</textarea> -->
+            <pre id="editorHTML" style="height:600px">{{htmlCode}}</pre>
           </el-tab-pane>
           <el-tab-pane label="CSS">
             <div class="css-box">
@@ -60,9 +62,11 @@
               <el-tabs type="border-card">
                 <el-tab-pane label="RAW">
                   <!-- <code class="css-code" v-html="csscodeList"></code> -->
+                  <pre id="editorCSS_LIST" style="height:600px">{{csscodeList}}</pre>
                 </el-tab-pane>
                 <el-tab-pane label="SCSS、LESS">
                   <!-- <code class="css-code" v-html="csscodeTree"></code> -->
+                  <pre id="editorCSS_TREE" style="height:600px">{{csscodeTree}}</pre>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -125,6 +129,7 @@
 </template>
 
 <script>
+// https://ace.c9.io/
 // import HelloWorld from "./components/HelloWorld";
 import preview from "./component/preview";
 import uid2 from "uid2";
@@ -161,6 +166,11 @@ export default {
   },
   data() {
     return {
+      editorHTML: "",
+      editorCSS_LIST: "",
+      csscodeList: "",
+      editorCSS_TREE: "",
+      csscodeTree: "",
       realViewCount: 0,
       controlView: true,
       deviceType: "mobile",
@@ -207,7 +217,7 @@ export default {
         )} ${propertyToString(element.options.props)} style="${styleToString(
           element.options.attrs.style
         )}" class="${classname(element.options.attrs.class)}">
-        ${sub}<${element.tagName}/>`;
+        ${sub}</${element.tagName}>`;
         r.push(res);
       }
 
@@ -271,9 +281,38 @@ export default {
     onChangePosition(value) {
       this.appendPosition = value;
     },
+    format(node, level) {
+      var indentBefore = new Array(level++ + 1).join("  "),
+        indentAfter = new Array(level - 1).join("  "),
+        textNode;
+
+      for (var i = 0; i < node.children.length; i++) {
+        textNode = document.createTextNode("\n" + indentBefore);
+        node.insertBefore(textNode, node.children[i]);
+
+        this.format(node.children[i], level);
+
+        if (node.lastElementChild == node.children[i]) {
+          textNode = document.createTextNode("\n" + indentAfter);
+          node.appendChild(textNode);
+        }
+      }
+
+      return node;
+    },
+    process(str) {
+      var div = document.createElement("div");
+      div.innerHTML = str.trim();
+
+      return this.format(div, 0).innerHTML;
+    },
     resultClick(r) {
       if (r.label == "HTML") {
-        this.htmlCode = this.getHTML(this.dataset);
+        this.editorHTML.setValue(this.process(this.getHTML(this.dataset)));
+      }
+      if (r.label == "CSS") {
+        this.editor.setValue(this.process(this.getHTML(this.dataset)));
+        this.editorHTML.setValue(this.process(this.getHTML(this.dataset)));
       }
     },
     actionTimeTravel(index) {
@@ -472,16 +511,6 @@ export default {
               }
             },
             subset: [nSubset]
-            // tagName: this.tagName,
-            // direction: this.addDirection,
-            // id: uid2(10),
-            // className: "",
-            // levelClassName: "",
-            // classObj: { grow: true },
-            // subset: nSubset,
-            // style: [],
-            // property: [],
-            // props: []
           });
         });
       }
@@ -489,30 +518,6 @@ export default {
       // this.setDatasetClassName(this.dataset, 1);
       this.updateElementSetElement();
     },
-    // jsonToHtmlStyle1(array, tagName) {
-    //   // 操作
-    //   // let element = null
-    //   // if(parentElement==null){
-    //   if (tagName == undefined) {
-    //     tagName = 'div'
-    //   }
-    //   let element = document.createElement(tagName)
-    //   // 子级
-    //   array.forEach(item => {
-    //     console.log('item.tagName', item.tagName)
-    //     let childElement = this.jsonToHtmlStyle1(item.subset, item.tagName)
-    //     childElement.className = classname(
-    //       item.className,
-    //       'flex',
-    //       item.direction
-    //     )
-    //     childElement.style = item.style
-    //     element.appendChild(childElement)
-    //   })
-    //   // 返回元素
-    //   return element
-    // },
-
     jsonToCssStyle1(array, parentHeader, parentLevel, result) {
       array.forEach((item, index) => {
         let nodeHeader = "";
@@ -536,34 +541,6 @@ export default {
         this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result);
       });
     }
-    // jsonToCssStyle2(array, result, top) {
-    //   // console.log('2222222222', array)
-    //   let res = "";
-    //   array.forEach((item, index) => {
-    //     res = res + "." + item.className + "{";
-    //     if (item.subset) {
-    //       res += this.jsonToCssStyle2(item.subset, result, false);
-    //     }
-    //   });
-    //   if (!top) {
-    //     res += "}";
-    //   }
-    //   return res;
-    // }
-    // setDatasetClassName(array, parentLevel) {
-    //   array.forEach((item, index) => {
-    //     let sublevel = "";
-    //     if (parentLevel == 1) {
-    //       sublevel = "";
-    //     } else {
-    //       sublevel = parentLevel + "-" + index;
-    //       item.className = classname({}, item.options.attrs.class);
-    //       item.levelClassName = "s" + sublevel;
-    //     }
-
-    //     this.setDatasetClassName(item.subset, sublevel);
-    //   });
-    // }
   },
   watch: {
     elementHistory: {
@@ -593,10 +570,15 @@ export default {
     // }
   },
   mounted() {
-    console.log("aaaa", this.$refs.iframeRef);
+    // console.log("aaaa", this.$refs.iframeRef);
     // setInterval(() => {
     //   this.updateElementSetElement();
     // }, 500);
+    var editorHTML = ace.edit("editorHTML");
+    editorHTML.setTheme("ace/theme/twilight");
+    editorHTML.session.setMode("ace/mode/html");
+    window.editorHTML = editorHTML;
+    this.editorHTML = editorHTML;
   },
   created() {
     //   let body = document.getElementsByTagName('body')

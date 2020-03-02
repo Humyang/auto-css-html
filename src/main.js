@@ -17,6 +17,8 @@ Vue.prototype.api = api;
 import Vant from "vant";
 import "vant/lib/index.css";
 
+// import "./vendors/ace.js";
+
 Vue.use(Vant);
 
 /* eslint-disable no-new */
