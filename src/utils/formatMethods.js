@@ -1,8 +1,12 @@
 import uid2 from "uid2";
 function getFormatedData(data) {
-  let props = {};
+  let props = [];
   data.props.forEach(item => {
-    props[item.name] = item.value;
+    // props[item.name] = item.value;
+    let obj = {};
+    obj.property = item.name;
+    obj.value = item.value;
+    props.push(obj);
   });
   let obj = {
     tagName: data.tagName,
@@ -21,7 +25,7 @@ function getFormatedData(data) {
     tagName: "div",
     id: uid2(10),
     options: {
-      props: props,
+      props: [],
       attrs: {
         class: [],
         style: [],
@@ -36,7 +40,7 @@ function propertyToString(obj) {
   let res = "";
   for (let index = 0; index < obj.length; index++) {
     const element = obj[index];
-    res += `${element.property}="${element.value}"`;
+    res += `${element.property}="${element.value}" `;
   }
   return res;
 }
@@ -44,7 +48,7 @@ function styleToString(obj) {
   let res = "";
   for (let index = 0; index < obj.length; index++) {
     const element = obj[index];
-    res += `${element.property}:${element.value};`;
+    res += `${element.property}:${element.value}; `;
   }
   return res;
 }

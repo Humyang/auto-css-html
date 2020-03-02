@@ -1,7 +1,6 @@
 <template>
   <div class="preDefined">
     <el-button type="primary" @click="actionInsert">插入</el-button>
-    <!-- {{rawData}} -->
     <div v-for="item,index in rawData.props" :key="index">
       <div v-if="item.type ===String" class="flex cell">
         <span class="label">{{item.name}}</span>
@@ -9,7 +8,6 @@
       </div>
       <div v-if="item.type ===Boolean" class="flex cell">
         <span class="label">{{item.name}}</span>
-        <!-- <el-input v-model="input" placeholder="请输入内容"></el-input> -->
         <el-switch v-model="item.value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </div>
     </div>

@@ -74,12 +74,8 @@ export default {
       let eee = createElement(
         dataset.tagName,
         {
-          props: dataset.options.props,
+          props: formatProperty(dataset.options.props),
           attrs: {
-            // class: classname({
-            //   [dataset.className]: true,
-            //   [dataset.levelClassName]: true
-            // }),
             class: classname(dataset.options.attrs.class),
             style: formatStyle(dataset.options.attrs.style),
             ...formatProperty(dataset.options.attrs.property)
@@ -119,14 +115,11 @@ export default {
               event.stopPropagation();
             }
           },
-          props: dataset.options.props,
+          props: formatProperty(dataset.options.props),
           attrs: {
             class: classname({
               selected:
                 getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
-              // [dataset.className]: true,
-              // [dataset.levelClassName]: true,
-
               preview: true,
               ...dataset.options.attrs.class
             }),
