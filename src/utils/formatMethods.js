@@ -14,7 +14,7 @@ function getFormatedData(data) {
     options: {
       props: props,
       attrs: {
-        class: [],
+        class: {},
         style: [],
         property: []
       }
@@ -27,7 +27,7 @@ function getFormatedData(data) {
     options: {
       props: [],
       attrs: {
-        class: [],
+        class: {},
         style: [],
         property: []
       }

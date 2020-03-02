@@ -9,7 +9,7 @@ var obj = {
       default: ""
     },
     {
-      name: ":left-arrow",
+      name: "left-arrow",
       desc: "左侧箭头",
       value: false,
       type: Boolean,

@@ -1,25 +1,10 @@
 <template>
   <div class="scq-view flex column" style="height: 100%;">
-    <!-- <van-nav-bar title="标题" left-text="返回" left-arrow class="grow" ref="vanNavBar">
-  <van-icon name="search" slot="right" />
-    </van-nav-bar>-->
-    <!-- <div>
-      <div class="current flex row" style="width:100%;">
-        <div>按下多选：{{ isMulitle }}</div>
-
-        <div class="flex row">
-          父级名称
-          <el-input v-model="containerName" placeholder="请输入内容"></el-input>
-        </div>
-      </div>
-    </div>-->
     <div class="flex row">
       <div style="height:100%;overflow:auto;margin-right:10px;flex-grow: 1;" class="flex column">
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
             <div class="flex row">
-              <!-- <realView :dataset="dataset" :controlView="controlView"></realView> -->
-
               <div>
                 <iframe ref="iframeRef" :src="'/realview'" class="realviewIframe"></iframe>
               </div>
@@ -175,19 +160,14 @@ export default {
       controlView: true,
       deviceType: "mobile",
       htmlCode: "",
-      // preClass,
       currentHistroyIndex: 0,
       current_id: [],
       appendPosition: "subChildAppend",
-      // cssType: 'normal', //normal tree
-      // dataset: [],
       containerName: "container",
-      // addDirection: "row",
       addNumber: 1,
       currentItem: {},
       currentItemSubset: [],
       tagName: "div",
-
       isMulitle: false,
       dataset: []
     };
@@ -204,13 +184,67 @@ export default {
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
     ...mapMutations(["SET_DATASET"]),
-    getHTML(dataset) {
+    // jsonToCssStyle2(array, result, top) {
+    //   let res = "";
+    //   array.forEach((item, index) => {
+    //     res = res + "." + item.className + "{";
+    //     if (item.subset) {
+    //       res += this.jsonToCssStyle2(item.subset, result, false);
+    //     }
+    //   });
+    //   if (!top) {
+    //     res += "}";
+    //   }
+    //   return res;
+    // },
+    getCssTree(dataset, prefix) {
       let r = [];
       for (let index = 0; index < dataset.length; index++) {
         let sub = "";
         const element = dataset[index];
-
-        sub = this.getHTML(element.subset);
+        let nodeFlagClass = "";
+        if (prefix == "") {
+          nodeFlagClass = ".node-" + index;
+        } else {
+          nodeFlagClass = prefix + "-" + index;
+        }
+        // element.options.attrs.class[nodeFlagClass] = true;
+        sub = this.getCssTree(element.subset, nodeFlagClass);
+        let res = `${nodeFlagClass}{ ${sub} } `;
+        r.push(res);
+      }
+      return r.join("");
+    },
+    getCssList(dataset, parentHeader, parentLevel, result) {
+      for (let index = 0; index < dataset.length; index++) {
+        const element = dataset[index];
+        let nodeHeader = "";
+        let sublevel = "";
+        if (parentHeader == "") {
+          nodeHeader = ".node-" + index;
+          sublevel = index;
+        } else {
+          nodeHeader =
+            parentHeader + " " + ".node-" + parentLevel + "-" + index;
+          sublevel = parentLevel + "-" + index;
+        }
+        result.push(nodeHeader + " {}");
+        this.getCssList(element.subset, nodeHeader, sublevel, result);
+      }
+    },
+    getHTML(dataset, level, prefix) {
+      let r = [];
+      for (let index = 0; index < dataset.length; index++) {
+        let sub = "";
+        const element = dataset[index];
+        let nodeFlagClass = "";
+        if (prefix == "") {
+          nodeFlagClass = "node-" + level;
+        } else {
+          nodeFlagClass = prefix + "-" + level;
+        }
+        element.options.attrs.class[nodeFlagClass] = true;
+        sub = this.getHTML(element.subset, level++, nodeFlagClass);
 
         let res = `<${element.tagName} ${propertyToString(
           element.options.attrs.property
@@ -281,38 +315,60 @@ export default {
     onChangePosition(value) {
       this.appendPosition = value;
     },
-    format(node, level) {
-      var indentBefore = new Array(level++ + 1).join("  "),
-        indentAfter = new Array(level - 1).join("  "),
-        textNode;
+    // format(node, level) {
+    //   var indentBefore = new Array(level++ + 1).join("  "),
+    //     indentAfter = new Array(level - 1).join("  "),
+    //     textNode;
 
-      for (var i = 0; i < node.children.length; i++) {
-        textNode = document.createTextNode("\n" + indentBefore);
-        node.insertBefore(textNode, node.children[i]);
+    //   for (var i = 0; i < node.children.length; i++) {
+    //     textNode = document.createTextNode("\n" + indentBefore);
+    //     node.insertBefore(textNode, node.children[i]);
 
-        this.format(node.children[i], level);
+    //     this.format(node.children[i], level);
 
-        if (node.lastElementChild == node.children[i]) {
-          textNode = document.createTextNode("\n" + indentAfter);
-          node.appendChild(textNode);
-        }
-      }
+    //     if (node.lastElementChild == node.children[i]) {
+    //       textNode = document.createTextNode("\n" + indentAfter);
+    //       node.appendChild(textNode);
+    //     }
+    //   }
 
-      return node;
-    },
-    process(str) {
-      var div = document.createElement("div");
-      div.innerHTML = str.trim();
+    //   return node;
+    // },
+    // process(str) {
+    //   var div = document.createElement("div");
+    //   div.innerHTML = str.trim();
 
-      return this.format(div, 0).innerHTML;
-    },
+    //   return this.format(div, 0).innerHTML;
+    // },
     resultClick(r) {
+      var beautify = ace.require("ace/ext/beautify");
       if (r.label == "HTML") {
-        this.editorHTML.setValue(this.process(this.getHTML(this.dataset)));
+        this.editorHTML.setValue(
+          // this.process(
+          this.getHTML(JSON.parse(JSON.stringify(this.dataset)), 0, "")
+          // )
+        );
+        beautify.beautify(this.editorHTML.session);
       }
       if (r.label == "CSS") {
-        this.editor.setValue(this.process(this.getHTML(this.dataset)));
-        this.editorHTML.setValue(this.process(this.getHTML(this.dataset)));
+        let result = [];
+        this.getCssList(
+          JSON.parse(JSON.stringify(this.dataset)),
+          "",
+          0,
+          result
+        );
+        let result2 = this.getCssTree(
+          JSON.parse(JSON.stringify(this.dataset)),
+          ""
+        );
+        this.editorCSS_LIST.setValue(result.join("\n"));
+        this.editorCSS_TREE.setValue(result2);
+
+        beautify.beautify(this.editorCSS_LIST.session);
+
+        beautify.beautify(this.editorCSS_TREE.session);
+        console.log("beautify", beautify);
       }
     },
     actionTimeTravel(index) {
@@ -346,29 +402,6 @@ export default {
 
       this.updateElementSetElement();
     },
-    // currentTagChange(event) {
-    //   console.log(event);
-    //   this.getNodeByIdChaneType(this.dataset, this.current_id, event);
-    // },
-    // getNodeByIdChaneType(subset, id, tagName) {
-    //   let item = subset.filter(item => {
-    //     let findresult = id.find(subitem => {
-    //       return subitem == item.id;
-    //     });
-    //     console.log(!!findresult);
-    //     return !!findresult;
-    //   });
-    //   if (item.length > 0) {
-    //     item.forEach(subitem => {
-    //       subitem.tagName = tagName;
-    //     });
-    //     this.setDatasetClassName(this.dataset, 1);
-    //   } else {
-    //     subset.map(item => {
-    //       this.getNodeByIdChaneType(item.subset, id, tagName);
-    //     });
-    //   }
-    // },
     actionPreviewClick(dataset) {
       this.current_id = JSON.parse(JSON.stringify([dataset.id]));
       let arr = this.getNode(this.dataset, this.current_id);
@@ -451,18 +484,7 @@ export default {
         this.addElement(this.currentItemSubset);
       }
     },
-    // resetUid(dataset) {
-    //   if (dataset.length > 0) {
-    //     dataset.forEach(item => {
-    //       if (typeof item == "object") {
-    //         item.id = uid2(10);
-    //         this.resetUid(item.subset);
-    //       }
-    //     });
-    //   }
-    // },
     addElement(item) {
-      // console.log('add element', item)
       let addArray = new Array(this.addNumber);
       addArray.fill(1);
 
@@ -474,20 +496,12 @@ export default {
             options: {
               props: {},
               attrs: {
-                class: [],
+                class: {},
                 style: [],
                 property: []
               }
             },
             subset: []
-            // direction: this.addDirection,
-            // className: "",
-            // levelClassName: "",
-            // classObj: { grow: true },
-            // subset: [],
-            // style: [],
-            // property: [],
-            // props: []
           });
         });
       }
@@ -505,7 +519,7 @@ export default {
             options: {
               props: {},
               attrs: {
-                class: [],
+                class: {},
                 style: [],
                 property: []
               }
@@ -517,30 +531,30 @@ export default {
       // });
       // this.setDatasetClassName(this.dataset, 1);
       this.updateElementSetElement();
-    },
-    jsonToCssStyle1(array, parentHeader, parentLevel, result) {
-      array.forEach((item, index) => {
-        let nodeHeader = "";
-        let sublevel = "";
-        if (parentHeader == "") {
-          nodeHeader = "." + this.containerName;
-          sublevel = "";
-        } else {
-          nodeHeader =
-            parentHeader +
-            " " +
-            item.tagName +
-            ".s" +
-            parentLevel +
-            "-" +
-            index;
-          sublevel = parentLevel + "-" + index;
-        }
-
-        result.push(nodeHeader + " {}");
-        this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result);
-      });
     }
+    // jsonToCssStyle1(array, parentHeader, parentLevel, result) {
+    //   array.forEach((item, index) => {
+    //     let nodeHeader = "";
+    //     let sublevel = "";
+    //     if (parentHeader == "") {
+    //       nodeHeader = "." + this.containerName;
+    //       sublevel = "";
+    //     } else {
+    //       nodeHeader =
+    //         parentHeader +
+    //         " " +
+    //         item.tagName +
+    //         ".s" +
+    //         parentLevel +
+    //         "-" +
+    //         index;
+    //       sublevel = parentLevel + "-" + index;
+    //     }
+
+    //     result.push(nodeHeader + " {}");
+    //     this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result);
+    //   });
+    // }
   },
   watch: {
     elementHistory: {
@@ -577,8 +591,21 @@ export default {
     var editorHTML = ace.edit("editorHTML");
     editorHTML.setTheme("ace/theme/twilight");
     editorHTML.session.setMode("ace/mode/html");
-    window.editorHTML = editorHTML;
+    // window.editorHTML = editorHTML;
+
     this.editorHTML = editorHTML;
+
+    var editorCSS_LIST = ace.edit("editorCSS_LIST");
+    editorCSS_LIST.setTheme("ace/theme/twilight");
+    editorCSS_LIST.session.setMode("ace/mode/css");
+    // window.editorCSS_LIST = editorCSS_LIST;
+    this.editorCSS_LIST = editorCSS_LIST;
+
+    var editorCSS_TREE = ace.edit("editorCSS_TREE");
+    editorCSS_TREE.setTheme("ace/theme/twilight");
+    editorCSS_TREE.session.setMode("ace/mode/less");
+    // window.editorCSS_TREE = editorCSS_TREE;
+    this.editorCSS_TREE = editorCSS_TREE;
   },
   created() {
     //   let body = document.getElementsByTagName('body')
