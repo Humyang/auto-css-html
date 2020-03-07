@@ -42,6 +42,12 @@ let store = new Vuex.Store({
     }
   },
   mutations: {
+    SET_LOAD_PRESET(state, data) {
+      state.preSet = JSON.parse(data);
+      if (state.preSet == null) {
+        state.preSet = {};
+      }
+    },
     SET_PRESET(state, data) {
       let obj = state.preSet;
       if (!obj[data.tagName]) {
@@ -49,14 +55,24 @@ let store = new Vuex.Store({
       }
       obj[data.tagName].push(data.dataset);
       state.preSet = JSON.parse(JSON.stringify(obj));
+
+      localStorage.setItem("SINGLE", JSON.stringify(state.preSet));
     },
     SET_DATASET(state, data) {
       let d = JSON.parse(JSON.stringify(data));
       state.dataset = d;
     },
+    SET_LOAD_PREVIEW(state, data) {
+      state.preSave = JSON.parse(data);
+      if (state.preSave == null) {
+        state.preSave = [];
+      }
+    },
     SET_PREVIEW_SAVE(state, data) {
       let d = JSON.parse(JSON.stringify(data));
       state.preSave.push(d);
+      console.log(1);
+      localStorage.setItem("COMPOSE", JSON.stringify(state.preSave));
     },
     SET_ELEMENT_HISTORY(state, data) {
       let d = JSON.parse(JSON.stringify(data));

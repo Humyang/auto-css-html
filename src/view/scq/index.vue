@@ -302,10 +302,8 @@ export default {
       this.updateElementSetElement();
     },
     collectionInsert(data) {
-      console.log("collectionInsert", data);
       let item = this.getNode(this.dataset, this.current_id);
       item.subset.push(data);
-
       this.updateElementSetElement();
     },
     updateElementSetElement() {
@@ -315,31 +313,6 @@ export default {
     onChangePosition(value) {
       this.appendPosition = value;
     },
-    // format(node, level) {
-    //   var indentBefore = new Array(level++ + 1).join("  "),
-    //     indentAfter = new Array(level - 1).join("  "),
-    //     textNode;
-
-    //   for (var i = 0; i < node.children.length; i++) {
-    //     textNode = document.createTextNode("\n" + indentBefore);
-    //     node.insertBefore(textNode, node.children[i]);
-
-    //     this.format(node.children[i], level);
-
-    //     if (node.lastElementChild == node.children[i]) {
-    //       textNode = document.createTextNode("\n" + indentAfter);
-    //       node.appendChild(textNode);
-    //     }
-    //   }
-
-    //   return node;
-    // },
-    // process(str) {
-    //   var div = document.createElement("div");
-    //   div.innerHTML = str.trim();
-
-    //   return this.format(div, 0).innerHTML;
-    // },
     resultClick(r) {
       var beautify = ace.require("ace/ext/beautify");
       if (r.label == "HTML") {
@@ -506,55 +479,47 @@ export default {
         });
       }
       if (this.appendPosition == "subChildInsert") {
-        let subset = JSON.parse(JSON.stringify(item.subset));
-
-        item.subset = [];
-
-        addArray.forEach(() => {
-          let nSubset = JSON.parse(JSON.stringify(subset));
-          resetUid(nSubset);
-          item.subset.push({
-            tagName: this.tagName,
-            id: uid2(10),
-            options: {
-              props: {},
-              attrs: {
-                class: {},
-                style: [],
-                property: []
-              }
-            },
-            subset: [nSubset]
+        for (let index = 0; index < item.length; index++) {
+          const element = item[index];
+          addArray.forEach(() => {
+            element.subset.push({
+              tagName: this.tagName,
+              id: uid2(10),
+              options: {
+                props: {},
+                attrs: {
+                  class: {},
+                  style: [],
+                  property: []
+                }
+              },
+              subset: []
+            });
           });
-        });
+        }
       }
-      // });
-      // this.setDatasetClassName(this.dataset, 1);
+      if (this.appendPosition == "parentAppend") {
+        // for (let index = 0; index < item.length; index++) {
+        //   const element = item[index];
+        //   addArray.forEach(() => {
+        //     element.subset.push({
+        //       tagName: this.tagName,
+        //       id: uid2(10),
+        //       options: {
+        //         props: {},
+        //         attrs: {
+        //           class: {},
+        //           style: [],
+        //           property: []
+        //         }
+        //       },
+        //       subset: []
+        //     });
+        //   });
+        // }
+      }
       this.updateElementSetElement();
     }
-    // jsonToCssStyle1(array, parentHeader, parentLevel, result) {
-    //   array.forEach((item, index) => {
-    //     let nodeHeader = "";
-    //     let sublevel = "";
-    //     if (parentHeader == "") {
-    //       nodeHeader = "." + this.containerName;
-    //       sublevel = "";
-    //     } else {
-    //       nodeHeader =
-    //         parentHeader +
-    //         " " +
-    //         item.tagName +
-    //         ".s" +
-    //         parentLevel +
-    //         "-" +
-    //         index;
-    //       sublevel = parentLevel + "-" + index;
-    //     }
-
-    //     result.push(nodeHeader + " {}");
-    //     this.jsonToCssStyle1(item.subset, nodeHeader, sublevel, result);
-    //   });
-    // }
   },
   watch: {
     elementHistory: {
