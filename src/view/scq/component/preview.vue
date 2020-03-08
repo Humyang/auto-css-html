@@ -1,14 +1,11 @@
 <template>
   <div class="flex">
     <div class="preview mobile" @click="rootClick">
-      <!-- {{dataset}} -->
       <engine
         instanceType="preView"
-        v-for="item,index in dataset"
-        :key="index"
         :currentSelect="currentSelect"
         v-on:actionClick="actionClick"
-        :dataset="item"
+        :dataset="dataset"
         :controlView="controlView"
       ></engine>
     </div>
@@ -16,7 +13,7 @@
       <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
 
       <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
-    </div> -->
+    </div>-->
   </div>
 </template>
 

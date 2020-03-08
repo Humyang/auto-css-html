@@ -1,10 +1,10 @@
 <template>
   <div>
+    <!-- {{dataset}} -->
     <engine
+      v-if="dataset.id"
       instanceType="realView"
-      v-for="item,index in dataset"
-      :key="index"
-      :dataset="item"
+      :dataset="dataset"
       v-on:actionClick="actionClick"
       :controlView="controlView"
     ></engine>

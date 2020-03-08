@@ -62,7 +62,11 @@ export default {
     renderForRealView(createElement, dataset) {
       let sub = [];
       if (this.controlView) {
-        for (let index = 0; index < dataset.subset.length; index++) {
+        for (
+          let index = 0;
+          index < (dataset.subset && dataset.subset.length);
+          index++
+        ) {
           const element = dataset.subset[index];
           if (typeof element == "object") {
             sub.push(this.renderForRealView(createElement, element));
@@ -97,7 +101,11 @@ export default {
         );
       }
       if (this.controlView) {
-        for (let index = 0; index < dataset.subset.length; index++) {
+        for (
+          let index = 0;
+          index < (dataset.subset && dataset.subset.length);
+          index++
+        ) {
           const element = dataset.subset[index];
           if (typeof element == "object") {
             sub.push(this.renderForPreView(createElement, element));

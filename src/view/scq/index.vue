@@ -169,7 +169,19 @@ export default {
       currentItemSubset: [],
       tagName: "div",
       isMulitle: false,
-      dataset: []
+      dataset: {
+        tagName: "div",
+        id: "root",
+        options: {
+          props: {},
+          attrs: {
+            class: {},
+            style: [],
+            property: []
+          }
+        },
+        subset: []
+      }
     };
   },
 
@@ -258,22 +270,29 @@ export default {
       return r.join("");
     },
     actionSaveSelected(selected) {
-      let item = this.getNodeById(this.dataset, this.current_id);
+      let item = this.getNodeById(this.dataset.subset, this.current_id);
       this.pushPreSave(item[0]);
     },
     rootClick() {
       this.currentItem = this.dataset;
-      this.currentItemSubset = this.dataset;
+      this.currentItemSubset = this.dataset.subset;
     },
     rawToPreView(data) {
-      let item = this.getNodeById(this.dataset, this.current_id);
+      let item = this.getNodeById(this.dataset.subset, this.current_id);
       this.currentItemSubset.push(data);
 
       this.updateElementSetElement();
     },
     actionRemoveSelected() {
       // item.subset = [];
-      this.dataset = this.removeSelected(this.dataset, this.current_id);
+      if (this.current_id == "root") {
+        this.dataset.subset = [];
+      } else {
+        this.dataset.subset = this.removeSelected(
+          this.dataset.subset,
+          this.current_id
+        );
+      }
 
       // this.setElement(JSON.parse(JSON.stringify(dataset)));
       this.updateElementSetElement();
@@ -297,17 +316,17 @@ export default {
     },
 
     actionInsert(data) {
-      let item = this.getNodeById(this.dataset, this.current_id);
+      let item = this.getNodeById(this.dataset.subset, this.current_id);
       this.currentItemSubset.push(getFormatedData(data));
       this.updateElementSetElement();
     },
     collectionInsert(data) {
-      let item = this.getNode(this.dataset, this.current_id);
+      let item = this.getNode(this.dataset.subset, this.current_id);
       item.subset.push(data);
       this.updateElementSetElement();
     },
     updateElementSetElement() {
-      this.setElement(JSON.parse(JSON.stringify(this.dataset)));
+      this.setElement(JSON.parse(JSON.stringify(this.dataset.subset)));
       this.refreshRealView();
     },
     onChangePosition(value) {
@@ -318,7 +337,7 @@ export default {
       if (r.label == "HTML") {
         this.editorHTML.setValue(
           // this.process(
-          this.getHTML(JSON.parse(JSON.stringify(this.dataset)), 0, "")
+          this.getHTML(JSON.parse(JSON.stringify(this.dataset.subset)), 0, "")
           // )
         );
         beautify.beautify(this.editorHTML.session);
@@ -326,13 +345,13 @@ export default {
       if (r.label == "CSS") {
         let result = [];
         this.getCssList(
-          JSON.parse(JSON.stringify(this.dataset)),
+          JSON.parse(JSON.stringify(this.dataset.subset)),
           "",
           0,
           result
         );
         let result2 = this.getCssTree(
-          JSON.parse(JSON.stringify(this.dataset)),
+          JSON.parse(JSON.stringify(this.dataset.subset)),
           ""
         );
         this.editorCSS_LIST.setValue(result.join("\n"));
@@ -377,16 +396,18 @@ export default {
     },
     actionPreviewClick(dataset) {
       this.current_id = JSON.parse(JSON.stringify([dataset.id]));
-      let arr = this.getNode(this.dataset, this.current_id);
-      this.currentItemSubset = arr.subset;
-      this.currentItem = arr;
+      this.currentItemSubset = dataset.subset;
+      this.currentItem = dataset;
       this.$refs.CssDec.setList(this.currentItem.options.attrs.style);
       this.$refs.HtmlDec.setList(this.currentItem);
     },
-    getNode(subset, id) {
+    getNode(dataset, id) {
+      if (dataset.id == id) {
+        return dataset;
+      }
       let res = "";
-      for (let index = 0; index < subset.length; index++) {
-        const element = subset[index];
+      for (let index = 0; index < dataset.subset.length; index++) {
+        const element = dataset.subset[index];
         if (typeof element == "object") {
           let findresult = id.find(subitem => {
             return subitem == element.id;
@@ -395,7 +416,7 @@ export default {
             res = element;
             break;
           } else {
-            res = this.getNode(element.subset, id);
+            res = this.getNode(element, id);
             if (res != "") {
               break;
             }
@@ -421,7 +442,6 @@ export default {
           if (typeof element == "object") {
             res = this.getNodeById(element.subset, id);
             if (res) {
-              // continue;
               break;
             }
           }
@@ -433,6 +453,21 @@ export default {
         }
       }
     },
+    getNodeParentById(sets, id) {
+      for (let index = 0; index < sets.length; index++) {
+        const element = sets[index];
+        if (element.id == id) {
+          return sets;
+        } else {
+          let res = this.getNodeParentById(element.subset, id);
+          if (res) {
+            return element;
+            // return res;
+          }
+        }
+      }
+      return false;
+    },
     columnAdd(number) {
       // this.addDirection = "column";
       if (number == 0) {
@@ -440,7 +475,7 @@ export default {
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
-        let item = this.getNodeById(this.dataset, this.current_id);
+        let item = this.getNodeById(this.dataset.subset, this.current_id);
 
         this.addElement(this.currentItemSubset);
       }
@@ -452,7 +487,7 @@ export default {
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
-        let item = this.getNodeById(this.dataset, this.current_id);
+        let item = this.getNodeById(this.dataset.subset, this.current_id);
 
         this.addElement(this.currentItemSubset);
       }
@@ -499,24 +534,29 @@ export default {
         }
       }
       if (this.appendPosition == "parentAppend") {
-        // for (let index = 0; index < item.length; index++) {
-        //   const element = item[index];
-        //   addArray.forEach(() => {
-        //     element.subset.push({
-        //       tagName: this.tagName,
-        //       id: uid2(10),
-        //       options: {
-        //         props: {},
-        //         attrs: {
-        //           class: {},
-        //           style: [],
-        //           property: []
-        //         }
-        //       },
-        //       subset: []
-        //     });
-        //   });
-        // }
+        // console.log(1);
+        var node = this.getNodeParentById(
+          this.dataset.subset,
+          this.current_id[0]
+        );
+        let obj = JSON.parse(JSON.stringify(node));
+        // node = [];
+        let data = JSON.parse(
+          JSON.stringify({
+            tagName: this.tagName,
+            id: uid2(10),
+            options: {
+              props: {},
+              attrs: {
+                class: {},
+                style: [],
+                property: []
+              }
+            },
+            subset: obj
+          })
+        );
+        node = data;
       }
       this.updateElementSetElement();
     }
@@ -532,27 +572,11 @@ export default {
       handler: function() {
         this.SET_DATASET(this.dataset);
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
-    // dset: {
-    //   handler: function() {
-    //     this.dataset = this.dset;
-    //     let arr = this.getNode(this.dataset, this.current_id);
-    //     this.currentItem = arr;
-    //   },
-    //   immediate: true
-    // },
-    // containerName(newValue) {
-    // console.log(v,e)
-    // this.dataset[0].className = newValue;
-    // this.setElement(this.dataset);
-    // }
   },
   mounted() {
-    // console.log("aaaa", this.$refs.iframeRef);
-    // setInterval(() => {
-    //   this.updateElementSetElement();
-    // }, 500);
     var editorHTML = ace.edit("editorHTML");
     editorHTML.setTheme("ace/theme/twilight");
     editorHTML.session.setMode("ace/mode/html");
@@ -574,7 +598,7 @@ export default {
   },
   created() {
     //   let body = document.getElementsByTagName('body')
-    // this.dataset[0].className = this.containerName;
+    // this.dataset.subset[0].className = this.containerName;
     window.addEventListener("keydown", event => {
       //   console.log(event)
       if (event.keyCode == 17) {
@@ -588,7 +612,7 @@ export default {
       }
     });
     window.deb = this;
-    this.currentItemSubset = this.dataset;
+    this.currentItemSubset = this.dataset.subset;
   }
 };
 </script>

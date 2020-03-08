@@ -10,7 +10,7 @@ Vue.use(Vuex);
 let store = new Vuex.Store({
   state: {
     preSave: [],
-    dataset: [],
+    dataset: {},
     preSet: {},
     element: [
       // {
