@@ -211,9 +211,9 @@ export default {
     // },
     getCssTree(dataset, prefix) {
       let r = [];
-      for (let index = 0; index < dataset.length; index++) {
+      for (let index = 0; index < dataset.subset.length; index++) {
         let sub = "";
-        const element = dataset[index];
+        const element = dataset.subset[index];
         let nodeFlagClass = "";
         if (prefix == "") {
           nodeFlagClass = ".node-" + index;
@@ -221,19 +221,26 @@ export default {
           nodeFlagClass = prefix + "-" + index;
         }
         // element.options.attrs.class[nodeFlagClass] = true;
-        sub = this.getCssTree(element.subset, nodeFlagClass);
+        sub = this.getCssTree(element, nodeFlagClass);
         let res = `${nodeFlagClass}{ ${sub} } `;
         r.push(res);
       }
-      return r.join("");
+      if (prefix == "") {
+        let res = `.${dataset.id}{${r.join("")}}`;
+
+        return res;
+      } else {
+        return r.join("");
+      }
+      // return r.join("");
     },
     getCssList(dataset, parentHeader, parentLevel, result) {
-      for (let index = 0; index < dataset.length; index++) {
-        const element = dataset[index];
+      for (let index = 0; index < dataset.subset.length; index++) {
+        const element = dataset.subset[index];
         let nodeHeader = "";
         let sublevel = "";
         if (parentHeader == "") {
-          nodeHeader = ".node-" + index;
+          nodeHeader = "." + dataset.id + " .node-" + index;
           sublevel = index;
         } else {
           nodeHeader =
@@ -241,44 +248,47 @@ export default {
           sublevel = parentLevel + "-" + index;
         }
         result.push(nodeHeader + " {}");
-        this.getCssList(element.subset, nodeHeader, sublevel, result);
+        this.getCssList(element, nodeHeader, sublevel, result);
       }
     },
     getHTML(dataset, level, prefix) {
       let r = [];
-      for (let index = 0; index < dataset.length; index++) {
+      for (let index = 0; index < dataset.subset.length; index++) {
         let sub = "";
-        const element = dataset[index];
+        const element = dataset.subset[index];
         let nodeFlagClass = "";
         if (prefix == "") {
           nodeFlagClass = "node-" + level;
         } else {
-          nodeFlagClass = prefix + "-" + level;
+          nodeFlagClass = prefix + "-" + index;
         }
         element.options.attrs.class[nodeFlagClass] = true;
-        sub = this.getHTML(element.subset, level++, nodeFlagClass);
-
-        let res = `<${element.tagName} ${propertyToString(
-          element.options.attrs.property
-        )} ${propertyToString(element.options.props)} style="${styleToString(
-          element.options.attrs.style
-        )}" class="${classname(element.options.attrs.class)}">
-        ${sub}</${element.tagName}>`;
-        r.push(res);
+        sub = this.getHTML(element, level++, nodeFlagClass);
+        r.push(sub);
       }
+      let rootName = "";
+      if (prefix == "") {
+        rootName = dataset.id;
+      }
+      let res = `<${dataset.tagName} ${propertyToString(
+        dataset.options.attrs.property
+      )} ${propertyToString(dataset.options.props)} style="${styleToString(
+        dataset.options.attrs.style
+      )}" class="${classname(dataset.options.attrs.class, rootName)}">
+        ${r.join("")}</${dataset.tagName}>`;
 
-      return r.join("");
+      return res;
     },
     actionSaveSelected(selected) {
-      let item = this.getNodeById(this.dataset.subset, this.current_id);
-      this.pushPreSave(item[0]);
+      let item = this.getNodeById(this.dataset, this.current_id);
+      this.pushPreSave(item);
     },
     rootClick() {
       this.currentItem = this.dataset;
       this.currentItemSubset = this.dataset.subset;
     },
     rawToPreView(data) {
-      let item = this.getNodeById(this.dataset.subset, this.current_id);
+      let item = this.getNodeById(this.dataset, this.current_id);
       this.currentItemSubset.push(data);
 
       this.updateElementSetElement();
@@ -337,7 +347,7 @@ export default {
       if (r.label == "HTML") {
         this.editorHTML.setValue(
           // this.process(
-          this.getHTML(JSON.parse(JSON.stringify(this.dataset.subset)), 0, "")
+          this.getHTML(JSON.parse(JSON.stringify(this.dataset)), 0, "")
           // )
         );
         beautify.beautify(this.editorHTML.session);
@@ -345,13 +355,13 @@ export default {
       if (r.label == "CSS") {
         let result = [];
         this.getCssList(
-          JSON.parse(JSON.stringify(this.dataset.subset)),
+          JSON.parse(JSON.stringify(this.dataset)),
           "",
           0,
           result
         );
         let result2 = this.getCssTree(
-          JSON.parse(JSON.stringify(this.dataset.subset)),
+          JSON.parse(JSON.stringify(this.dataset)),
           ""
         );
         this.editorCSS_LIST.setValue(result.join("\n"));
@@ -426,21 +436,25 @@ export default {
       return res;
     },
     //   遍历树结构，找到指定值
-    getNodeById(subset, id) {
-      let item = subset.filter(item => {
-        let findresult = id.find(subitem => {
-          return subitem == item.id;
-        });
-        return !!findresult;
-      });
-      if (item.length > 0) {
-        return item;
-      } else {
+    getNodeById(dataset, id) {
+      // let item = subset.filter(item => {
+      //   let findresult = id.find(subitem => {
+      //     return subitem == item.id;
+      //   });
+      //   return !!findresult;
+      // });
+      if (dataset.id == id) {
+        return dataset;
+      }
+      // if (item.length > 0) {
+      //   return item;
+      // }
+      else {
         let res = false;
-        for (let index = 0; index < subset.length; index++) {
-          const element = subset[index];
+        for (let index = 0; index < dataset.subset.length; index++) {
+          const element = dataset.subset[index];
           if (typeof element == "object") {
-            res = this.getNodeById(element.subset, id);
+            res = this.getNodeById(element, id);
             if (res) {
               break;
             }
@@ -475,7 +489,7 @@ export default {
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
-        let item = this.getNodeById(this.dataset.subset, this.current_id);
+        let item = this.getNodeById(this.dataset, this.current_id);
 
         this.addElement(this.currentItemSubset);
       }
@@ -487,7 +501,7 @@ export default {
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
-        let item = this.getNodeById(this.dataset.subset, this.current_id);
+        let item = this.getNodeById(this.dataset, this.current_id);
 
         this.addElement(this.currentItemSubset);
       }
