@@ -34,9 +34,6 @@ export default {
     };
   },
   methods: {
-    rawToPreView(data) {
-      this.$emit("rawToPreView", JSON.parse(JSON.stringify(resetUid(data))));
-    },
     actionInsert(data) {
       this.$emit("actionInsert", data);
     },
@@ -64,8 +61,10 @@ export default {
   height: 736px;
   background: #fff;
   margin: 0 auto;
-  border: 2px solid #000;
+  border: 4px solid #000;
   border-style: dotted;
   box-sizing: content-box;
+  padding: 0;
+  overflow: auto;
 }
 </style>

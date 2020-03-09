@@ -11,12 +11,11 @@
               <div class="grow flex row" style="padding-left: 20px;">
                 <preview
                   @actionSaveSelected="actionSaveSelected"
-                  v-on:currentSelect="actionPreviewClick"
+                  @currentSelect="actionPreviewClick"
                   @actionInsert="actionInsert"
-                  v-on:rootClick="rootClick"
+                  @rootClick="rootClick"
                   :dataset="dataset"
                   :controlView="controlView"
-                  @rawToPreView="rawToPreView"
                 ></preview>
                 <div>
                   <el-switch
@@ -94,7 +93,7 @@
             <el-button type="danger" plain @click="actionRemoveSelected">删除选中</el-button>
             <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
 
-            <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
+            <!-- <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" /> -->
             <div class="flex">
               <div class="history flex" style="flex-flow: row-reverse;">
                 <span
@@ -137,7 +136,7 @@ import {
 
 import resetUid from "@/utils/resetUid.js";
 
-import pickOnAll from "./component/pickOnAll";
+// import pickOnAll from "./component/pickOnAll";
 export default {
   name: "SCQ",
   components: {
@@ -146,8 +145,8 @@ export default {
     preClass,
     collection,
     realView,
-    htmlProperty,
-    pickOnAll
+    htmlProperty
+    // pickOnAll
   },
   data() {
     return {
@@ -326,7 +325,7 @@ export default {
     },
 
     actionInsert(data) {
-      let item = this.getNodeById(this.dataset.subset, this.current_id);
+      let item = this.getNodeById(this.dataset, this.current_id);
       this.currentItemSubset.push(getFormatedData(data));
       this.updateElementSetElement();
     },
@@ -634,7 +633,7 @@ export default {
 <style>
 .realviewIframe {
   width: 414px;
-  height: 700px;
+  height: 736px;
   border: 4px solid #333;
 }
 .html-box,

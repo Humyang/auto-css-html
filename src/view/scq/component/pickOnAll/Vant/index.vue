@@ -14,7 +14,7 @@
             <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
             <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" />
           </div>
-          <div class="grow">
+          <div class="mobile">
             <div class="flex column" v-for="item,index in preSet[item.tagName]">
               <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
               <engine :controlView="true" instanceType="preView" :key="index" :dataset="item"></engine>
