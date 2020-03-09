@@ -3,6 +3,13 @@
 1、任意的样式添加
 优化样式值的输入方式
 2、框架的接入
+
+element ui
+icon
+button
+link
+form 表单
+
 3、html、css 代码生成
 4、项目生成
 

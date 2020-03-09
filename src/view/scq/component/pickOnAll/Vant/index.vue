@@ -16,7 +16,10 @@
           </div>
           <div class="mobile">
             <div class="flex column" v-for="item,index in preSet[item.tagName]">
-              <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
+              <div class="flex row">
+                <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
+                <el-button type="danger" @click="rawToPreView(item)">删除</el-button>
+              </div>
               <engine :controlView="true" instanceType="preView" :key="index" :dataset="item"></engine>
             </div>
           </div>
