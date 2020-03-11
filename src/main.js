@@ -29,9 +29,14 @@ let ins = new Vue({
   el: "#app"
 });
 window.parentDataset = new Dexie("dataset");
+// window.componentCache = new Dexie("componentCache");
 parentDataset.version(1).stores({
-  dataset: "version,dataset,currentSelect,modifyFlag"
+  dataset: "version,dataset,currentSelect,modifyFlag",
+  componentCache: "id,tagName,dataset"
 });
+// componentCache.version(1).stores({
+//   dataset: "id,tagName,dataset"
+// });
 // let db = parentDataset;
 // db.dataset.put({ version: "1", dataset: {}, currentSelect: [] });
 // var db = new Dexie("friend_database");

@@ -53,6 +53,14 @@ const router = new VueRouter({
           component: resolve => require(["@/view/scq/preview.vue"], resolve)
         },
         {
+          path: "/component/:id",
+          name: "component",
+          meta: {
+            title: "预览"
+          },
+          component: resolve => require(["@/view/scq/component.vue"], resolve)
+        },
+        {
           path: "/pdsc",
           name: "pdsc",
           meta: {

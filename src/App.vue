@@ -19,7 +19,7 @@ export default {
   mounted() {
     // this.$store
 
-    this.SET_LOAD_PRESET(localStorage.getItem("SINGLE"));
+    // this.SET_LOAD_PRESET(localStorage.getItem("SINGLE"));
 
     this.SET_LOAD_PREVIEW(localStorage.getItem("COMPOSE"));
   }

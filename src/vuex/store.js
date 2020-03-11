@@ -52,15 +52,21 @@ let store = new Vuex.Store({
         state.preSet = {};
       }
     },
-    SET_PRESET(state, data) {
-      let obj = state.preSet;
-      if (!obj[data.tagName]) {
-        obj[data.tagName] = [];
-      }
-      obj[data.tagName].push(data.dataset);
-      state.preSet = JSON.parse(JSON.stringify(obj));
-
-      localStorage.setItem("SINGLE", JSON.stringify(state.preSet));
+    async SET_PRESET(state, data) {
+      // let obj = state.preSet;
+      // if (!obj[data.tagName]) {
+      //   obj[data.tagName] = [];
+      // }
+      // obj[data.tagName].push(data.dataset);
+      // state.preSet = JSON.parse(JSON.stringify(obj));
+      // localStorage.setItem("SINGLE", JSON.stringify(state.preSet));
+      // alert(111);
+      // console.log(data);
+      await parentDataset.componentCache.add({
+        id: uid2(20),
+        tagName: data.tagName,
+        dataset: data.dataset
+      });
     },
     SET_DATASET(state, data) {
       let d = JSON.parse(JSON.stringify(data));
