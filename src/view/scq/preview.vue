@@ -17,6 +17,7 @@ import realView from "./component/realView";
 
 import engine from "./component/engine";
 import { mapMutations, mapActions, mapState } from "vuex";
+import uid2 from "uid2";
 export default {
   components: { realView, engine },
 
@@ -32,18 +33,22 @@ export default {
       this.currentSelect = [dataset.id];
       let v = await parentDataset.dataset.get("1");
       parentDataset.dataset.update("1", {
-        currentSelect: this.currentSelect
+        currentSelect: this.currentSelect,
+        modifyFlag: uid2(20)
       });
       //   this.$emit("currentSelect", dataset);
     }
   },
   async mounted() {
+    let modifyFlag = "";
     setInterval(async () => {
       //   this.dataset = parent.INS.$store.state.dataset;
       // parentDataset.
       let v = await parentDataset.dataset.get("1");
-      this.dataset = v.dataset;
-    }, 500);
+      if (modifyFlag != v.modifyFlag) {
+        this.dataset = v.dataset;
+      }
+    }, 100);
   }
 };
 </script>

@@ -2,6 +2,7 @@ import Vuex from "vuex";
 import Vue from "vue";
 // import * as types from './types'
 
+import uid2 from "uid2";
 Vue.use(Vuex);
 
 // const SET_ELEMENT = (state)=>{
@@ -37,7 +38,8 @@ let store = new Vuex.Store({
     setElement({ commit, state, dispatch }, obj) {
       // state.elementHistory.push(JSON.parse(JSON.stringify(data)));
       parentDataset.dataset.update("1", {
-        dataset: obj
+        dataset: obj,
+        modifyFlag: uid2(20)
       });
       commit("SET_DATASET", obj);
       commit("SET_ELEMENT_HISTORY", obj);

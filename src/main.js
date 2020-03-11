@@ -30,7 +30,7 @@ let ins = new Vue({
 });
 window.parentDataset = new Dexie("dataset");
 parentDataset.version(1).stores({
-  dataset: "version,dataset,currentSelect"
+  dataset: "version,dataset,currentSelect,modifyFlag"
 });
 // let db = parentDataset;
 // db.dataset.put({ version: "1", dataset: {}, currentSelect: [] });

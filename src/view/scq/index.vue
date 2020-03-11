@@ -613,18 +613,21 @@ export default {
       parentDataset.dataset.put({
         version: "1",
         dataset: this.dataset,
-        currentSelect: []
+        currentSelect: [],
+        modifyFlag: uid2(20)
       });
     }
+    let modifyFlag = "";
     setInterval(async () => {
-      //   this.dataset = parent.INS.$store.state.dataset;
-      // parentDataset.
       let v = await parentDataset.dataset.get("1");
-      this.currentSelect = v.currentSelect;
-      this.dataset = v.dataset;
-      this.currentItem = this.getNode(this.dataset, this.currentSelect);
-      this.currentItemSubset = this.currentItem.subset;
-    }, 500);
+      if (modifyFlag != v.modifyFlag) {
+        modifyFlag = v.modifyFlag;
+        this.currentSelect = v.currentSelect;
+        this.dataset = v.dataset;
+        this.currentItem = this.getNode(this.dataset, this.currentSelect);
+        this.currentItemSubset = this.currentItem.subset;
+      }
+    }, 100);
   },
   created() {
     //   let body = document.getElementsByTagName('body')

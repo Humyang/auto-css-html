@@ -6,7 +6,7 @@
         <el-menu-item index="0">Element-UI</el-menu-item>
         <el-menu-item index="1">Vant</el-menu-item>
       </el-menu>-->
-      <el-tabs v-model="rootPick">
+      <el-tabs v-model="rootPick" v-if="pickOnAllVisible">
         <el-tab-pane label="Element-UI" name="0">用户管理</el-tab-pane>
         <el-tab-pane label="Vant" name="1">
           <Vant @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
