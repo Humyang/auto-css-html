@@ -1,19 +1,14 @@
 <template>
   <div class="flex">
-    <div class="preview mobile" @click="rootClick">
-      <engine
-        instanceType="preView"
-        :currentSelect="currentSelect"
-        v-on:actionClick="actionClick"
-        :dataset="dataset"
-        :controlView="controlView"
-      ></engine>
-    </div>
-    <!-- <div style="padding-left: 20px;">
-      <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
-
-      <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
-    </div>-->
+    <!-- <div class="preview mobile" @click="rootClick"> -->
+    <engine
+      instanceType="preView"
+      :currentSelect="currentSelect"
+      v-on:actionClick="actionClick"
+      :dataset="dataset"
+      :controlView="controlView"
+    ></engine>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -34,16 +29,10 @@ export default {
     };
   },
   methods: {
-    actionInsert(data) {
-      this.$emit("actionInsert", data);
-    },
-    actionSaveSelected() {
-      this.$emit("actionSaveSelected", this.currentSelect);
-    },
-    rootClick() {
-      this.currentSelect = [];
-      this.$emit("rootClick");
-    },
+    // rootClick() {
+    //   this.currentSelect = [];
+    //   this.$emit("rootClick");
+    // },
     actionClick(dataset) {
       this.currentSelect = [dataset.id];
       this.$emit("currentSelect", dataset);

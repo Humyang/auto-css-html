@@ -9,11 +9,9 @@
                 <iframe ref="iframeRef" :src="'/realview'" class="realviewIframe"></iframe>
               </div>
               <div class="grow flex row" style="padding-left: 20px;">
+                <!-- @rootClick="rootClick" -->
                 <preview
-                  @actionSaveSelected="actionSaveSelected"
                   @currentSelect="actionPreviewClick"
-                  @actionInsert="actionInsert"
-                  @rootClick="rootClick"
                   :dataset="dataset"
                   :controlView="controlView"
                 ></preview>
