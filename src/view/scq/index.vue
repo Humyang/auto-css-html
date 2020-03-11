@@ -10,11 +10,12 @@
               </div>
               <div class="grow flex row" style="padding-left: 20px;">
                 <!-- @rootClick="rootClick" -->
-                <preview
+                <!-- <preview
                   @currentSelect="actionPreviewClick"
                   :dataset="dataset"
                   :controlView="controlView"
-                ></preview>
+                ></preview>-->
+                <iframe ref="iframeRef" :src="'/preview'" class="realviewIframe"></iframe>
                 <div>
                   <el-switch
                     v-for="(item, index) in currentItem.options&&currentItem.options.attrs.class"
@@ -148,6 +149,7 @@ export default {
   },
   data() {
     return {
+      currentSelect: [],
       editorHTML: "",
       editorCSS_LIST: "",
       csscodeList: "",
@@ -277,27 +279,27 @@ export default {
       return res;
     },
     actionSaveSelected(selected) {
-      let item = this.getNodeById(this.dataset, this.current_id);
+      let item = this.getNodeById(this.dataset, this.currentSelect);
       this.pushPreSave(item);
     },
-    rootClick() {
-      this.currentItem = this.dataset;
-      this.currentItemSubset = this.dataset.subset;
-    },
+    // rootClick() {
+    //   this.currentItem = this.dataset;
+    //   this.currentItemSubset = this.dataset.subset;
+    // },
     rawToPreView(data) {
-      let item = this.getNodeById(this.dataset, this.current_id);
+      let item = this.getNodeById(this.dataset, this.currentSelect);
       this.currentItemSubset.push(data);
 
       this.updateElementSetElement();
     },
     actionRemoveSelected() {
       // item.subset = [];
-      if (this.current_id == "root") {
+      if (this.currentSelect == "root") {
         this.dataset.subset = [];
       } else {
         this.dataset.subset = this.removeSelected(
           this.dataset.subset,
-          this.current_id
+          this.currentSelect
         );
       }
 
@@ -323,17 +325,17 @@ export default {
     },
 
     actionInsert(data) {
-      let item = this.getNodeById(this.dataset, this.current_id);
+      let item = this.getNodeById(this.dataset, this.currentSelect);
       this.currentItemSubset.push(getFormatedData(data));
       this.updateElementSetElement();
     },
     collectionInsert(data) {
-      let item = this.getNode(this.dataset.subset, this.current_id);
+      let item = this.getNode(this.dataset.subset, this.currentSelect);
       item.subset.push(data);
       this.updateElementSetElement();
     },
     updateElementSetElement() {
-      this.setElement(JSON.parse(JSON.stringify(this.dataset.subset)));
+      this.setElement(JSON.parse(JSON.stringify(this.dataset)));
       this.refreshRealView();
     },
     onChangePosition(value) {
@@ -387,11 +389,10 @@ export default {
       );
       obj[index] = !item;
       this.currentItem.options.attrs.class = obj;
-      // this.currentItem.className = classname(this.currentItem.className, obj);
       this.updateElementSetElement();
     },
     setElementAttr(type) {
-      let item = this.getNode(this.dataset, this.current_id);
+      let item = this.getNode(this.dataset, this.currentSelect);
 
       item.options.attrs.class = Object.assign({}, item.options.attrs.class, {
         [type]: true
@@ -402,7 +403,7 @@ export default {
       this.updateElementSetElement();
     },
     actionPreviewClick(dataset) {
-      this.current_id = JSON.parse(JSON.stringify([dataset.id]));
+      this.currentSelect = JSON.parse(JSON.stringify([dataset.id]));
       this.currentItemSubset = dataset.subset;
       this.currentItem = dataset;
       this.$refs.CssDec.setList(this.currentItem.options.attrs.style);
@@ -486,7 +487,7 @@ export default {
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
-        let item = this.getNodeById(this.dataset, this.current_id);
+        let item = this.getNodeById(this.dataset, this.currentSelect);
 
         this.addElement(this.currentItemSubset);
       }
@@ -498,7 +499,7 @@ export default {
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
-        let item = this.getNodeById(this.dataset, this.current_id);
+        let item = this.getNodeById(this.dataset, this.currentSelect);
 
         this.addElement(this.currentItemSubset);
       }
@@ -548,7 +549,7 @@ export default {
         // console.log(1);
         var node = this.getNodeParentById(
           this.dataset.subset,
-          this.current_id[0]
+          this.currentSelect[0]
         );
         let obj = JSON.parse(JSON.stringify(node));
         // node = [];
@@ -587,7 +588,7 @@ export default {
       immediate: true
     }
   },
-  mounted() {
+  async mounted() {
     var editorHTML = ace.edit("editorHTML");
     editorHTML.setTheme("ace/theme/twilight");
     editorHTML.session.setMode("ace/mode/html");
@@ -606,6 +607,24 @@ export default {
     editorCSS_TREE.session.setMode("ace/mode/less");
     // window.editorCSS_TREE = editorCSS_TREE;
     this.editorCSS_TREE = editorCSS_TREE;
+
+    let dataset = await parentDataset.dataset.get("1");
+    if (!dataset) {
+      parentDataset.dataset.put({
+        version: "1",
+        dataset: this.dataset,
+        currentSelect: []
+      });
+    }
+    setInterval(async () => {
+      //   this.dataset = parent.INS.$store.state.dataset;
+      // parentDataset.
+      let v = await parentDataset.dataset.get("1");
+      this.currentSelect = v.currentSelect;
+      this.dataset = v.dataset;
+      this.currentItem = this.getNode(this.dataset, this.currentSelect);
+      this.currentItemSubset = this.currentItem.subset;
+    }, 500);
   },
   created() {
     //   let body = document.getElementsByTagName('body')
@@ -643,14 +662,6 @@ export default {
   text-align: left;
 }
 
-.preview {
-  /* height: 100%; */
-  /* box-sizing: border-box; */
-  border: 1px solid black;
-  padding: 20px;
-
-  box-sizing: content-box;
-}
 .scq-view {
   /* height: 800px; */
   min-width: 100px;
@@ -665,12 +676,6 @@ export default {
   margin-top: 5px;
 }
 
-.preview {
-  background-color: #d4d4d4;
-}
-.selected {
-  background-color: #ffaf3a;
-}
 .current {
   justify-content: flex-start;
   align-items: center;

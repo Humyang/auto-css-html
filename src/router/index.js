@@ -45,6 +45,14 @@ const router = new VueRouter({
           component: resolve => require(["@/view/scq/realview.vue"], resolve)
         },
         {
+          path: "/preview",
+          name: "preview",
+          meta: {
+            title: "预览"
+          },
+          component: resolve => require(["@/view/scq/preview.vue"], resolve)
+        },
+        {
           path: "/pdsc",
           name: "pdsc",
           meta: {
