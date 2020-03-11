@@ -39,7 +39,6 @@
             v-model="property.property"
             :fetch-suggestions="querySearch"
             placeholder="请输入内容"
-            .
             @change="inputChange"
           ></el-autocomplete>
         </div>
@@ -146,7 +145,10 @@ export default {
       this.updateDataset();
     },
     addProperty() {
-      this.dataObj.options.attrs.property.push({ property: "", value: "" });
+      this.dataObj.options.attrs.property.push({
+        property: "",
+        value: ""
+      });
 
       this.updateDataset();
     }
