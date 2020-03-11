@@ -20,7 +20,13 @@
       >
         <div>文本</div>
         <div style="margin-left:20px">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="dataObj.subset[index]"></el-input>
+          <el-input
+            type="textarea"
+            @change="inputChange"
+            :rows="2"
+            placeholder="请输入内容"
+            v-model="dataObj.subset[index]"
+          ></el-input>
         </div>
       </div>
     </div>
@@ -33,10 +39,17 @@
             v-model="property.property"
             :fetch-suggestions="querySearch"
             placeholder="请输入内容"
+            .
+            @change="inputChange"
           ></el-autocomplete>
         </div>
         <div class="flex align-baseline">
-          <el-input placeholder="请输入内容" v-model="property.value" class="input-with-select"></el-input>
+          <el-input
+            placeholder="请输入内容"
+            @change="inputChange"
+            v-model="property.value"
+            class="input-with-select"
+          ></el-input>
           <!-- <el-button>保存</el-button> -->
           <el-button type="danger" @click="actionRemove(index)">删除</el-button>
         </div>
@@ -66,8 +79,15 @@ export default {
     };
   },
   methods: {
+    inputChange() {
+      this.updateDataset();
+    },
+    updateDataset() {
+      this.$emit("change", this.dataObj);
+    },
     addSubText() {
       this.dataObj.subset.push("");
+      this.updateDataset();
     },
     tagNameFilter(queryString, cb) {
       let tageTypeArray = [
@@ -122,9 +142,13 @@ export default {
         ...this.dataObj.options.attrs.property.slice(0, i),
         ...this.dataObj.options.attrs.property.slice(i + 1)
       ];
+
+      this.updateDataset();
     },
     addProperty() {
       this.dataObj.options.attrs.property.push({ property: "", value: "" });
+
+      this.updateDataset();
     }
   },
   computed: {},

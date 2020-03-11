@@ -36,7 +36,6 @@ let store = new Vuex.Store({
       commit("SET_ELEMENT", state.elementHistory[index]);
     },
     setElement({ commit, state, dispatch }, obj) {
-      // state.elementHistory.push(JSON.parse(JSON.stringify(data)));
       parentDataset.dataset.update("1", {
         dataset: obj,
         modifyFlag: uid2(20)

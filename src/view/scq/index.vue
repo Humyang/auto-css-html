@@ -78,10 +78,10 @@
             <div style="    text-align: left;">
               <el-tabs type="border-card">
                 <el-tab-pane label="CSS">
-                  <css-declaration ref="CssDec" />
+                  <css-declaration ref="CssDec" @change="cssChange" />
                 </el-tab-pane>
                 <el-tab-pane label="HTML">
-                  <htmlProperty ref="HtmlDec" />
+                  <htmlProperty ref="HtmlDec" @change="htmlChange" />
                 </el-tab-pane>
                 <el-tab-pane label="属性组合"></el-tab-pane>
               </el-tabs>
@@ -114,7 +114,7 @@
 <script>
 // https://ace.c9.io/
 // import HelloWorld from "./components/HelloWorld";
-import preview from "./component/preview";
+// import preview from "./component/preview";
 import uid2 from "uid2";
 import classname from "classname";
 window.ccc = classname;
@@ -140,7 +140,7 @@ export default {
   name: "SCQ",
   components: {
     cssDeclaration,
-    preview,
+    // preview,
     preClass,
     collection,
     realView,
@@ -332,6 +332,15 @@ export default {
     collectionInsert(data) {
       let item = this.getNode(this.dataset.subset, this.currentSelect);
       item.subset.push(data);
+      this.updateElementSetElement();
+    },
+    htmlChange(obj) {
+      this.currentItem = obj;
+
+      this.updateElementSetElement();
+    },
+    cssChange(style) {
+      this.currentItem.options.attrs.style = style;
       this.updateElementSetElement();
     },
     updateElementSetElement() {
@@ -626,6 +635,8 @@ export default {
         this.dataset = v.dataset;
         this.currentItem = this.getNode(this.dataset, this.currentSelect);
         this.currentItemSubset = this.currentItem.subset;
+        this.$refs.CssDec.setList(this.currentItem.options.attrs.style);
+        this.$refs.HtmlDec.setList(this.currentItem);
       }
     }, 100);
   },

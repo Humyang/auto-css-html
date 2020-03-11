@@ -22,7 +22,12 @@
           ></el-autocomplete>
         </div>
         <div class="flex align-baseline">
-          <el-input placeholder="请输入内容" v-model="property.value" class="input-with-select"></el-input>
+          <el-input
+            placeholder="请输入内容"
+            @change="inputChange"
+            v-model="property.value"
+            class="input-with-select"
+          ></el-input>
           <!-- <el-button>保存</el-button> -->
           <inputAdvance @valueChange="(value)=>valueChange(property,value)" />
           <el-button type="danger" @click="actionRemove(index)">删除</el-button>
@@ -80,11 +85,18 @@ export default {
     };
   },
   methods: {
+    inputChange() {
+      this.updateDataset();
+    },
     valueChange(property, value) {
       property.value = value;
+      this.updateDataset();
     },
     setList(data) {
       this.propertyList = data;
+    },
+    updateDataset() {
+      this.$emit("change", this.propertyList);
     },
     // createFilter(queryString) {
     //   return config => {
@@ -114,6 +126,9 @@ export default {
         ...this.propertyList.slice(0, i),
         ...this.propertyList.slice(i + 1)
       ];
+      // setTimeout(() => {
+      this.updateDataset();
+      // }, 100);
     },
     addProperty() {
       this.propertyList.push({ property: "", value: "" });
