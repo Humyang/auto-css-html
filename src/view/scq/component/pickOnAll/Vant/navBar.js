@@ -1,4 +1,4 @@
-var obj = {
+export default {
   tagName: "van-nav-bar",
   desc: "NarBar导航栏",
   props: [
@@ -46,4 +46,4 @@ var obj = {
     }
   ]
 };
-export default obj;
+// export default obj;

@@ -79,8 +79,9 @@ export default {
         dataset.tagName,
         {
           props: formatProperty(dataset.options.props),
+
+          class: classname(dataset.options.attrs.class),
           attrs: {
-            class: classname(dataset.options.attrs.class),
             style: formatStyle(dataset.options.attrs.style),
             ...formatProperty(dataset.options.attrs.property)
           }
@@ -123,20 +124,30 @@ export default {
               event.stopPropagation();
             }
           },
-          props: formatProperty(dataset.options.props),
+          props: {
+            ...formatProperty(dataset.options.props)
+            // className: "11111"
+          },
+          // class: "123",
+          // className: "11111",
+          class: classname({
+            selected:
+              getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
+            preview: true,
+            ...dataset.options.attrs.class
+          }),
           attrs: {
-            class: classname({
-              selected:
-                getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
-              preview: true,
-              ...dataset.options.attrs.class
-            }),
             style: formatStyle(dataset.options.attrs.style),
             ...formatProperty(dataset.options.attrs.property)
           }
         },
         sub
       );
+      // if (eee.componentOptions && eee.componentOptions.propsData) {
+      //   eee.componentOptions.propsData.class = "preview";
+      //   eee.componentOptions.class = "preview";
+      // }
+      // console.log(eee);
       return eee;
     },
     actionClick(dataset) {

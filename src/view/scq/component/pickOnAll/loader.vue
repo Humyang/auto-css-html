@@ -4,7 +4,7 @@
       <el-tab-pane
         v-for="item,index in config"
         :key="index"
-        :label="item.desc"
+        :label="item.tagName"
         :name="item.tagName"
       >
         <div class="flex">
@@ -28,21 +28,20 @@
   </div>
 </template>
 <script>
-import setPropery from "../setPropery";
-import config from "./index.js";
+import setPropery from "./setPropery";
 
-import engine from "../../engine";
+import engine from "../engine";
 import { getFormatedData } from "@/utils/formatMethods";
 import { mapMutations, mapActions, mapState } from "vuex";
 
 import resetUid from "@/utils/resetUid.js";
 export default {
   name: "Vant",
+  props: ["config"],
   components: { setPropery, engine },
   data() {
     return {
       rootPick: "1",
-      config,
       datasetList: []
     };
   },

@@ -7,9 +7,16 @@
         <el-menu-item index="1">Vant</el-menu-item>
       </el-menu>-->
       <el-tabs v-model="rootPick" v-if="pickOnAllVisible">
-        <el-tab-pane label="Element-UI" name="0">用户管理</el-tab-pane>
+        <el-tab-pane label="Element-UI" name="0">
+          <loader
+            :config="elementConfig"
+            @actionInsert="actionInsert"
+            @rawToPreView="rawToPreView"
+          />
+        </el-tab-pane>
         <el-tab-pane label="Vant" name="1">
-          <Vant @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
+          <!-- <Vant @actionInsert="actionInsert" @rawToPreView="rawToPreView" /> -->
+          <loader :config="vantConfig" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
         </el-tab-pane>
         <el-tab-pane label="自定义" name="2">
           <custom @rawToPreView="rawToPreView" />
@@ -19,13 +26,22 @@
   </div>
 </template>
 <script>
-import Vant from "./Vant/index.vue";
+import vantConfig from "./Vant/index.js";
+import elementConfig from "./elementUi/index";
+// import Vant from "./Vant/index.vue";
+import loader from "./loader";
 import custom from "./custom/index";
 export default {
   name: "pickOnAll",
-  components: { Vant, custom },
+  components: {
+    // Vant,
+    custom,
+    loader
+  },
   data() {
     return {
+      vantConfig,
+      elementConfig,
       rootPick: "1",
       pickOnAllVisible: false
     };
@@ -41,3 +57,10 @@ export default {
   }
 };
 </script>
+<style >
+.componentIframe {
+  width: 600px;
+  height: 300px;
+  border: 4px solid #333;
+}
+</style>
