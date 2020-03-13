@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{rootPick}}
     <el-tabs v-model="rootPick" tab-position="left" @tab-click="tabClick">
       <el-tab-pane
         v-for="item,index in config"
@@ -7,11 +8,13 @@
         :label="item.tagName"
         :name="item.tagName"
       >
-        <div class="flex">
+        {{item.tagName}}
+        <div class="flex" v-if="rootPick == item.tagName">
           <div style="min-width:300px">
             <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
             <!-- <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" /> -->
             <setValue
+              ref="setValue"
               :tagName="item.tagName"
               @actionInsert="actionInsert"
               @rawToPreView="rawToPreView"
@@ -50,7 +53,7 @@ export default {
   },
   data() {
     return {
-      rootPick: "1",
+      rootPick: "",
       datasetList: []
     };
   },

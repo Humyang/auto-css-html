@@ -1,13 +1,8 @@
 <template>
   <div>
-    <!-- {{rawData}} -->
-    <setPropery
-      v-if="rawData.tagName"
-      :value="value"
-      @actionInsert="actionInsert"
-      :data="rawData"
-      @change="change"
-    />
+    <!-- 
+    v-if="rawData.tagName"-->
+    <setPropery v-if="visible" ref="setPropery" @actionInsert="actionInsert" @change="change" />
   </div>
 </template>
 
@@ -18,11 +13,13 @@ import elementConfig from "./elementUi/index";
 import setPropery from "./setPropery";
 export default {
   name: "setValue",
-  props: ["tagName", "value"],
+  // props: ["tagName", "value"],
   components: { setPropery },
   data() {
     return {
-      rawData: {}
+      rawData: {},
+      visible: true,
+      rawValue: {}
     };
   },
   methods: {
@@ -31,33 +28,61 @@ export default {
     },
     change(data) {
       this.$emit("change", data);
-    }
-  },
-  watch: {
-    tagName: {
-      handler: function() {
-        this.rawData = {};
-        // console.log("tagName", this.tagName, vantConfig, elementConfig);
-        for (const key in vantConfig) {
-          if (vantConfig.hasOwnProperty(key)) {
-            const element = vantConfig[key];
-            if (element.tagName == this.tagName) {
-              this.rawData = element;
-              break;
-            }
-          }
-        }
-        for (const key in elementConfig) {
-          if (elementConfig.hasOwnProperty(key)) {
-            const element = elementConfig[key];
-            if (element.tagName == this.tagName) {
-              this.rawData = element;
-              break;
-            }
+    },
+    setValue(tagName, value) {
+      let rawData = {};
+      this.visible = false;
+
+      for (const key in vantConfig) {
+        if (vantConfig.hasOwnProperty(key)) {
+          const element = vantConfig[key];
+          if (element.tagName == tagName) {
+            rawData = element;
+            break;
           }
         }
       }
+      for (const key in elementConfig) {
+        if (elementConfig.hasOwnProperty(key)) {
+          const element = elementConfig[key];
+          if (element.tagName == tagName) {
+            rawData = element;
+            break;
+          }
+        }
+      }
+      setTimeout(() => {
+        this.visible = true;
+        this.$nextTick(() => {
+          this.$refs.setPropery.setRawData(rawData);
+          if (value) {
+            this.$refs.setPropery.setValue(value);
+          }
+        });
+      }, 100);
     }
+  },
+  watch: {
+    // value: {
+    //   handler: function() {
+    //     // consolvalue"v", this.value);
+    //     this.$refs.setPropery.setValue(this.value);
+    //     // if (this.value) {
+    //     //   this.rawValue = JSON.parse(JSON.stringify(this.value));
+    //     // } else {
+    //     //   // this, (rawValue = {});
+    //     // }
+    //   },
+    //   // immediate: true,
+    //   deep: true
+    // },
+    // tagName: {
+    //   handler: function() {
+    //     this.rawData = {};
+    //     this.value = {};
+    //     // console.log("tagName", this.tagName, vantConfig, elementConfig);
+    //   }
+    // }
   },
   mounted() {}
 };

@@ -98,12 +98,9 @@
                 </el-tab-pane>
                 <el-tab-pane label="属性组合"></el-tab-pane>
               </el-tabs>-->
-              <setValue
-                v-if="currentItem.tagName"
-                :tagName="currentItem.tagName"
-                @change="componentChange"
-                :value="currentItem.options.props"
-              />
+              <!-- :value="currentItem.options.props" -->
+              <!-- :tagName="currentItem.tagName" -->
+              <setValue ref="setValue" @change="componentChange" />
             </div>
           </el-tab-pane>
           <el-tab-pane label="操作">
@@ -549,6 +546,11 @@ export default {
         this.currentItemSubset = this.currentItem.subset;
         this.$refs.CssDec.setList(this.currentItem.options.attrs.style);
         this.$refs.HtmlDec.setList(this.currentItem);
+        // console.log(1);
+        this.$refs.setValue.setValue(
+          this.currentItem.tagName,
+          this.currentItem.options.props
+        );
       }
     }, 100);
   },

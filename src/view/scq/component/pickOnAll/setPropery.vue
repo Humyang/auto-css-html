@@ -1,6 +1,8 @@
 <template>
   <div class="preDefined">
     <el-button type="primary" @click="actionInsert">插入</el-button>
+    <!-- {{rawData.props}} -->
+    <!-- {{rawData}} -->
     <div v-for="item,index in rawData.props" :key="index">
       <div v-if="item.type ===String" class="flex cell">
         <span class="label">{{item.name}}</span>
@@ -22,25 +24,68 @@
 <script>
 import iconNameSelect from "./elementUi/component/iconNameSelect";
 export default {
-  props: ["data"],
+  // props: ["data"],
   components: { iconNameSelect },
   data() {
     return {
+      isWatch: true,
       rawData: {}
     };
   },
   methods: {
+    setRawData(obj) {
+      this.isWatch = false;
+      this.rawData = obj;
+      setTimeout(() => {
+        this.isWatch = true;
+      }, 100);
+    },
+    setValue(value) {
+      this.isWatch = false;
+      let obj1 = {};
+      // for (let index = 0; index < array.length; index++) {
+      //   const element = array[index];
+      //
+      // }
+      for (const key in value) {
+        if (value.hasOwnProperty(key)) {
+          const element = value[key];
+          obj1[element.property] = element.value;
+        }
+      }
+      for (const key in this.rawData.props) {
+        if (this.rawData.props.hasOwnProperty(key)) {
+          const element = this.rawData.props[key];
+          element.value = obj1[element.name];
+        }
+      }
+      setTimeout(() => {
+        this.isWatch = true;
+      }, 100);
+      // console.log("1", value);
+      // console.log("2", this.rawData.props);
+      // this.rawData.props = value;
+    },
     actionInsert() {
       this.$emit("actionInsert", this.rawData);
     }
   },
   mounted() {
-    this.rawData = this.data;
+    // this.rawData = this.data;
   },
   watch: {
+    // rawData: {
+    //   handler: function() {
+    //     this.$emit("change", this.rawData);
+    //   },
+    //   immediate: true,
+    //   deep:true
+    // },
     rawData: {
       handler: function() {
-        this.$emit("change", this.rawData);
+        if (this.isWatch) {
+          this.$emit("change", this.rawData);
+        }
       },
       deep: true
     }
