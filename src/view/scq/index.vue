@@ -209,45 +209,51 @@ export default {
     //   return res;
     // },
     getCssTree(dataset, prefix) {
-      let r = [];
-      for (let index = 0; index < dataset.subset.length; index++) {
-        let sub = "";
-        const element = dataset.subset[index];
-        let nodeFlagClass = "";
-        if (prefix == "") {
-          nodeFlagClass = ".node-" + index;
-        } else {
-          nodeFlagClass = prefix + "-" + index;
+      if (typeof dataset == "object") {
+        let r = [];
+        for (let index = 0; index < dataset.subset.length; index++) {
+          let sub = "";
+          const element = dataset.subset[index];
+          let nodeFlagClass = "";
+          if (prefix == "") {
+            nodeFlagClass = ".node-" + index;
+          } else {
+            nodeFlagClass = prefix + "-" + index;
+          }
+          // element.options.attrs.class[nodeFlagClass] = true;
+          sub = this.getCssTree(element, nodeFlagClass);
+          let res = `${nodeFlagClass}{ ${sub} } `;
+          r.push(res);
         }
-        // element.options.attrs.class[nodeFlagClass] = true;
-        sub = this.getCssTree(element, nodeFlagClass);
-        let res = `${nodeFlagClass}{ ${sub} } `;
-        r.push(res);
-      }
-      if (prefix == "") {
-        let res = `.${dataset.id}{${r.join("")}}`;
-
-        return res;
+        if (prefix == "") {
+          let res = `.${dataset.id}{${r.join("")}}`;
+          return res;
+        } else {
+          return r.join("");
+        }
       } else {
-        return r.join("");
+        return "";
       }
       // return r.join("");
     },
     getCssList(dataset, parentHeader, parentLevel, result) {
-      for (let index = 0; index < dataset.subset.length; index++) {
-        const element = dataset.subset[index];
-        let nodeHeader = "";
-        let sublevel = "";
-        if (parentHeader == "") {
-          nodeHeader = "." + dataset.id + " .node-" + index;
-          sublevel = index;
-        } else {
-          nodeHeader =
-            parentHeader + " " + ".node-" + parentLevel + "-" + index;
-          sublevel = parentLevel + "-" + index;
+      if (typeof dataset == "object") {
+        for (let index = 0; index < dataset.subset.length; index++) {
+          const element = dataset.subset[index];
+
+          let nodeHeader = "";
+          let sublevel = "";
+          if (parentHeader == "") {
+            nodeHeader = "." + dataset.id + " .node-" + index;
+            sublevel = index;
+          } else {
+            nodeHeader =
+              parentHeader + " " + ".node-" + parentLevel + "-" + index;
+            sublevel = parentLevel + "-" + index;
+          }
+          result.push(nodeHeader + " {}");
+          this.getCssList(element, nodeHeader, sublevel, result);
         }
-        result.push(nodeHeader + " {}");
-        this.getCssList(element, nodeHeader, sublevel, result);
       }
     },
     getHTML(dataset, level, prefix) {
@@ -261,9 +267,13 @@ export default {
         } else {
           nodeFlagClass = prefix + "-" + index;
         }
-        element.options.attrs.class[nodeFlagClass] = true;
-        sub = this.getHTML(element, level++, nodeFlagClass);
-        r.push(sub);
+        if (typeof element == "object") {
+          element.options.attrs.class[nodeFlagClass] = true;
+          sub = this.getHTML(element, level++, nodeFlagClass);
+          r.push(sub);
+        } else {
+          r.push(element);
+        }
       }
       let rootName = "";
       if (prefix == "") {

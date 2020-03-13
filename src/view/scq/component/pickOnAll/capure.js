@@ -10,7 +10,12 @@ function getObj(elementName) {
     obj["type"] = sa[2].innerText;
     let options = sa[3].innerText;
     obj["options"] = options.split(" / ");
-    obj["value"] = sa[4].innerText;
+    let value = sa[4].innerText;
+    if (value == "—") {
+      obj["value"] = "";
+    } else {
+      obj["value"] = value;
+    }
     resArr.push(obj);
   }
 
@@ -23,3 +28,10 @@ function getObj(elementName) {
 let res = getObj("button");
 console.log(res);
 copy(res);
+
+let icon = document.querySelectorAll(".icon-name");
+let res = [];
+for (let index = 0; index < icon.length; index++) {
+  const element = icon[index];
+  res.push(element.innerText);
+}
