@@ -9,7 +9,7 @@
         <el-select v-if="item.options.length>0" v-model="item.value" placeholder="请选择">
           <el-option v-for="w in item.options" :key="w" :label="w" :value="w"></el-option>
         </el-select>
-        <iconNameSelect @change="(iconName)=>{item.value=iconName}" />
+        <iconNameSelect v-if="item.isIconNamePick" @change="(iconName)=>{item.value=iconName}" />
       </div>
       <div v-if="item.type ===Boolean" class="flex cell">
         <span class="label">{{item.name}}</span>

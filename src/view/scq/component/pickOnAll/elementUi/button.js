@@ -56,6 +56,7 @@ export default {
       desc: "图标类名",
       type: String,
       options: [],
+      isIconNamePick: true,
       value: ""
     },
     {

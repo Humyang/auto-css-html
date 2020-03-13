@@ -42,7 +42,7 @@ export default {
     return {
       vantConfig,
       elementConfig,
-      rootPick: "1",
+      rootPick: "0",
       pickOnAllVisible: false
     };
   },
