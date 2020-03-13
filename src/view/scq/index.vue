@@ -88,11 +88,9 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="操作">
-            <!-- <p>删除选中</p> -->
             <el-button type="danger" plain @click="actionRemoveSelected">删除选中</el-button>
             <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
 
-            <!-- <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" /> -->
             <div class="flex">
               <div class="history flex" style="flex-flow: row-reverse;">
                 <span
@@ -127,11 +125,8 @@ import htmlProperty from "./component/HTMLProperty/index";
 import preClass from "./component/preClass";
 import collection from "./component/collection";
 import realView from "./component/realView";
-import {
-  getFormatedData,
-  propertyToString,
-  styleToString
-} from "@/utils/formatMethods";
+import { getHTML, getCssList, getCssTree } from "@/utils/datasetToCode";
+import { getFormatedData } from "@/utils/formatMethods";
 
 import resetUid from "@/utils/resetUid.js";
 
@@ -195,107 +190,11 @@ export default {
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
     ...mapMutations(["SET_DATASET"]),
-    // jsonToCssStyle2(array, result, top) {
-    //   let res = "";
-    //   array.forEach((item, index) => {
-    //     res = res + "." + item.className + "{";
-    //     if (item.subset) {
-    //       res += this.jsonToCssStyle2(item.subset, result, false);
-    //     }
-    //   });
-    //   if (!top) {
-    //     res += "}";
-    //   }
-    //   return res;
-    // },
-    getCssTree(dataset, prefix) {
-      if (typeof dataset == "object") {
-        let r = [];
-        for (let index = 0; index < dataset.subset.length; index++) {
-          let sub = "";
-          const element = dataset.subset[index];
-          let nodeFlagClass = "";
-          if (prefix == "") {
-            nodeFlagClass = ".node-" + index;
-          } else {
-            nodeFlagClass = prefix + "-" + index;
-          }
-          // element.options.attrs.class[nodeFlagClass] = true;
-          sub = this.getCssTree(element, nodeFlagClass);
-          let res = `${nodeFlagClass}{ ${sub} } `;
-          r.push(res);
-        }
-        if (prefix == "") {
-          let res = `.${dataset.id}{${r.join("")}}`;
-          return res;
-        } else {
-          return r.join("");
-        }
-      } else {
-        return "";
-      }
-      // return r.join("");
-    },
-    getCssList(dataset, parentHeader, parentLevel, result) {
-      if (typeof dataset == "object") {
-        for (let index = 0; index < dataset.subset.length; index++) {
-          const element = dataset.subset[index];
 
-          let nodeHeader = "";
-          let sublevel = "";
-          if (parentHeader == "") {
-            nodeHeader = "." + dataset.id + " .node-" + index;
-            sublevel = index;
-          } else {
-            nodeHeader =
-              parentHeader + " " + ".node-" + parentLevel + "-" + index;
-            sublevel = parentLevel + "-" + index;
-          }
-          result.push(nodeHeader + " {}");
-          this.getCssList(element, nodeHeader, sublevel, result);
-        }
-      }
-    },
-    getHTML(dataset, level, prefix) {
-      let r = [];
-      for (let index = 0; index < dataset.subset.length; index++) {
-        let sub = "";
-        const element = dataset.subset[index];
-        let nodeFlagClass = "";
-        if (prefix == "") {
-          nodeFlagClass = "node-" + level;
-        } else {
-          nodeFlagClass = prefix + "-" + index;
-        }
-        if (typeof element == "object") {
-          element.options.attrs.class[nodeFlagClass] = true;
-          sub = this.getHTML(element, level++, nodeFlagClass);
-          r.push(sub);
-        } else {
-          r.push(element);
-        }
-      }
-      let rootName = "";
-      if (prefix == "") {
-        rootName = dataset.id;
-      }
-      let res = `<${dataset.tagName} ${propertyToString(
-        dataset.options.attrs.property
-      )} ${propertyToString(dataset.options.props)} style="${styleToString(
-        dataset.options.attrs.style
-      )}" class="${classname(dataset.options.attrs.class, rootName)}">
-        ${r.join("")}</${dataset.tagName}>`;
-
-      return res;
-    },
     actionSaveSelected(selected) {
       let item = this.getNodeById(this.dataset, this.currentSelect);
       this.pushPreSave(item);
     },
-    // rootClick() {
-    //   this.currentItem = this.dataset;
-    //   this.currentItemSubset = this.dataset.subset;
-    // },
     rawToPreView(data) {
       let item = this.getNodeById(this.dataset, this.currentSelect);
       this.currentItemSubset.push(data);
@@ -312,8 +211,6 @@ export default {
           this.currentSelect
         );
       }
-
-      // this.setElement(JSON.parse(JSON.stringify(dataset)));
       this.updateElementSetElement();
     },
     removeSelected(subset, id) {
@@ -365,23 +262,15 @@ export default {
       if (r.label == "HTML") {
         this.editorHTML.setValue(
           // this.process(
-          this.getHTML(JSON.parse(JSON.stringify(this.dataset)), 0, "")
+          getHTML(JSON.parse(JSON.stringify(this.dataset)), 0, "")
           // )
         );
         beautify.beautify(this.editorHTML.session);
       }
       if (r.label == "CSS") {
         let result = [];
-        this.getCssList(
-          JSON.parse(JSON.stringify(this.dataset)),
-          "",
-          0,
-          result
-        );
-        let result2 = this.getCssTree(
-          JSON.parse(JSON.stringify(this.dataset)),
-          ""
-        );
+        getCssList(JSON.parse(JSON.stringify(this.dataset)), "", 0, result);
+        let result2 = getCssTree(JSON.parse(JSON.stringify(this.dataset)), "");
         this.editorCSS_LIST.setValue(result.join("\n"));
         this.editorCSS_TREE.setValue(result2);
 
@@ -454,19 +343,9 @@ export default {
     },
     //   遍历树结构，找到指定值
     getNodeById(dataset, id) {
-      // let item = subset.filter(item => {
-      //   let findresult = id.find(subitem => {
-      //     return subitem == item.id;
-      //   });
-      //   return !!findresult;
-      // });
       if (dataset.id == id) {
         return dataset;
-      }
-      // if (item.length > 0) {
-      //   return item;
-      // }
-      else {
+      } else {
         let res = false;
         for (let index = 0; index < dataset.subset.length; index++) {
           const element = dataset.subset[index];
@@ -500,9 +379,7 @@ export default {
       return false;
     },
     columnAdd(number) {
-      // this.addDirection = "column";
       if (number == 0) {
-        // this.currentItem.direction = this.addDirection;
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
@@ -512,9 +389,7 @@ export default {
       }
     },
     rowAdd(number) {
-      // this.addDirection = "row";
       if (number == 0) {
-        // this.currentItem.direction = this.addDirection;
         this.updateElementSetElement();
       } else {
         this.addNumber = number;
