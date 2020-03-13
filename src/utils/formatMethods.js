@@ -23,6 +23,7 @@ function getFormatedData(data) {
   };
   let parent = {
     tagName: "div",
+    isWrap: true,
     id: uid2(10),
     options: {
       props: [],

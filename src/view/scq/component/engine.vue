@@ -126,14 +126,12 @@ export default {
           },
           props: {
             ...formatProperty(dataset.options.props)
-            // className: "11111"
           },
-          // class: "123",
-          // className: "11111",
+
           class: classname({
             selected:
               getSelectedStatus(dataset, this.currentSelect) && !this.isHide,
-            preview: true,
+            preview: true && !dataset.isWrap,
             ...dataset.options.attrs.class
           }),
           attrs: {
@@ -143,11 +141,6 @@ export default {
         },
         sub
       );
-      // if (eee.componentOptions && eee.componentOptions.propsData) {
-      //   eee.componentOptions.propsData.class = "preview";
-      //   eee.componentOptions.class = "preview";
-      // }
-      // console.log(eee);
       return eee;
     },
     actionClick(dataset) {
