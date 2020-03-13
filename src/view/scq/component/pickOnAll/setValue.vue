@@ -23,8 +23,8 @@ export default {
     };
   },
   methods: {
-    actionInsert() {
-      this.$emit("actionInsert", this.rawData);
+    actionInsert(data) {
+      this.$emit("actionInsert", data);
     },
     change(data) {
       this.$emit("change", data);

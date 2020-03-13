@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{rootPick}}
+    <!-- {{rootPick}} -->
     <el-tabs v-model="rootPick" tab-position="left" @tab-click="tabClick">
       <el-tab-pane
         v-for="item,index in config"
@@ -8,17 +8,13 @@
         :label="item.tagName"
         :name="item.tagName"
       >
-        {{item.tagName}}
+        <!-- {{item.tagName}} -->
         <div class="flex" v-if="rootPick == item.tagName">
           <div style="min-width:300px">
             <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
             <!-- <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" /> -->
-            <setValue
-              ref="setValue"
-              :tagName="item.tagName"
-              @actionInsert="actionInsert"
-              @rawToPreView="rawToPreView"
-            />
+            <!-- :tagName="item.tagName" -->
+            <setValue ref="setValue" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
           </div>
           <div class="flex" style="    flex-flow: wrap;">
             <div v-for="item,index in datasetList">
@@ -66,6 +62,8 @@ export default {
           tagName: this.rootPick
         })
         .toArray();
+      // alert(123);
+      this.$refs.setValue[0].setValue(this.rootPick);
     },
     rawToPreView(data) {
       this.$emit("rawToPreView", resetUid(JSON.parse(JSON.stringify(data))));
