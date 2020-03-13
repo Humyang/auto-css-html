@@ -15,7 +15,6 @@
           />
         </el-tab-pane>
         <el-tab-pane label="Vant" name="1">
-          <!-- <Vant @actionInsert="actionInsert" @rawToPreView="rawToPreView" /> -->
           <loader :config="vantConfig" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
         </el-tab-pane>
         <el-tab-pane label="自定义" name="2">
@@ -29,6 +28,7 @@
 import vantConfig from "./Vant/index.js";
 import elementConfig from "./elementUi/index";
 // import Vant from "./Vant/index.vue";
+
 import loader from "./loader";
 import custom from "./custom/index";
 export default {
@@ -36,6 +36,7 @@ export default {
   components: {
     // Vant,
     custom,
+    // setValue
     loader
   },
   data() {

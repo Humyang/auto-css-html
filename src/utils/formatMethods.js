@@ -1,13 +1,22 @@
 import uid2 from "uid2";
-function getFormatedData(data) {
+function objToPropsArray(obj) {
   let props = [];
-  data.props.forEach(item => {
-    // props[item.name] = item.value;
+  obj.forEach(item => {
     let obj = {};
     obj.property = item.name;
     obj.value = item.value;
     props.push(obj);
   });
+  return props;
+}
+function getFormatedData(data) {
+  let props = objToPropsArray(data.props);
+  // data.props.forEach(item => {
+  //   let obj = {};
+  //   obj.property = item.name;
+  //   obj.value = item.value;
+  //   props.push(obj);
+  // });
   let obj = {
     tagName: data.tagName,
     id: uid2(10),
@@ -54,4 +63,4 @@ function styleToString(obj) {
   return res;
 }
 
-export { getFormatedData, propertyToString, styleToString };
+export { objToPropsArray, getFormatedData, propertyToString, styleToString };

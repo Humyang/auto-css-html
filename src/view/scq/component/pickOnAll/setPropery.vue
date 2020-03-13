@@ -36,6 +36,14 @@ export default {
   },
   mounted() {
     this.rawData = this.data;
+  },
+  watch: {
+    rawData: {
+      handler: function() {
+        this.$emit("change", this.rawData);
+      },
+      deep: true
+    }
   }
 };
 </script>

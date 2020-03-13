@@ -10,7 +10,12 @@
         <div class="flex">
           <div style="min-width:300px">
             <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
-            <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" />
+            <!-- <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" /> -->
+            <setValue
+              :tagName="item.tagName"
+              @actionInsert="actionInsert"
+              @rawToPreView="rawToPreView"
+            />
           </div>
           <div class="flex" style="    flex-flow: wrap;">
             <div v-for="item,index in datasetList">
@@ -28,17 +33,21 @@
   </div>
 </template>
 <script>
-import setPropery from "./setPropery";
-
 import engine from "../engine";
 import { getFormatedData } from "@/utils/formatMethods";
 import { mapMutations, mapActions, mapState } from "vuex";
 
 import resetUid from "@/utils/resetUid.js";
+
+import setValue from "./setValue";
 export default {
   name: "Vant",
   props: ["config"],
-  components: { setPropery, engine },
+  components: {
+    // setPropery,
+    engine,
+    setValue
+  },
   data() {
     return {
       rootPick: "1",

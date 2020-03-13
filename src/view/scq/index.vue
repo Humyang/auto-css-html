@@ -87,6 +87,25 @@
               </el-tabs>
             </div>
           </el-tab-pane>
+          <el-tab-pane label="组件属性">
+            <div style="    text-align: left;">
+              <!-- <el-tabs type="border-card">
+                <el-tab-pane label="CSS">
+                  <css-declaration ref="CssDec" @change="cssChange" />
+                </el-tab-pane>
+                <el-tab-pane label="HTML">
+                  <htmlProperty ref="HtmlDec" @change="htmlChange" />
+                </el-tab-pane>
+                <el-tab-pane label="属性组合"></el-tab-pane>
+              </el-tabs>-->
+              <setValue
+                v-if="currentItem.tagName"
+                :tagName="currentItem.tagName"
+                @change="componentChange"
+                :value="currentItem.options.props"
+              />
+            </div>
+          </el-tab-pane>
           <el-tab-pane label="操作">
             <el-button type="danger" plain @click="actionRemoveSelected">删除选中</el-button>
             <el-button type="danger" plain @click="actionSaveSelected">存入预设</el-button>
@@ -126,14 +145,17 @@ import preClass from "./component/preClass";
 import collection from "./component/collection";
 import realView from "./component/realView";
 import { getHTML, getCssList, getCssTree } from "@/utils/datasetToCode";
-import { getFormatedData } from "@/utils/formatMethods";
+import { getFormatedData, objToPropsArray } from "@/utils/formatMethods";
 
 import resetUid from "@/utils/resetUid.js";
+
+import setValue from "Component/pickOnAll/setValue";
 
 // import pickOnAll from "./component/pickOnAll";
 export default {
   name: "SCQ",
   components: {
+    setValue,
     cssDeclaration,
     // preview,
     preClass,
@@ -190,7 +212,12 @@ export default {
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
     ...mapMutations(["SET_DATASET"]),
+    componentChange(data) {
+      // console.log("component", data);
+      this.currentItem.options.props = objToPropsArray(data.props);
 
+      this.updateElementSetElement();
+    },
     actionSaveSelected(selected) {
       let item = this.getNodeById(this.dataset, this.currentSelect);
       this.pushPreSave(item);

@@ -1,20 +1,5 @@
 <template>
   <div class="insersub-view flex column" style="margin-left:0;margin-top:10px;">
-    <!-- <el-tabs tab-position="left">
-      <el-tab-pane label="DIV">
-        
-      </el-tab-pane>
-
-      <el-tab-pane label="预设框架">
-        <div class="flex column" v-for="item,index in preSave">
-          <el-button type="primary" @click="rawToPreView(item)">插入</el-button>
-          <engine :controlView="controlView" instanceType="preView" :key="index" :dataset="item"></engine>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="NavMenu 导航菜单">
-        <nav-menu @actionInsert="actionInsert" />
-      </el-tab-pane>
-    </el-tabs>-->
     <div style="    text-align: left;margin-bottom: 10px;">
       <el-select placeholder="设置添加位置" v-model="appendPosition">
         <el-option label="子级添加" value="subChildAppend"></el-option>
