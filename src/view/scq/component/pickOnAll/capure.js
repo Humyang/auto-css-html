@@ -7,11 +7,23 @@ function getObj(elementName) {
     let obj = {};
     obj["name"] = sa[0].innerText;
     obj["desc"] = sa[1].innerText;
-    obj["type"] = sa[2].innerText;
+    let type = sa[2].innerText;
+    switch (type) {
+      case "string":
+        obj["type"] = "String";
+        break;
+      case "boolean":
+        obj["type"] = "Boolean";
+        break;
+    }
     let options = sa[3].innerText;
-    obj["options"] = options.split(" / ");
+    if (options == "—") {
+      obj["options"] = [];
+    } else {
+      obj["options"] = options.split(" / ");
+    }
     let value = sa[4].innerText;
-    if (value == "—") {
+    if (value == "-") {
       obj["value"] = "";
     } else {
       obj["value"] = value;
@@ -26,7 +38,7 @@ function getObj(elementName) {
   };
 }
 let res = getObj("button");
-console.log(res);
+res = `export default ${JSON.stringify(res)}`;
 copy(res);
 
 let icon = document.querySelectorAll(".icon-name");

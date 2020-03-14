@@ -1,3 +1,3 @@
 import button from "./button";
-
-export default { button };
+import link from "./link";
+export default { button, link };

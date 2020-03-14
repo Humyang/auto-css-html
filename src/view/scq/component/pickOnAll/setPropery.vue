@@ -4,7 +4,7 @@
     <!-- {{rawData.props}} -->
     <!-- {{rawData}} -->
     <div v-for="item,index in rawData.props" :key="index">
-      <div v-if="item.type ===String" class="flex cell">
+      <div v-if="item.type =='String'" class="flex cell">
         <span class="label">{{item.name}}</span>
 
         <el-input v-model="item.value" placeholder="请输入内容"></el-input>
@@ -13,7 +13,7 @@
         </el-select>
         <iconNameSelect v-if="item.isIconNamePick" @change="(iconName)=>{item.value=iconName}" />
       </div>
-      <div v-if="item.type ===Boolean" class="flex cell">
+      <div v-if="item.type =='Boolean'" class="flex cell">
         <span class="label">{{item.name}}</span>
         <el-switch v-model="item.value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </div>
