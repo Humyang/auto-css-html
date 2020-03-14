@@ -241,15 +241,17 @@ export default {
       let res = "";
       for (let index = 0; index < subset.length; index++) {
         const element = subset[index];
-        let findresult = id.find(subitem => {
-          return subitem == element.id;
-        });
+        if (typeof element == "object") {
+          let findresult = id.find(subitem => {
+            return subitem == element.id;
+          });
 
-        if (findresult) {
-          subset = [...subset.slice(0, index), ...subset.slice(index + 1)];
-          break;
-        } else {
-          element.subset = this.removeSelected(element.subset, id);
+          if (findresult) {
+            subset = [...subset.slice(0, index), ...subset.slice(index + 1)];
+            break;
+          } else {
+            element.subset = this.removeSelected(element.subset, id);
+          }
         }
       }
       return subset;
