@@ -30,21 +30,22 @@ function getFormatedData(data) {
     },
     subset: []
   };
-  let parent = {
-    tagName: "div",
-    isWrap: true,
-    id: uid2(10),
-    options: {
-      props: [],
-      attrs: {
-        class: {},
-        style: [],
-        property: []
-      }
-    },
-    subset: [obj]
-  };
-  return parent;
+  // let parent = {
+  //   tagName: "div",
+  //   isWrap: true,
+  //   id: uid2(10),
+  //   options: {
+  //     props: [],
+  //     attrs: {
+  //       class: {},
+  //       style: [],
+  //       property: []
+  //     }
+  //   },
+  //   subset: [obj]
+  // };
+  // return parent;
+  return obj;
 }
 function propertyToString(obj) {
   let res = "";
