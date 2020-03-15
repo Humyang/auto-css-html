@@ -14,6 +14,7 @@
     "axios": "^0.18.0",
     "classname": "0.0.0",
     "element-ui": "^2.2.1",
+    "html2canvas": "^1.0.0-rc.5",
     "koa": "^2.3.0",
     "koa-better-body": "^3.0.4",
     "koa-cors": "0.0.16",

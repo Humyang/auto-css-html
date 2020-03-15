@@ -126,7 +126,9 @@
 </template>
 
 <script>
-// https://ace.c9.io/
+// https://ace.c9.io/ html css 编辑器
+// https://dexie.org/ indexedDB wraper
+
 // import HelloWorld from "./components/HelloWorld";
 // import preview from "./component/preview";
 import uid2 from "uid2";

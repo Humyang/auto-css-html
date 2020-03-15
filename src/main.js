@@ -32,7 +32,7 @@ window.parentDataset = new Dexie("dataset");
 // window.componentCache = new Dexie("componentCache");
 parentDataset.version(1).stores({
   dataset: "version,dataset,currentSelect,modifyFlag",
-  componentCache: "id,tagName,dataset"
+  componentCache: "id,tagName,dataset,imageBase64"
 });
 // componentCache.version(1).stores({
 //   dataset: "id,tagName,dataset"

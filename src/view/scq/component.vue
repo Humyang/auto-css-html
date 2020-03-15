@@ -1,5 +1,5 @@
 <template>
-  <div class="fix-full">
+  <div class="fix-full" ref="root">
     <engine
       instanceType="preView"
       :currentSelect="currentSelect"
@@ -16,6 +16,7 @@ import realView from "./component/realView";
 import engine from "./component/engine";
 import { mapMutations, mapActions, mapState } from "vuex";
 import uid2 from "uid2";
+import html2canvas from "html2canvas";
 export default {
   components: { realView, engine },
 
@@ -30,14 +31,22 @@ export default {
   async mounted() {
     let modifyFlag = "";
     let id = this.$route.params.id;
-    // setInterval(async () => {
-    //   this.dataset = parent.INS.$store.state.dataset;
-    // parentDataset.
     let v = await parentDataset.componentCache.get(id);
-    // if (modifyFlag != v.modifyFlag) {
     this.dataset = v.dataset;
-    // }
-    // }, 100);
+    this.$nextTick(() => {
+      if (!v.imageBase64) {
+        html2canvas(this.$refs.root, {
+          windowWidth: 800,
+          windowHeight: 600
+        }).then(function(canvas) {
+          // document.body.appendChild(canvas);
+          console.log("canvas", canvas);
+          parentDataset.componentCache.update(id, {
+            imageBase64: canvas.toDataURL()
+          });
+        });
+      }
+    });
   }
 };
 </script>

@@ -8,7 +8,6 @@
       :dataset="dataset"
       :controlView="controlView"
     ></engine>
-    <!-- </div> -->
   </div>
 </template>
 

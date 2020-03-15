@@ -8,22 +8,28 @@
         :label="item.tagName"
         :name="item.tagName"
       >
-        <!-- {{item.tagName}} -->
         <div class="flex" v-if="rootPick == item.tagName">
           <div style="min-width:300px">
             <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
-            <!-- <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" /> -->
-            <!-- :tagName="item.tagName" -->
             <setValue ref="setValue" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
           </div>
+          <div ref="canvasCache"></div>
           <div class="flex" style="    flex-flow: wrap;">
             <div v-for="item,index in datasetList">
               <div class="flex row">
                 <el-button type="primary" @click="rawToPreView(item.dataset)">插入</el-button>
-                <el-button type="danger" @click="rawToPreView(item)">删除</el-button>
+                <el-button type="danger" @click="remove(item)">删除</el-button>
+
+                <el-button type="info" @click="setPreview(item)">预览</el-button>
               </div>
 
-              <iframe ref="iframeRef" :src="'/component/'+item.id" class="componentIframe"></iframe>
+              <iframe
+                v-if="!item.imageBase64 || item.setPreview"
+                ref="iframeRef"
+                :src="'/component/'+item.id"
+                class="componentIframe"
+              ></iframe>
+              <img v-else :src="item.imageBase64" style="width: 400px;" alt />
             </div>
           </div>
         </div>
@@ -56,12 +62,22 @@ export default {
   computed: {},
   methods: {
     ...mapMutations(["SET_PRESET"]),
+    remove(item) {
+      parentDataset.componentCache.delete(item.id);
+      this.tabClick();
+    },
+    setPreview(item) {
+      item.setPreview = true;
+    },
     async tabClick(tab, event) {
-      this.datasetList = await parentDataset.componentCache
+      let arr = await parentDataset.componentCache
         .where({
           tagName: this.rootPick
         })
         .toArray();
+      this.datasetList = arr.map(item => {
+        return { ...item, setPreview: false };
+      });
       // alert(123);
       this.$refs.setValue[0].setValue(this.rootPick);
     },

@@ -61,6 +61,7 @@ let store = new Vuex.Store({
       // localStorage.setItem("SINGLE", JSON.stringify(state.preSet));
       // alert(111);
       // console.log(data);
+
       await parentDataset.componentCache.add({
         id: uid2(20),
         tagName: data.tagName,
