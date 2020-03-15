@@ -210,7 +210,7 @@ export default {
   },
   methods: {
     ...mapActions(["pushPreSave", "setElement", "timeTravel"]),
-    ...mapMutations(["SET_DATASET"]),
+    ...mapMutations(["SET_DATASET", "SET_PRESET"]),
     componentChange(data) {
       // console.log("component", data);
       this.currentItem.options.props = objToPropsArray(data.props);
@@ -218,8 +218,12 @@ export default {
       this.updateElementSetElement();
     },
     actionSaveSelected(selected) {
-      let item = this.getNodeById(this.dataset, this.currentSelect);
-      this.pushPreSave(item);
+      let data = this.getNodeById(this.dataset, this.currentSelect);
+      // this.pushPreSave(item);
+      this.SET_PRESET({
+        tagName: "mobile-414",
+        dataset: data
+      });
     },
     rawToPreView(data) {
       let item = this.getNodeById(this.dataset, this.currentSelect);

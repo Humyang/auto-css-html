@@ -21,6 +21,8 @@
                 <el-button type="danger" @click="remove(item)">删除</el-button>
 
                 <el-button type="info" @click="setPreview(item)">预览</el-button>
+
+                <el-button type="info" @click="setNewPreviewImage(item)">更新图片</el-button>
               </div>
 
               <iframe
@@ -62,6 +64,12 @@ export default {
   computed: {},
   methods: {
     ...mapMutations(["SET_PRESET"]),
+    setNewPreviewImage(item) {
+      parentDataset.componentCache.update(item.id, {
+        imageBase64: false
+      });
+      this.tabClick();
+    },
     remove(item) {
       parentDataset.componentCache.delete(item.id);
       this.tabClick();

@@ -36,8 +36,11 @@ export default {
     this.$nextTick(() => {
       if (!v.imageBase64) {
         html2canvas(this.$refs.root, {
-          windowWidth: 800,
-          windowHeight: 600
+          // windowWidth: 1980,
+          // windowHeight: 1080,
+          width: 600,
+          height: 600,
+          allowTaint: true
         }).then(function(canvas) {
           // document.body.appendChild(canvas);
           console.log("canvas", canvas);

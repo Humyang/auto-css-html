@@ -18,7 +18,8 @@
           <loader :config="vantConfig" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
         </el-tab-pane>
         <el-tab-pane label="自定义" name="2">
-          <custom @rawToPreView="rawToPreView" />
+          <!-- <custom @rawToPreView="rawToPreView" /> -->
+          <loader :config="customConfig" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -27,20 +28,22 @@
 <script>
 import vantConfig from "./Vant/index.js";
 import elementConfig from "./elementUi/index";
+import customConfig from "./custom";
 // import Vant from "./Vant/index.vue";
 
 import loader from "./loader";
-import custom from "./custom/index";
+// import custom from "./custom/index";
 export default {
   name: "pickOnAll",
   components: {
     // Vant,
-    custom,
+    // custom,
     // setValue
     loader
   },
   data() {
     return {
+      customConfig,
       vantConfig,
       elementConfig,
       rootPick: "0",
