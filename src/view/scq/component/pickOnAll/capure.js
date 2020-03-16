@@ -1,6 +1,7 @@
-function getObj(elementName) {
+// function a(el) {
+function getObj(elementName, el) {
   let resArr = [];
-  let arr = document.querySelectorAll("table tbody tr");
+  let arr = el.querySelectorAll("tbody tr");
   for (let index = 0; index < arr.length; index++) {
     const element = arr[index];
     let sa = element.querySelectorAll("td");
@@ -23,7 +24,7 @@ function getObj(elementName) {
       obj["options"] = options.split(" / ");
     }
     let value = sa[4].innerText;
-    if (value == "-") {
+    if (value == "-" || value == "—") {
       obj["value"] = "";
     } else {
       obj["value"] = value;
@@ -31,15 +32,20 @@ function getObj(elementName) {
     resArr.push(obj);
   }
 
-  return {
+  let res = {
     tagName: elementName,
-    desc: "NarBar导航栏",
+    desc: elementName,
     props: resArr
   };
+  res = `export default ${JSON.stringify(res)}`;
+  copy(res);
 }
-let res = getObj("button");
-res = `export default ${JSON.stringify(res)}`;
-copy(res);
+//   }
+//   let res = getObj("button", el);
+//   res = `export default ${JSON.stringify(res)}`;
+//   copy(res);
+// }
+// a();
 
 let icon = document.querySelectorAll(".icon-name");
 let res = [];
