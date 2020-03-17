@@ -16,19 +16,10 @@
                   :controlView="controlView"
                 ></preview>-->
                 <iframe ref="iframeRef" :src="'/preview'" class="realviewIframe"></iframe>
-                <div>
-                  <el-switch
-                    v-for="(item, index) in currentItem.options&&currentItem.options.attrs.class"
-                    :key="index"
-                    :value="item"
-                    @change="setExtendAttr(index, item)"
-                    :inactive-text="index"
-                    inactive-color="#13ce66"
-                    active-color="#ff4949"
-                    :active-value="false"
-                    :inactive-value="true"
-                  ></el-switch>
-                </div>
+                <div></div>
+              </div>
+              <div>
+                <tree :dataset="[dataset]" />
               </div>
             </div>
           </el-tab-pane>
@@ -71,6 +62,17 @@
           </el-tab-pane>
           <el-tab-pane label="预设类名">
             <div class="flex column content" style="text-align: left;">
+              <el-switch
+                v-for="(item, index) in currentItem.options&&currentItem.options.attrs.class"
+                :key="index"
+                :value="item"
+                @change="setExtendAttr(index, item)"
+                :inactive-text="index"
+                inactive-color="#13ce66"
+                active-color="#ff4949"
+                :active-value="false"
+                :inactive-value="true"
+              ></el-switch>
               <preClass @actionClick="setElementAttr" />
             </div>
           </el-tab-pane>
@@ -151,9 +153,11 @@ import resetUid from "@/utils/resetUid.js";
 import setValue from "Component/pickOnAll/setValue";
 
 // import pickOnAll from "./component/pickOnAll";
+import tree from "./tree";
 export default {
   name: "SCQ",
   components: {
+    tree,
     setValue,
     cssDeclaration,
     // preview,
