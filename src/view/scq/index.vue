@@ -8,7 +8,7 @@
               <div>
                 <iframe ref="iframeRef" :src="'/realview'" class="realviewIframe"></iframe>
               </div>
-              <div class="grow flex row" style="padding-left: 20px;">
+              <div class="flex row" style="padding-left: 20px;">
                 <!-- @rootClick="rootClick" -->
                 <!-- <preview
                   @currentSelect="actionPreviewClick"
@@ -18,8 +18,8 @@
                 <iframe ref="iframeRef" :src="'/preview'" class="realviewIframe"></iframe>
                 <div></div>
               </div>
-              <div>
-                <tree :dataset="[dataset]" />
+              <div class="grow">
+                <tree ref="tree" />
               </div>
             </div>
           </el-tab-pane>
@@ -558,6 +558,9 @@ export default {
         this.currentItemSubset = this.currentItem.subset;
         this.$refs.CssDec.setList(this.currentItem.options.attrs.style);
         this.$refs.HtmlDec.setList(this.currentItem);
+        this.$refs.tree.setList(this.dataset);
+
+        this.$refs.tree.setChecked(this.currentSelect);
         // console.log(1);
         this.$refs.setValue.setValue(
           this.currentItem.tagName,

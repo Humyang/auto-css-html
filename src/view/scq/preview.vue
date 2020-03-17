@@ -31,12 +31,10 @@ export default {
   methods: {
     async actionClick(dataset) {
       this.currentSelect = [dataset.id];
-      let v = await parentDataset.dataset.get("1");
       parentDataset.dataset.update("1", {
         currentSelect: this.currentSelect,
         modifyFlag: uid2(20)
       });
-      //   this.$emit("currentSelect", dataset);
     }
   },
   async mounted() {
@@ -45,7 +43,9 @@ export default {
       //   this.dataset = parent.INS.$store.state.dataset;
       // parentDataset.
       let v = await parentDataset.dataset.get("1");
+
       if (modifyFlag != v.modifyFlag) {
+        this.currentSelect = v.currentSelect;
         this.dataset = v.dataset;
       }
     }, 100);

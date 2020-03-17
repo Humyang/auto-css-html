@@ -1,8 +1,11 @@
 <template>
   <el-tree
+    ref="elTree"
     :data="dataset"
     node-key="id"
     default-expand-all
+    :props="defaultProps"
+    :highlight-current="true"
     @node-drag-start="handleDragStart"
     @node-drag-enter="handleDragEnter"
     @node-drag-leave="handleDragLeave"
@@ -10,81 +13,21 @@
     @node-drag-end="handleDragEnd"
     @node-drop="handleDrop"
     draggable
+    @node-click="nodeClick"
   ></el-tree>
   <!-- :allow-drop="allowDrop"
   :allow-drag="allowDrag"-->
 </template>
 
 <script>
+import uid2 from "uid2";
 export default {
   name: "tree",
-  props: ["dataset"],
+  // props: ["dataset"],
   data() {
     return {
-      //   data: [
-      //     {
-      //       id: 1,
-      //       label: "一级 1",
-      //       children: [
-      //         {
-      //           id: 4,
-      //           label: "二级 1-1",
-      //           children: [
-      //             {
-      //               id: 9,
-      //               label: "三级 1-1-1"
-      //             },
-      //             {
-      //               id: 10,
-      //               label: "三级 1-1-2"
-      //             }
-      //           ]
-      //         }
-      //       ]
-      //     },
-      //     {
-      //       id: 2,
-      //       label: "一级 2",
-      //       children: [
-      //         {
-      //           id: 5,
-      //           label: "二级 2-1"
-      //         },
-      //         {
-      //           id: 6,
-      //           label: "二级 2-2"
-      //         }
-      //       ]
-      //     },
-      //     {
-      //       id: 3,
-      //       label: "一级 3",
-      //       children: [
-      //         {
-      //           id: 7,
-      //           label: "二级 3-1"
-      //         },
-      //         {
-      //           id: 8,
-      //           label: "二级 3-2",
-      //           children: [
-      //             {
-      //               id: 11,
-      //               label: "三级 3-2-1"
-      //             },
-      //             {
-      //               id: 12,
-      //               label: "三级 3-2-2"
-      //             },
-      //             {
-      //               id: 13,
-      //               label: "三级 3-2-3"
-      //             }
-      //           ]
-      //         }
-      //       ]
-      //     }
-      //   ],
+      dataset: [],
+      // cnk: "",
       defaultProps: {
         children: "subset",
         label: "tagName"
@@ -92,6 +35,44 @@ export default {
     };
   },
   methods: {
+    reFormat(data) {
+      if (data.type == "innerText") {
+        data.tagName = "";
+      }
+      for (let index = 0; index < data.subset.length; index++) {
+        const element = data.subset[index];
+        this.reFormat(element);
+      }
+    },
+    format(data) {
+      if (data.type == "innerText") {
+        data.tagName = data.value;
+      }
+      for (let index = 0; index < data.subset.length; index++) {
+        const element = data.subset[index];
+        this.format(element);
+      }
+    },
+    nodeClick(node) {
+      console.log(node);
+      parentDataset.dataset.update("1", {
+        currentSelect: [node.id],
+        modifyFlag: uid2(20)
+      });
+    },
+    setChecked(id) {
+      // this.defaultChecke = id[0];
+      // console.log(id, "id");
+      this.$nextTick(() => {
+        this.$refs.elTree.setCurrentKey(id[0]);
+      });
+      // this.cnk = id[0];
+    },
+    setList(dataset) {
+      let obj = JSON.parse(JSON.stringify(dataset));
+      this.format(obj);
+      this.dataset = [obj];
+    },
     handleDragStart(node, ev) {
       console.log("drag start", node);
     },
@@ -105,7 +86,15 @@ export default {
       console.log("tree drag over: ", dropNode.label);
     },
     handleDragEnd(draggingNode, dropNode, dropType, ev) {
-      console.log("tree drag end: ", dropNode && dropNode.label, dropType);
+      let obj = JSON.parse(JSON.stringify(this.dataset[0]));
+      this.reFormat(obj);
+
+      // console.log("tree drag end: ", dropNode && dropNode.label, dropType);
+      // console.log(draggingNode, dropNode);
+      parentDataset.dataset.update("1", {
+        dataset: obj,
+        modifyFlag: uid2(20)
+      });
     },
     handleDrop(draggingNode, dropNode, dropType, ev) {
       console.log("tree drop: ", dropNode.label, dropType);
