@@ -251,7 +251,7 @@ export default {
       let res = "";
       for (let index = 0; index < subset.length; index++) {
         const element = subset[index];
-        if (typeof element == "object") {
+        if (!element.type) {
           let findresult = id.find(subitem => {
             return subitem == element.id;
           });
@@ -360,7 +360,7 @@ export default {
       let res = "";
       for (let index = 0; index < dataset.subset.length; index++) {
         const element = dataset.subset[index];
-        if (typeof element == "object") {
+        if (!element.type) {
           let findresult = id.find(subitem => {
             return subitem == element.id;
           });
@@ -385,7 +385,7 @@ export default {
         let res = false;
         for (let index = 0; index < dataset.subset.length; index++) {
           const element = dataset.subset[index];
-          if (typeof element == "object") {
+          if (!element.type) {
             res = this.getNodeById(element, id);
             if (res) {
               break;

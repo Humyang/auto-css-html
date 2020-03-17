@@ -16,7 +16,7 @@
       <div
         class="flex align-center"
         v-for="item,index in dataObj.subset"
-        v-if="typeof item == 'string'"
+        v-if="item.type == 'innerText'"
       >
         <div>文本</div>
         <div style="margin-left:20px">
@@ -25,7 +25,7 @@
             @change="inputChange"
             :rows="2"
             placeholder="请输入内容"
-            v-model="dataObj.subset[index]"
+            v-model="item.value"
           ></el-input>
         </div>
       </div>
@@ -59,6 +59,7 @@
 
 <script>
 import config from "./config";
+import uid2 from "uid2";
 export default {
   name: "HTMLProperty",
   components: {},
@@ -85,7 +86,21 @@ export default {
       this.$emit("change", this.dataObj);
     },
     addSubText() {
-      this.dataObj.subset.push("");
+      this.dataObj.subset.push({
+        type: "innerText",
+        tagName: "",
+        value: "",
+        id: uid2(10),
+        options: {
+          props: {},
+          attrs: {
+            class: {},
+            style: [],
+            property: []
+          }
+        },
+        subset: []
+      });
       this.updateDataset();
     },
     tagNameFilter(queryString, cb) {

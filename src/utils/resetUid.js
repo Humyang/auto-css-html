@@ -1,6 +1,6 @@
 import uid2 from "uid2";
 export default function resetUid(data) {
-  if (typeof data == "object") {
+  if (!data.type) {
     data.id = uid2(10);
     for (let index = 0; index < data.subset.length; index++) {
       const element = data.subset[index];

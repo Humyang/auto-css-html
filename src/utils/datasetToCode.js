@@ -6,7 +6,7 @@ import {
 
 import classname from "classname";
 function getCssTree(dataset, prefix) {
-  if (typeof dataset == "object") {
+  if (!dataset.type) {
     let r = [];
     for (let index = 0; index < dataset.subset.length; index++) {
       let sub = "";
@@ -34,7 +34,7 @@ function getCssTree(dataset, prefix) {
   // return r.join("");
 }
 function getCssList(dataset, parentHeader, parentLevel, result) {
-  if (typeof dataset == "object") {
+  if (!dataset.type) {
     for (let index = 0; index < dataset.subset.length; index++) {
       const element = dataset.subset[index];
 
@@ -63,12 +63,12 @@ function getHTML(dataset, level, prefix) {
     } else {
       nodeFlagClass = prefix + "-" + index;
     }
-    if (typeof element == "object") {
+    if (!element.type) {
       element.options.attrs.class[nodeFlagClass] = true;
       sub = getHTML(element, level++, nodeFlagClass);
       r.push(sub);
     } else {
-      r.push(element);
+      r.push(element.value);
     }
   }
   let rootName = "";

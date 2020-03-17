@@ -68,10 +68,10 @@ export default {
           index++
         ) {
           const element = dataset.subset[index];
-          if (typeof element == "object") {
+          if (!element.type) {
             sub.push(this.renderForRealView(createElement, element));
           } else {
-            sub.push(element);
+            sub.push(element.value);
           }
         }
       }
@@ -108,10 +108,10 @@ export default {
           index++
         ) {
           const element = dataset.subset[index];
-          if (typeof element == "object") {
+          if (!element.type) {
             sub.push(this.renderForPreView(createElement, element));
           } else {
-            sub.push(element);
+            sub.push(element.value);
           }
         }
       }
