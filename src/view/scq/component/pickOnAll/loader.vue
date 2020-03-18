@@ -49,7 +49,7 @@ import resetUid from "@/utils/resetUid.js";
 
 import setValue from "./setValue";
 export default {
-  name: "Vant",
+  name: "loader",
   props: ["config"],
   components: {
     // setPropery,
