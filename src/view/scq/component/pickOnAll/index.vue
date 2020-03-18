@@ -8,18 +8,17 @@
       </el-menu>-->
       <el-tabs v-model="rootPick" v-if="pickOnAllVisible">
         <el-tab-pane label="Element-UI" name="0">
-          <loader
-            :config="elementConfig"
-            @actionInsert="actionInsert"
-            @rawToPreView="rawToPreView"
-          />
+          <!-- @actionInsert="actionInsert" -->
+          <loader :config="elementConfig" @rawToPreView="rawToPreView" />
         </el-tab-pane>
         <el-tab-pane label="Vant" name="1">
-          <loader :config="vantConfig" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
+          <!-- @actionInsert="actionInsert" -->
+          <loader :config="vantConfig" @rawToPreView="rawToPreView" />
         </el-tab-pane>
         <el-tab-pane label="自定义" name="2">
           <!-- <custom @rawToPreView="rawToPreView" /> -->
-          <loader :config="customConfig" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
+          <!-- @actionInsert="actionInsert" -->
+          <loader :config="customConfig" @rawToPreView="rawToPreView" />
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -56,7 +55,7 @@ export default {
     },
     actionInsert(data) {
       this.pickOnAllVisible = false;
-      this.$emit("actionInsert", data);
+      // this.$emit("actionInsert", data);
     }
   }
 };

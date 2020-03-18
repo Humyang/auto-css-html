@@ -57,8 +57,8 @@
               @rawToPreView="rawToPreView"
               @onChangePosition="onChangePosition"
               @onSelected="collectionInsert"
-              @actionInsert="actionInsert"
             />
+            <!-- @actionInsert="actionInsert" -->
           </el-tab-pane>
           <el-tab-pane label="预设类名">
             <div class="flex column content" style="text-align: left;">
@@ -267,11 +267,11 @@ export default {
       return subset;
     },
 
-    actionInsert(data) {
-      let item = this.getNodeById(this.dataset, this.currentSelect);
-      this.currentItemSubset.push(getFormatedData(data));
-      this.updateElementSetElement();
-    },
+    // actionInsert(data) {
+    //   let item = this.getNodeById(this.dataset, this.currentSelect);
+    //   this.currentItemSubset.push(getFormatedData(data));
+    //   this.updateElementSetElement();
+    // },
     collectionInsert(data) {
       let item = this.getNode(this.dataset.subset, this.currentSelect);
       item.subset.push(data);

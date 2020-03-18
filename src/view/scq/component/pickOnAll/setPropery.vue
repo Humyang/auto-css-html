@@ -23,6 +23,10 @@
 
 <script>
 import iconNameSelect from "./elementUi/component/iconNameSelect";
+import { getNodeById } from "@/utils/nodeUtils.js";
+
+import { getFormatedData, objToPropsArray } from "@/utils/formatMethods";
+import uid2 from "uid2";
 export default {
   // props: ["data"],
   components: { iconNameSelect },
@@ -66,8 +70,17 @@ export default {
       // console.log("2", this.rawData.props);
       // this.rawData.props = value;
     },
-    actionInsert() {
-      this.$emit("actionInsert", this.rawData);
+    async actionInsert() {
+      let v = await parentDataset.dataset.get("1");
+      let dataset = v.dataset;
+      let currentSelect = v.currentSelect;
+      let item = getNodeById(dataset, currentSelect);
+      item.subset.push(getFormatedData(this.rawData));
+      parentDataset.dataset.update("1", {
+        dataset: dataset,
+        modifyFlag: uid2(20)
+      });
+      // this.$emit("actionInsert", this.rawData);
     }
   },
   mounted() {

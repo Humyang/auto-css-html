@@ -27,7 +27,8 @@
         >{{ item }}</div>
       </div>
     </div>
-    <pickOnAll @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
+    <!-- @actionInsert="actionInsert" -->
+    <pickOnAll @rawToPreView="rawToPreView" />
   </div>
 </template>
 
@@ -35,7 +36,7 @@
 import uid2 from "uid2";
 import preview from "../preview";
 import lara from "@/assets/lara.jpg";
-import navMenu from "./navMenu.vue";
+// import navMenu from "./navMenu.vue";
 import engine from "../engine";
 
 import { mapMutations, mapActions, mapState } from "vuex";
@@ -45,7 +46,7 @@ import pickOnAll from "../pickOnAll";
 export default {
   name: "collection",
   props: ["controlView"],
-  components: { engine, preview, navMenu, pickOnAll },
+  components: { engine, preview, pickOnAll },
   data() {
     return {
       appendPosition: "subChildAppend",
@@ -65,9 +66,9 @@ export default {
     rawToPreView(data) {
       this.$emit("rawToPreView", resetUid(JSON.parse(JSON.stringify(data))));
     },
-    actionInsert(data) {
-      this.$emit("actionInsert", data);
-    },
+    // actionInsert(data) {
+    //   this.$emit("actionInsert", data);
+    // },
 
     actionSetExtendAttr(index, item) {
       this.$emit("actionSetExtendAttr", { index, item });

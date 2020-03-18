@@ -2,7 +2,8 @@
   <div>
     <!-- 
     v-if="rawData.tagName"-->
-    <setPropery v-if="visible" ref="setPropery" @actionInsert="actionInsert" @change="change" />
+    <setPropery v-if="visible" ref="setPropery" @change="change" />
+    <!-- @actionInsert="actionInsert" -->
   </div>
 </template>
 
@@ -23,9 +24,9 @@ export default {
     };
   },
   methods: {
-    actionInsert(data) {
-      this.$emit("actionInsert", data);
-    },
+    // actionInsert(data) {
+    //   this.$emit("actionInsert", data);
+    // },
     change(data) {
       this.$emit("change", data);
     },

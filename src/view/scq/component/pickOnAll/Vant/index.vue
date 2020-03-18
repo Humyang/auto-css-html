@@ -10,7 +10,8 @@
         <div class="flex">
           <div style="min-width:300px">
             <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
-            <setPropery v-if="rootPick==item.tagName" @actionInsert="actionInsert" :data="item" />
+            <setPropery v-if="rootPick==item.tagName" :data="item" />
+            <!-- @actionInsert="actionInsert" -->
           </div>
           <div class="flex" style="    flex-flow: wrap;">
             <div v-for="item,index in datasetList">
@@ -64,10 +65,10 @@ export default {
         tagName: data.tagName,
         dataset: getFormatedData(data)
       });
-    },
-    actionInsert(data) {
-      this.$emit("actionInsert", data);
     }
+    // actionInsert(data) {
+    //   this.$emit("actionInsert", data);
+    // }
   }
 };
 </script>

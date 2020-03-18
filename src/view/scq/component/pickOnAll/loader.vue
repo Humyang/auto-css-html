@@ -11,7 +11,8 @@
         <div class="flex" v-if="rootPick == item.tagName">
           <div style="min-width:300px">
             <el-button type="primary" @click="saveToCache(item)">存入缓存</el-button>
-            <setValue ref="setValue" @actionInsert="actionInsert" @rawToPreView="rawToPreView" />
+            <!-- @actionInsert="actionInsert" -->
+            <setValue ref="setValue" @rawToPreView="rawToPreView" />
           </div>
           <div ref="canvasCache"></div>
           <div class="flex" style="    flex-flow: wrap;">
@@ -97,10 +98,10 @@ export default {
         tagName: data.tagName,
         dataset: getFormatedData(data)
       });
-    },
-    actionInsert(data) {
-      this.$emit("actionInsert", data);
     }
+    // actionInsert(data) {
+    //   this.$emit("actionInsert", data);
+    // }
   }
 };
 </script>
