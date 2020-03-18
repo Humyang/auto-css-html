@@ -28,7 +28,8 @@
       </div>
     </div>
     <!-- @actionInsert="actionInsert" -->
-    <pickOnAll @rawToPreView="rawToPreView" />
+    <!-- @rawToPreView="rawToPreView" -->
+    <pickOnAll />
   </div>
 </template>
 
@@ -63,9 +64,9 @@ export default {
     })
   },
   methods: {
-    rawToPreView(data) {
-      this.$emit("rawToPreView", resetUid(JSON.parse(JSON.stringify(data))));
-    },
+    // rawToPreView(data) {
+    //   this.$emit("rawToPreView", resetUid(JSON.parse(JSON.stringify(data))));
+    // },
     // actionInsert(data) {
     //   this.$emit("actionInsert", data);
     // },

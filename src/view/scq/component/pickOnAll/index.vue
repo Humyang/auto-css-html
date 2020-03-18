@@ -9,16 +9,19 @@
       <el-tabs v-model="rootPick" v-if="pickOnAllVisible">
         <el-tab-pane label="Element-UI" name="0">
           <!-- @actionInsert="actionInsert" -->
-          <loader :config="elementConfig" @rawToPreView="rawToPreView" />
+          <!-- @rawToPreView="rawToPreView" -->
+          <loader :config="elementConfig" />
         </el-tab-pane>
         <el-tab-pane label="Vant" name="1">
           <!-- @actionInsert="actionInsert" -->
-          <loader :config="vantConfig" @rawToPreView="rawToPreView" />
+          <!-- @rawToPreView="rawToPreView" -->
+          <loader :config="vantConfig" />
         </el-tab-pane>
         <el-tab-pane label="自定义" name="2">
           <!-- <custom @rawToPreView="rawToPreView" /> -->
+          <!-- @rawToPreView="rawToPreView"  -->
           <!-- @actionInsert="actionInsert" -->
-          <loader :config="customConfig" @rawToPreView="rawToPreView" />
+          <loader :config="customConfig" />
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -50,9 +53,9 @@ export default {
     };
   },
   methods: {
-    rawToPreView(data) {
-      this.$emit("rawToPreView", data);
-    },
+    // rawToPreView(data) {
+    //   this.$emit("rawToPreView", data);
+    // },
     actionInsert(data) {
       this.pickOnAllVisible = false;
       // this.$emit("actionInsert", data);

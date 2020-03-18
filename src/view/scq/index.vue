@@ -54,10 +54,11 @@
               :controlView="controlView"
               @actionColumnAdd="columnAdd"
               @actionRowAdd="rowAdd"
-              @rawToPreView="rawToPreView"
               @onChangePosition="onChangePosition"
               @onSelected="collectionInsert"
             />
+
+            <!-- @rawToPreView="rawToPreView" -->
             <!-- @actionInsert="actionInsert" -->
           </el-tab-pane>
           <el-tab-pane label="预设类名">
@@ -229,12 +230,12 @@ export default {
         dataset: data
       });
     },
-    rawToPreView(data) {
-      let item = this.getNodeById(this.dataset, this.currentSelect);
-      this.currentItemSubset.push(data);
+    // rawToPreView(data) {
+    //   let item = this.getNodeById(this.dataset, this.currentSelect);
+    //   this.currentItemSubset.push(data);
 
-      this.updateElementSetElement();
-    },
+    //   this.updateElementSetElement();
+    // },
     actionRemoveSelected() {
       // item.subset = [];
       if (this.currentSelect == "root") {
