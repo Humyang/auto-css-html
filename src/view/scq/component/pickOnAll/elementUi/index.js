@@ -19,7 +19,12 @@ import cascaderPanel from "./cascaderPanel";
 import elSwitch from "./elSwitch";
 import elSlider from "./elSlider";
 
+import timePicker from "./timePicker";
+import timeSelect from "./timeSelect";
+
 export default {
+  timeSelect,
+  timePicker,
   elSlider,
   elSwitch,
   cascaderPanel,
