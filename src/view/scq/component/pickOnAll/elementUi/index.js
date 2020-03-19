@@ -12,7 +12,13 @@ import input from "./input";
 import select from "./select";
 import selectOptionGroup from "./selectOptionGroup";
 import selectOption from "./selectOption";
+
+import cascader from "./cascader";
+import cascaderPanel from "./cascaderPanel";
+
 export default {
+  cascaderPanel,
+  cascader,
   selectOptionGroup,
   selectOption,
   select,
