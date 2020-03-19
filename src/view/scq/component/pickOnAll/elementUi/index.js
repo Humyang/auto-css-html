@@ -16,7 +16,12 @@ import selectOption from "./selectOption";
 import cascader from "./cascader";
 import cascaderPanel from "./cascaderPanel";
 
+import elSwitch from "./elSwitch";
+import elSlider from "./elSlider";
+
 export default {
+  elSlider,
+  elSwitch,
   cascaderPanel,
   cascader,
   selectOptionGroup,
