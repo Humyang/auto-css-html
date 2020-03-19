@@ -22,7 +22,24 @@ import elSlider from "./elSlider";
 import timePicker from "./timePicker";
 import timeSelect from "./timeSelect";
 
+import datePicker from "./datePicker";
+import upload from "./upload";
+
+import rate from "./rate";
+import colorPicker from "./colorPicker";
+import transfer from "./transfer";
+
+import form from "./form";
+import formItem from "./formItem";
+
 export default {
+  form,
+  formItem,
+  transfer,
+  colorPicker,
+  rate,
+  upload,
+  datePicker,
   timeSelect,
   timePicker,
   elSlider,
