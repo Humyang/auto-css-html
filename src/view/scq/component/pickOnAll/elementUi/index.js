@@ -6,7 +6,10 @@ import radioGroup from "./radioGroup";
 import checkbox from "./checkbox";
 import checkboxGroup from "./checkboxGroup";
 import checkboxButton from "./checkboxButton";
+
+import input from "./input";
 export default {
+  input,
   checkbox,
   checkboxGroup,
   checkboxButton,
