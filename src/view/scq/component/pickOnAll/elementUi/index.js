@@ -6,9 +6,17 @@ import radioGroup from "./radioGroup";
 import checkbox from "./checkbox";
 import checkboxGroup from "./checkboxGroup";
 import checkboxButton from "./checkboxButton";
-
+import InputNumber from "./InputNumber";
 import input from "./input";
+
+import select from "./select";
+import selectOptionGroup from "./selectOptionGroup";
+import selectOption from "./selectOption";
 export default {
+  selectOptionGroup,
+  selectOption,
+  select,
+  InputNumber,
   input,
   checkbox,
   checkboxGroup,

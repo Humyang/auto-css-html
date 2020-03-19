@@ -46,16 +46,3 @@ function getObj(elementName, el) {
   res = `export default ${JSON.stringify(res)}`;
   copy(res);
 }
-//   }
-//   let res = getObj("button", el);
-//   res = `export default ${JSON.stringify(res)}`;
-//   copy(res);
-// }
-// a();
-
-let icon = document.querySelectorAll(".icon-name");
-let res = [];
-for (let index = 0; index < icon.length; index++) {
-  const element = icon[index];
-  res.push(element.innerText);
-}
