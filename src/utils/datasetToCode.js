@@ -1,6 +1,7 @@
 import {
   getFormatedData,
   propertyToString,
+  propsToString,
   styleToString
 } from "@/utils/formatMethods";
 
@@ -77,7 +78,7 @@ function getHTML(dataset, level, prefix) {
   }
   let res = `<${dataset.tagName} ${propertyToString(
     dataset.options.attrs.property
-  )} ${propertyToString(dataset.options.props)} style="${styleToString(
+  )} ${propsToString(dataset.options.props)} style="${styleToString(
     dataset.options.attrs.style
   )}" class="${classname(dataset.options.attrs.class, rootName)}">
       ${r.join("")}</${dataset.tagName}>`;

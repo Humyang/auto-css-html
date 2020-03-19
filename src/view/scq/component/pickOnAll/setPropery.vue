@@ -17,6 +17,17 @@
         <span class="label">{{item.name}}</span>
         <el-switch v-model="item.value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </div>
+      <div v-if="item.type =='Number'" class="flex cell">
+        <span class="label">{{item.name}}</span>
+        <!-- <el-switch v-model="item.value" active-color="#13ce66" inactive-color="#ff4949"></el-switch> -->
+        <el-input-number v-model="item.value" label="描述文字"></el-input-number>
+      </div>
+      <div v-if="!item.type" class="flex cell">
+        <span class="label">{{item.name}}</span>
+
+        <el-input v-model="item.value" placeholder="请输入内容"></el-input>
+        <inputAdvance @valueChange="(value)=>{item.value=value}" />
+      </div>
     </div>
   </div>
 </template>
@@ -27,9 +38,13 @@ import { getNodeById } from "@/utils/nodeUtils.js";
 
 import { getFormatedData, objToPropsArray } from "@/utils/formatMethods";
 import uid2 from "uid2";
+import inputAdvance from "Component/inputAdvance/index";
 export default {
   // props: ["data"],
-  components: { iconNameSelect },
+  components: {
+    inputAdvance,
+    iconNameSelect
+  },
   data() {
     return {
       isWatch: true,
@@ -45,12 +60,9 @@ export default {
       }, 100);
     },
     setValue(value) {
+      console.log("setValue", value);
       this.isWatch = false;
       let obj1 = {};
-      // for (let index = 0; index < array.length; index++) {
-      //   const element = array[index];
-      //
-      // }
       for (const key in value) {
         if (value.hasOwnProperty(key)) {
           const element = value[key];

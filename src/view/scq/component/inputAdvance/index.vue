@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button @click="popup=true" type="primary" icon="el-icon-edit" circle></el-button>
-    <el-dialog title="辅助输入" :visible.sync="popup">
+    <el-dialog title="辅助输入" :modal="false" :visible.sync="popup">
       <el-tabs>
         <el-tab-pane label="Number" name="0">
           <numberInput @valueChange="valueChange" />

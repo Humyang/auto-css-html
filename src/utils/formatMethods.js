@@ -5,6 +5,7 @@ function objToPropsArray(obj) {
     let obj = {};
     obj.property = item.name;
     obj.value = item.value;
+    obj.tyle = item.type;
     props.push(obj);
   });
   return props;
@@ -55,6 +56,18 @@ function propertyToString(obj) {
   }
   return res;
 }
+function propsToString(obj) {
+  let res = "";
+  for (let index = 0; index < obj.length; index++) {
+    const element = obj[index];
+    if (element.tyle == "Number") {
+      res += `:${element.property}="${element.value}" `;
+    } else {
+      res += `${element.property}="${element.value}" `;
+    }
+  }
+  return res;
+}
 function styleToString(obj) {
   let res = "";
   for (let index = 0; index < obj.length; index++) {
@@ -64,4 +77,10 @@ function styleToString(obj) {
   return res;
 }
 
-export { objToPropsArray, getFormatedData, propertyToString, styleToString };
+export {
+  objToPropsArray,
+  propsToString,
+  getFormatedData,
+  propertyToString,
+  styleToString
+};

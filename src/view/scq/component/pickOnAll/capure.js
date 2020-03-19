@@ -16,6 +16,12 @@ function getObj(elementName, el) {
       case "boolean":
         obj["type"] = "Boolean";
         break;
+      case "number":
+        obj["type"] = "Number";
+        break;
+      default:
+        obj["type"] = type;
+        break;
     }
     let options = sa[3].innerText;
     if (options == "—") {
