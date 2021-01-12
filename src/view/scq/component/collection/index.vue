@@ -1,6 +1,9 @@
 <template>
-  <div class="insersub-view flex column" style="margin-left:0;margin-top:10px;">
-    <div style="    text-align: left;margin-bottom: 10px;">
+  <div
+    class="insersub-view flex column"
+    style="margin-left: 0; margin-top: 10px"
+  >
+    <div style="text-align: left; margin-bottom: 10px">
       <el-select placeholder="设置添加位置" v-model="appendPosition">
         <el-option label="子级添加" value="subChildAppend"></el-option>
         <el-option label="孙级添加" value="subChildInsert"></el-option>
@@ -16,15 +19,21 @@
           class="subitem flex vcenter"
           v-for="(item, index) in rowList"
           @click="actionRowAdd(item)"
-        >{{ item }}</div>
+        >
+          {{ item }}
+        </div>
       </div>
       <div class="column-list">
-        <div class="subitem flex vcenter" @click="actionColumnAdd(0)">COLUMN</div>
+        <div class="subitem flex vcenter" @click="actionColumnAdd(0)">
+          COLUMN
+        </div>
         <div
           class="subitem flex vcenter"
           v-for="item in columnList"
           @click="actionColumnAdd(item)"
-        >{{ item }}</div>
+        >
+          {{ item }}
+        </div>
       </div>
     </div>
     <!-- @actionInsert="actionInsert" -->
@@ -55,13 +64,13 @@ export default {
 
       currentItem: {},
       rowList: [1, 2, 3, 4, 5],
-      columnList: [1, 2, 3, 4, 5]
+      columnList: [1, 2, 3, 4, 5],
     };
   },
   computed: {
     ...mapState({
-      preSave: state => state.preSave
-    })
+      preSave: (state) => state.preSave,
+    }),
   },
   methods: {
     // rawToPreView(data) {
@@ -79,7 +88,7 @@ export default {
     },
     actionColumnAdd(number) {
       this.$emit("actionColumnAdd", number);
-    }
+    },
   },
   watch: {
     appendPosition: {
@@ -87,11 +96,11 @@ export default {
         this.$emit("onChangePosition", this.appendPosition);
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   created() {},
-  mounted() {}
+  mounted() {},
 };
 </script>
 <style >

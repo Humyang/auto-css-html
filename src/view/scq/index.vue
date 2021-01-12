@@ -5,9 +5,9 @@
         <el-tabs type="border-card" @tab-click="resultClick">
           <el-tab-pane label="视图">
             <div class="flex row">
-              <div>
+              <!-- <div>
                 <iframe ref="iframeRef" :src="'/realview'" class="realviewIframe"></iframe>
-              </div>
+              </div> -->
               <div class="flex row" style="padding-left: 20px;">
                 <!-- @rootClick="rootClick" -->
                 <!-- <preview
@@ -593,8 +593,8 @@ export default {
 
 <style>
 .realviewIframe {
-  width: 414px;
-  height: 736px;
+  width: 1000px;
+  height: 836px;
   border: 4px solid #333;
 }
 .html-box,
